@@ -8,13 +8,16 @@
 /*----------------------------------------------------------------------------*/
 
 #include "vex.h"
-#include "globals.h"
+#include "Bot.h"
+#include "Drivetrain.h"
 
 using namespace vex;
 
 // A global instance of competition
 competition Competition;
 
+//Tasks!
+task ControllerLoop = task(Drivetrain::ControllerLoop);
 
 
 
