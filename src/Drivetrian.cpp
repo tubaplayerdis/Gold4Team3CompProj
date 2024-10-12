@@ -13,15 +13,15 @@ int Drivetrain::ControllerLoop() {
         // calculate the drivetrain motor velocities from the controller joystick axies
         // left = Axis3 + Axis1
         // right = Axis3 - Axis1
-        int drivetrainLeftSideSpeed = bot::Controller.Axis3.position() + bot::Controller.Axis1.position();
-        int drivetrainRightSideSpeed = bot::Controller.Axis3.position() - bot::Controller.Axis1.position();
+        int drivetrainLeftSideSpeed = Bot::Controller.Axis3.position() + Bot::Controller.Axis1.position();
+        int drivetrainRightSideSpeed = Bot::Controller.Axis3.position() - Bot::Controller.Axis1.position();
         
         // check if the value is inside of the deadband range
         if (drivetrainLeftSideSpeed < 5 && drivetrainLeftSideSpeed > -5) {
           // check if the left motor has already been stopped
           if (DrivetrainLNeedsToBeStopped) {
             // stop the left drive motor
-            bot::LeftMotors.stop();
+            Bot::LeftMotors.stop();
             // tell the code that the left motor has been stopped
             DrivetrainLNeedsToBeStopped = false;
           }
@@ -34,7 +34,7 @@ int Drivetrain::ControllerLoop() {
           // check if the right motor has already been stopped
           if (DrivetrainRNeedsToBeStopped) {
             // stop the right drive motor
-            bot::RightMotors.stop();
+            Bot::RightMotors.stop();
             // tell the code that the right motor has been stopped
             DrivetrainRNeedsToBeStopped = false;
           }
@@ -45,13 +45,13 @@ int Drivetrain::ControllerLoop() {
         
         // only tell the left drive motor to spin if the values are not in the deadband range
         if (DrivetrainLNeedsToBeStopped) {
-          bot::LeftMotors.setVelocity(drivetrainLeftSideSpeed, vex::percent);
-          bot::LeftMotors.spin(vex::forward);
+          Bot::LeftMotors.setVelocity(drivetrainLeftSideSpeed, vex::percent);
+          Bot::LeftMotors.spin(vex::forward);
         }
         // only tell the right drive motor to spin if the values are not in the deadband range
         if (DrivetrainRNeedsToBeStopped) {
-          bot::RightMotors.setVelocity(drivetrainRightSideSpeed, vex::percent);
-          bot::RightMotors.spin(vex::forward);
+          Bot::RightMotors.setVelocity(drivetrainRightSideSpeed, vex::percent);
+          Bot::RightMotors.spin(vex::forward);
         }
       }
       // wait before repeating the process
