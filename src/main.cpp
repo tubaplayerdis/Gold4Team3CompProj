@@ -8,13 +8,16 @@
 /*----------------------------------------------------------------------------*/
 
 #include "vex.h"
-#include "globals.h"
+#include "Bot.h"
+#include "Drivetrain.h"
 
 using namespace vex;
 
 // A global instance of competition
 competition Competition;
 
+//Tasks!
+task ControllerLoop = task(Drivetrain::ControllerLoop);
 
 
 
@@ -83,6 +86,8 @@ void usercontrol(void) {
 // Main will set up the competition functions and callbacks.
 //
 int main() {
+
+  Bot::Brain.Screen.printAt(100, 100, "Begining Setup!");
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
@@ -91,7 +96,7 @@ int main() {
   pre_auton();
 
   // Prevent main from exiting with an infinite loop.
-  while (true) {
-    wait(100, msec);
-  }
+  //while (true) {
+  //  wait(100, msec);
+  //}
 }
