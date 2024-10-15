@@ -10,6 +10,9 @@ class bot {
         static vex::motor LeftRear;
 };
 
+//Define Motors
+vex::motor bot::LeftFront = vex::motor(vex::PORT1, true);
+
 
 //Define important stuff
 vex::controller bot::Controller = vex::controller();
