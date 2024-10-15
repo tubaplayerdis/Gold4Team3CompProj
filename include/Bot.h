@@ -3,6 +3,9 @@
 
 class Bot {
     public:
+        //Brain
+        static vex::brain Brain;
+
         //Drivetrain Elements
         static vex::controller Controller;
         static vex::drivetrain Drivetrain;
