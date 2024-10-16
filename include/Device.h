@@ -18,3 +18,7 @@ class Device {
     public:
         static std::string getDeviceTypeString(int type);
 };
+
+typedef enum {
+    None = 0 //Complete More and add method to convert.
+} DeviceType;
