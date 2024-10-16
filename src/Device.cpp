@@ -18,6 +18,32 @@ std::string Device::toString() {
     return name + "Index: " + to_string_int(index);
 }
 
+/*
+  kDeviceTypeNoSensor        = 0,
+  kDeviceTypeMotorSensor     = 2,
+  kDeviceTypeLedSensor       = 3,
+  kDeviceTypeAbsEncSensor    = 4,
+  kDeviceTypeCrMotorSensor   = 5,
+  kDeviceTypeImuSensor       = 6,
+  kDeviceTypeRangeSensor     = 7, // obsolete
+  kDeviceTypeDistanceSensor  = 7,
+  kDeviceTypeRadioSensor     = 8,
+  kDeviceTypeTetherSensor    = 9,
+  kDeviceTypeBrainSensor     = 10,
+  kDeviceTypeVisionSensor    = 11,
+  kDeviceTypeAdiSensor       = 12,
+  kDeviceTypeRes1Sensor      = 13,
+  kDeviceTypeRes2Sensor      = 14,
+  kDeviceTypeRes3Sensor      = 15,
+  kDeviceTypeOpticalSensor   = 16,
+  kDeviceTypeMagnetSensor    = 17,
+  kDeviceTypeBumperSensor    = 0x40,
+  kDeviceTypeGyroSensor      = 0x46,
+  kDeviceTypeSonarSensor     = 0x47,
+  kDeviceTypeGenericSensor   = 128,
+  kDeviceTypeGenericSerial   = 129,
+  kDeviceTypeUndefinedSensor = 255
+*/
 std::string Device::getDeviceTypeString(int type) {
     switch (type)
     {

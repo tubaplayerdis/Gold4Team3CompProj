@@ -21,10 +21,8 @@ using namespace vex;
 // A global instance of competition
 competition Competition;
 
-//Tasks!
+// Tasks!
 task ControllerLoop = task(Drivetrain::ControllerLoop);
-
-
 
 // define your global instances of motors and other devices here
 
@@ -38,7 +36,8 @@ task ControllerLoop = task(Drivetrain::ControllerLoop);
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
 
-void pre_auton(void) {
+void pre_auton(void)
+{
 
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
@@ -54,7 +53,8 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void autonomous(void) {
+void autonomous(void)
+{
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
@@ -70,9 +70,11 @@ void autonomous(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void usercontrol(void) {
+void usercontrol(void)
+{
   // User control code here, inside the loop
-  while (true) {
+  while (true)
+  {
     // This is the main execution loop for the user control program.
     // Each time through the loop your program should update motor + servo
     // values based on feedback from the joysticks.
@@ -87,34 +89,10 @@ void usercontrol(void) {
   }
 }
 
-/*
-  kDeviceTypeNoSensor        = 0,
-  kDeviceTypeMotorSensor     = 2,
-  kDeviceTypeLedSensor       = 3,
-  kDeviceTypeAbsEncSensor    = 4,
-  kDeviceTypeCrMotorSensor   = 5,
-  kDeviceTypeImuSensor       = 6,
-  kDeviceTypeRangeSensor     = 7, // obsolete
-  kDeviceTypeDistanceSensor  = 7,
-  kDeviceTypeRadioSensor     = 8,
-  kDeviceTypeTetherSensor    = 9,
-  kDeviceTypeBrainSensor     = 10,
-  kDeviceTypeVisionSensor    = 11,
-  kDeviceTypeAdiSensor       = 12,
-  kDeviceTypeRes1Sensor      = 13,
-  kDeviceTypeRes2Sensor      = 14,
-  kDeviceTypeRes3Sensor      = 15,
-  kDeviceTypeOpticalSensor   = 16,
-  kDeviceTypeMagnetSensor    = 17,
-  kDeviceTypeBumperSensor    = 0x40,
-  kDeviceTypeGyroSensor      = 0x46,
-  kDeviceTypeSonarSensor     = 0x47,
-  kDeviceTypeGenericSensor   = 128,
-  kDeviceTypeGenericSerial   = 129,
-  kDeviceTypeUndefinedSensor = 255
-*/
 
-std::string to_string(int x){
+
+std::string to_string(int x)
+{
   std::stringstream s;
   s << x;
   return s.str();
@@ -123,10 +101,11 @@ std::string to_string(int x){
 //
 // Main will set up the competition functions and callbacks.
 //
-int main() {
+int main()
+{
 
-  //Bot::Brain.Screen.printAt(100, 100, "Begining Setup!");
-  // Set up callbacks for autonomous and driver control periods.
+  // Bot::Brain.Screen.printAt(100, 100, "Begining Setup!");
+  //  Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
 
@@ -135,7 +114,8 @@ int main() {
 
   Bot::Brain.Screen.printAt(10, 30, "Device List");
   int ind = 50;
-  for(Device obj : Bot::DeviceList) {
+  for (Device obj : Bot::DeviceList)
+  {
     Bot::Brain.Screen.printAt(10, ind, obj.toString().c_str());
     ind += 20;
   }
@@ -144,7 +124,7 @@ int main() {
   pre_auton();
 
   // Prevent main from exiting with an infinite loop.
-  //while (true) {
+  // while (true) {
   //  wait(100, msec);
   //}
 }
