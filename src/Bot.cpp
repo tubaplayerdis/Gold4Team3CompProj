@@ -6,8 +6,8 @@ vex::brain Bot::Brain = vex::brain();
 
 //Define Motors
 vex::motor Bot::LeftFront = vex::motor(vex::PORT1, vex::ratio18_1,false);
-vex::motor Bot::RightFront = vex::motor(vex::PORT11, vex::ratio18_1, false);
-vex::motor Bot::LeftRear = vex::motor(vex::PORT10, vex::ratio18_1, true);
+vex::motor Bot::LeftRear = vex::motor(vex::PORT11, vex::ratio18_1, false);
+vex::motor Bot::RightFront = vex::motor(vex::PORT10, vex::ratio18_1, true);
 vex::motor Bot::RightRear = vex::motor(vex::PORT20, vex::ratio18_1, true);
 
 vex::motor Bot::MGPM = vex::motor(vex::PORT4, false);
