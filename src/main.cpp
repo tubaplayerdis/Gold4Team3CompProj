@@ -12,9 +12,8 @@
 #include "Bot.h"
 #include "Drivetrain.h"
 #include "Device.h"
-#include <vector>
 #include <string>
-#include <iostream>
+#include <vector>
 #include <sstream>
 
 using namespace vex;
@@ -115,62 +114,6 @@ void usercontrol(void) {
   kDeviceTypeUndefinedSensor = 255
 */
 
-std::string getDeviceTypeString(int type) {
-  switch (type)
-  {
-    case 0:
-      return std::string("kDeviceTypeNoSensor");
-    case 1:
-      return std::string("Unsupported");  // This case was not defined above; keep or modify as needed.
-    case 2:
-      return std::string("kDeviceTypeMotorSensor");
-    case 3:
-      return std::string("kDeviceTypeLedSensor");
-    case 4:
-      return std::string("kDeviceTypeAbsEncSensor");
-    case 5:
-      return std::string("kDeviceTypeCrMotorSensor");
-    case 6:
-      return std::string("kDeviceTypeImuSensor");
-    case 7:
-      return std::string("kDeviceTypeDistanceSensor");  // Note: kDeviceTypeRangeSensor is obsolete.
-    case 8:
-      return std::string("kDeviceTypeRadioSensor");
-    case 9:
-      return std::string("kDeviceTypeTetherSensor");
-    case 10:
-      return std::string("kDeviceTypeBrainSensor");
-    case 11:
-      return std::string("kDeviceTypeVisionSensor");
-    case 12:
-      return std::string("kDeviceTypeAdiSensor");
-    case 13:
-      return std::string("kDeviceTypeRes1Sensor");
-    case 14:
-      return std::string("kDeviceTypeRes2Sensor");
-    case 15:
-      return std::string("kDeviceTypeRes3Sensor");
-    case 16:
-      return std::string("kDeviceTypeOpticalSensor");
-    case 17:
-      return std::string("kDeviceTypeMagnetSensor");
-    case 0x40:
-      return std::string("kDeviceTypeBumperSensor");
-    case 0x46:
-      return std::string("kDeviceTypeGyroSensor");
-    case 0x47:
-      return std::string("kDeviceTypeSonarSensor");
-    case 128:
-      return std::string("kDeviceTypeGenericSensor");
-    case 129:
-      return std::string("kDeviceTypeGenericSerial");
-    case 255:
-      return std::string("kDeviceTypeUndefinedSensor");
-    default:
-      return std::string("Unsupported");
-  }
-}
-
 std::string to_string(int x){
   std::stringstream s;
   s << x;
@@ -187,21 +130,13 @@ int main() {
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
 
-  V5_DeviceTypeBuffer devicel;
-  int devicenum = vexDeviceGetStatus(devicel);
-  Bot::Brain.Screen.printAt(10, 10, "Device Num: %d", devicenum);
-  std::vector<Device> typelist = std::vector<Device>();
-  for(int i = 0; i < vexDevicesGetNumber(); i++) {
-    std::string devicename = getDeviceTypeString(devicel[i]);
-    if(devicename != "kDeviceTypeNoSensor") {
-      typelist.push_back(Device(devicename, i, vexDeviceGetByIndex(i)));
-    } 
-  }
+  Bot::updateDeviceList();
+  Bot::Brain.Screen.printAt(10, 10, "Device Num: %d", Bot::NumDevices);
 
-  Bot::Brain.Screen.printAt(10, 30, "Device Type List");
+  Bot::Brain.Screen.printAt(10, 30, "Device List");
   int ind = 50;
-  for(Device obj : typelist) {
-    Bot::Brain.Screen.printAt(10, ind, obj.name + " Index: " + );
+  for(Device obj : Bot::DeviceList) {
+    Bot::Brain.Screen.printAt(10, ind, obj.toString().c_str());
     ind += 20;
   }
 

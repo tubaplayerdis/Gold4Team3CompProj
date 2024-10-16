@@ -22,3 +22,15 @@ vex::drivetrain Bot::Drivetrain = vex::drivetrain(Bot::LeftMotors, Bot::RightMot
 
 //hidden api
 std::vector<Device> Bot::DeviceList = std::vector<Device>();
+int Bot::NumDevices = 0;
+void Bot::updateDeviceList() {
+    V5_DeviceTypeBuffer devicel;
+    Bot::NumDevices = vexDeviceGetStatus(devicel);
+    for(int i = 0; i < vexDevicesGetNumber(); i++) {
+        std::string devicename = Device::getDeviceTypeString(devicel[i]);
+        if(devicename != "kDeviceTypeNoSensor") {
+            DeviceList.push_back(Device(devicename, i, vexDeviceGetByIndex(i)));
+        } 
+    }
+
+}

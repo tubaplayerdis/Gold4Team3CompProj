@@ -1,6 +1,5 @@
 #pragma once
 #include "vex.h"
-#include "debug.h"
 #include "Device.h"
 #include <vector>
 
@@ -23,6 +22,8 @@ class Bot {
         static vex::motor MGPM; //Mobile goal post motor
 
         //Hidden API Compatability
+        static void updateDeviceList();
+        static int NumDevices;
         static std::vector<Device> DeviceList;
 
 };
