@@ -1,4 +1,5 @@
 #include "Bot.h"
+#include "Device.h"
 
 //Define Brain
 vex::brain Bot::Brain = vex::brain();
@@ -18,3 +19,6 @@ vex::motor_group Bot::RightMotors = vex::motor_group(Bot::RightFront, Bot::Right
 //Define important stuff
 vex::controller Bot::Controller = vex::controller();
 vex::drivetrain Bot::Drivetrain = vex::drivetrain(Bot::LeftMotors, Bot::RightMotors, 4.0, 14.25, 11.0, vex::inches, 1);
+
+//hidden api
+std::vector<Device> Bot::DeviceList = std::vector<Device>();

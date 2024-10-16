@@ -1,5 +1,8 @@
 #pragma once
 #include "vex.h"
+#include "debug.h"
+#include "Device.h"
+#include <vector>
 
 class Bot {
     public:
@@ -18,5 +21,8 @@ class Bot {
 
         //Others
         static vex::motor MGPM; //Mobile goal post motor
+
+        //Hidden API Compatability
+        static std::vector<Device> DeviceList;
 
 };

@@ -11,6 +11,7 @@
 #include "v5_api.h"
 #include "Bot.h"
 #include "Drivetrain.h"
+#include "Device.h"
 #include <vector>
 #include <string>
 #include <iostream>
@@ -170,6 +171,12 @@ std::string getDeviceTypeString(int type) {
   }
 }
 
+std::string to_string(int x){
+  std::stringstream s;
+  s << x;
+  return s.str();
+}
+
 //
 // Main will set up the competition functions and callbacks.
 //
@@ -183,17 +190,18 @@ int main() {
   V5_DeviceTypeBuffer devicel;
   int devicenum = vexDeviceGetStatus(devicel);
   Bot::Brain.Screen.printAt(10, 10, "Device Num: %d", devicenum);
-  std::vector<std::string> typelist = std::vector<std::string>();
-  for(int i = 0; i < devicenum; i++) {
-    std::stringstream stream;
-    stream << i;
-    typelist.push_back("Device Type: " + getDeviceTypeString(devicel[i]) + " Index: "+ stream.str());
+  std::vector<Device> typelist = std::vector<Device>();
+  for(int i = 0; i < vexDevicesGetNumber(); i++) {
+    std::string devicename = getDeviceTypeString(devicel[i]);
+    if(devicename != "kDeviceTypeNoSensor") {
+      typelist.push_back(Device(devicename, i, vexDeviceGetByIndex(i)));
+    } 
   }
 
   Bot::Brain.Screen.printAt(10, 30, "Device Type List");
   int ind = 50;
-  for(std::string obj : typelist) {
-    Bot::Brain.Screen.printAt(10, ind, obj.c_str());
+  for(Device obj : typelist) {
+    Bot::Brain.Screen.printAt(10, ind, obj.name + " Index: " + );
     ind += 20;
   }
 
