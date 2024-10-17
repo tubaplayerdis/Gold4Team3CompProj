@@ -1,5 +1,6 @@
 #pragma once
 #include "v5_api.h"
+#include "vex.h"
 #include <string>
 
 
@@ -17,8 +18,5 @@ class Device {
 
     public:
         static std::string getDeviceTypeString(int type);
+        static V5_DeviceT getInternalDevicePointer(vex::device device);
 };
-
-typedef enum {
-    None = 0 //Complete More and add method to convert.
-} DeviceType;

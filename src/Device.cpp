@@ -99,3 +99,7 @@ std::string Device::getDeviceTypeString(int type) {
         return std::string("Unsupported");
     }
 }
+
+V5_DeviceT Device::getInternalDevicePointer(vex::device device) {
+  return vexDeviceGetByIndex(device.index());
+}
