@@ -1,0 +1,10 @@
+Global:
+ Down Arrow -> Aborts main loop, canceling everything but Drivetrian, which is its own loop.
+
+Drivetrian(Movement):
+ Left Joystick -> Forward/Backward
+ Right Joystick -> Left/Right
+
+Mobile Goal Post Holder:
+ A -> Release
+ B -> Clamp
