@@ -23,6 +23,7 @@ vex::drivetrain Bot::Drivetrain = vex::drivetrain(Bot::LeftMotors, Bot::RightMot
 //hidden api
 std::vector<Device> Bot::DeviceList = std::vector<Device>();
 int Bot::NumDevices = 0;
+
 void Bot::updateDeviceList() {
     V5_DeviceTypeBuffer devicel;
     Bot::NumDevices = vexDeviceGetStatus(devicel);
@@ -33,4 +34,27 @@ void Bot::updateDeviceList() {
         } 
     }
 
+}
+
+void Bot::mainLoop() {
+    while (true)
+    {
+        //Abort Loop
+        if(Controller.ButtonDown.pressing()) break;
+
+        //MGPM impl
+        if(Controller.ButtonA.pressing() && Controller.ButtonB.pressing()) {
+            MGPM.setVelocity(0, vex::rpm);
+        } else if (Controller.ButtonA.pressing()) {
+            MGPM.setVelocity(20, vex::rpm);
+        } else if(Controller.ButtonB.pressing()) {
+            MGPM.setVelocity(-20, vex::rpm);
+        } else {
+            MGPM.setVelocity(0, vex::rpm);
+        }
+        
+    }
+    Brain.Screen.setPenColor("#c96638");
+    Brain.Screen.printAt(100,100, "Main Loop has been aborted!");
+    Brain.Screen.setPenColor(vex::color::white);
 }
