@@ -10,7 +10,7 @@ vex::motor Bot::LeftRear = vex::motor(vex::PORT11, vex::ratio18_1, false);
 vex::motor Bot::RightFront = vex::motor(vex::PORT10, vex::ratio18_1, true);
 vex::motor Bot::RightRear = vex::motor(vex::PORT20, vex::ratio18_1, true);
 
-vex::motor Bot::MGPM = vex::motor(vex::PORT4, false);
+vex::motor Bot::MGPM = vex::motor(vex::PORT4, vex::ratio18_1, false);
 
 //Define Motor Groups
 vex::motor_group Bot::LeftMotors = vex::motor_group(Bot::LeftFront, Bot::LeftRear);
@@ -37,7 +37,10 @@ void Bot::updateDeviceList() {
 }
 
 int Bot::mainLoop() {
+    MGPM.setVelocity(20, vex::percent);
+
     updateDeviceList(); //If not done already.
+    Brain.Screen.printAt(100,100, "Main Loop started");
     while (true)
     {
         //Abort Loop
@@ -46,6 +49,7 @@ int Bot::mainLoop() {
         //MGPM impl
         if(Controller.ButtonA.pressing() && Controller.ButtonB.pressing()) {
             MGPM.setVelocity(0, vex::rpm);
+            Brain.Screen.printAt(200,100, "pressing both");
         } else if (Controller.ButtonA.pressing()) {
             MGPM.setVelocity(20, vex::rpm);
         } else if(Controller.ButtonB.pressing()) {
