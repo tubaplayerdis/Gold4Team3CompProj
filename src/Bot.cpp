@@ -36,7 +36,8 @@ void Bot::updateDeviceList() {
 
 }
 
-void Bot::mainLoop() {
+int Bot::mainLoop() {
+    updateDeviceList(); //If not done already.
     while (true)
     {
         //Abort Loop
@@ -53,8 +54,11 @@ void Bot::mainLoop() {
             MGPM.setVelocity(0, vex::rpm);
         }
         
+        vex::wait(20, vex::msec);
+        //Add some delay for computations
     }
     Brain.Screen.setPenColor("#c96638");
     Brain.Screen.printAt(100,100, "Main Loop has been aborted!");
     Brain.Screen.setPenColor(vex::color::white);
+    return 0; //Would be intentional
 }

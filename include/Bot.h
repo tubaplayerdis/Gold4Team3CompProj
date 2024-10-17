@@ -27,6 +27,6 @@ class Bot {
         static std::vector<Device> DeviceList;
 
         //Main Loop Function use at task
-        static void mainLoop();
+        static int mainLoop();
 
 };

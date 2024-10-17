@@ -23,6 +23,7 @@ competition Competition;
 
 // Tasks!
 task ControllerLoop = task(Drivetrain::ControllerLoop);
+task MainLoop = task(Bot::mainLoop);
 
 // define your global instances of motors and other devices here
 
