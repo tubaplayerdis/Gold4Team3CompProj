@@ -10,7 +10,7 @@ vex::motor Bot::LeftRear = vex::motor(vex::PORT11, vex::ratio18_1, false);
 vex::motor Bot::RightFront = vex::motor(vex::PORT10, vex::ratio18_1, true);
 vex::motor Bot::RightRear = vex::motor(vex::PORT20, vex::ratio18_1, true);
 
-vex::motor Bot::MGPM = vex::motor(vex::PORT4, vex::ratio18_1, false);
+vex::motor Bot::MGPM = vex::motor(vex::PORT4, vex::ratio6_1, false);
 
 //Define Motor Groups
 vex::motor_group Bot::LeftMotors = vex::motor_group(Bot::LeftFront, Bot::LeftRear);
@@ -59,10 +59,10 @@ int Bot::mainLoop() {
             MGPM.setVelocity(0, vex::rpm);
             MGPM.stop();
         } else if (Controller.ButtonA.pressing()) {
-            MGPM.setVelocity(200, vex::rpm);
+            MGPM.setVelocity(400, vex::rpm);
             MGPM.spin(vex::directionType::fwd);
         } else if(Controller.ButtonB.pressing()) {
-            MGPM.setVelocity(200, vex::rpm);
+            MGPM.setVelocity(400, vex::rpm);
             MGPM.spin(vex::directionType::rev);
         } else {
             MGPM.setVelocity(0, vex::rpm);
