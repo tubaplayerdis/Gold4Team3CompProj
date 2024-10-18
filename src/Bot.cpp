@@ -36,8 +36,16 @@ void Bot::updateDeviceList() {
 
 }
 
+void Bot::setup() {
+    LeftFront.setBrake(vex::hold);
+    LeftRear.setBrake(vex::hold);
+    RightFront.setBrake(vex::hold);
+    RightRear.setBrake(vex::hold);
+    MGPM.setBrake(vex::hold);
+}
+
 int Bot::mainLoop() {
-    MGPM.setVelocity(20, vex::percent);
+    setup();
 
     updateDeviceList(); //If not done already.
     Brain.Screen.printAt(100,100, "Main Loop started");
@@ -49,13 +57,16 @@ int Bot::mainLoop() {
         //MGPM impl
         if(Controller.ButtonA.pressing() && Controller.ButtonB.pressing()) {
             MGPM.setVelocity(0, vex::rpm);
-            Brain.Screen.printAt(200,100, "pressing both");
+            MGPM.stop();
         } else if (Controller.ButtonA.pressing()) {
-            MGPM.setVelocity(20, vex::rpm);
+            MGPM.setVelocity(200, vex::rpm);
+            MGPM.spin(vex::directionType::fwd);
         } else if(Controller.ButtonB.pressing()) {
-            MGPM.setVelocity(-20, vex::rpm);
+            MGPM.setVelocity(200, vex::rpm);
+            MGPM.spin(vex::directionType::rev);
         } else {
             MGPM.setVelocity(0, vex::rpm);
+            MGPM.stop();
         }
         
         vex::wait(20, vex::msec);

@@ -8,6 +8,8 @@ bool Drivetrain::DrivetrainRNeedsToBeStopped = true;
 
 int Drivetrain::ControllerLoop() {
     while(true) {
+      if(Bot::Controller.ButtonUp.pressing()) break;
+
       if(RemoteControlCodeEnabled) {
         
         // calculate the drivetrain motor velocities from the controller joystick axies
@@ -57,5 +59,10 @@ int Drivetrain::ControllerLoop() {
       // wait before repeating the process
       vex::wait(20, vex::msec);
     }
+
+    Bot::Brain.Screen.setPenColor("#c96638");
+    Bot::Brain.Screen.printAt(100,100, "Drivetrain Killswitch tricked");
+    Bot::Brain.Screen.setPenColor(vex::color::white);
+
     return 0;
 }

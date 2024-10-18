@@ -26,6 +26,8 @@ class Bot {
         static int NumDevices;
         static std::vector<Device> DeviceList;
 
+        //setup stuff
+        static void setup();
         //Main Loop Function use at task
         static int mainLoop();
 
