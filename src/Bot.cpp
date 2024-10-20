@@ -24,6 +24,13 @@ vex::drivetrain Bot::Drivetrain = vex::drivetrain(Bot::LeftMotors, Bot::RightMot
 std::vector<Device> Bot::DeviceList = std::vector<Device>();
 int Bot::NumDevices = 0;
 
+//Helper method
+std::string to_string_int(int x){
+  std::stringstream s;
+  s << x;
+  return s.str();
+}
+
 void Bot::updateDeviceList() {
     V5_DeviceTypeBuffer devicel;
     Bot::NumDevices = vexDeviceGetStatus(devicel);
@@ -42,13 +49,19 @@ void Bot::setup() {
     RightFront.setBrake(vex::hold);
     RightRear.setBrake(vex::hold);
     MGPM.setBrake(vex::hold);
+
+    int voltagelimold = vexDeviceMotorVoltageLimitGet(Device::getInternalDevicePointer(MGPM));
+    vexDeviceMotorVoltageLimitSet(Device::getInternalDevicePointer(MGPM), 15);
+    int voltagelimnew = vexDeviceMotorVoltageLimitGet(Device::getInternalDevicePointer(MGPM));
+    Brain.Screen.printAt(300, 10, "Voltage Limit Change!");
+    Brain.Screen.printAt(300, 30, to_string_int(voltagelimold).c_str());
+    Brain.Screen.printAt(330, 30, to_string_int(voltagelimnew).c_str());
 }
 
 int Bot::mainLoop() {
     setup();
-
     updateDeviceList(); //If not done already.
-    Brain.Screen.printAt(100,100, "Main Loop started");
+    //Brain.Screen.printAt(100,100, "Main Loop started");
     while (true)
     {
         //Abort Loop
