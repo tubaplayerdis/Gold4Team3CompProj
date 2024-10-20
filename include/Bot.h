@@ -2,6 +2,7 @@
 #include "vex.h"
 #include "Device.h"
 #include <vector>
+#include <sstream>
 
 class Bot {
     public:
