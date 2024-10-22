@@ -12,6 +12,11 @@ vex::motor Bot::RightRear = vex::motor(vex::PORT20, vex::ratio18_1, true);
 
 vex::motor Bot::MGPM = vex::motor(vex::PORT4, vex::ratio6_1, false);
 
+vex::motor Bot::ConveyorTop = vex::motor(vex::PORT6, vex::ratio6_1, false);
+vex::motor Bot::ConveyorBottom = vex::motor(vex::PORT7, vex::ratio6_1, true);
+vex::motor_group Bot::ConveyorMotors = vex::motor_group(Bot::ConveyorTop, Bot::ConveyorBottom);
+bool Bot::autoConveyor = false;
+
 //Define Motor Groups
 vex::motor_group Bot::LeftMotors = vex::motor_group(Bot::LeftFront, Bot::LeftRear);
 vex::motor_group Bot::RightMotors = vex::motor_group(Bot::RightFront, Bot::RightRear);
@@ -53,9 +58,10 @@ void Bot::setup() {
     int voltagelimold = vexDeviceMotorVoltageLimitGet(Device::getInternalDevicePointer(MGPM));
     vexDeviceMotorVoltageLimitSet(Device::getInternalDevicePointer(MGPM), 15);
     int voltagelimnew = vexDeviceMotorVoltageLimitGet(Device::getInternalDevicePointer(MGPM));
-    Brain.Screen.printAt(300, 10, "Voltage Limit Change!");
+    Brain.Screen.printAt(300, 10, "Voltage Limit Test!");
     Brain.Screen.printAt(300, 30, to_string_int(voltagelimold).c_str());
     Brain.Screen.printAt(330, 30, to_string_int(voltagelimnew).c_str());
+
 }
 
 int Bot::mainLoop() {
@@ -81,6 +87,33 @@ int Bot::mainLoop() {
             MGPM.setVelocity(0, vex::rpm);
             MGPM.stop();
         }
+
+        //Conveyor
+        if(Controller.ButtonL1.pressing()) autoConveyor = true;
+
+        if(Controller.ButtonR1.pressing()) {
+            autoConveyor = false;
+            ConveyorMotors.setVelocity(0, vex::rpm);
+            ConveyorMotors.stop();
+        }
+
+        if(Controller.ButtonL2.pressing() && Controller.ButtonR2.pressing()) {
+            ConveyorMotors.setVelocity(0, vex::rpm);
+            ConveyorMotors.stop();
+        } else if (Controller.ButtonL2.pressing()) {
+            ConveyorMotors.setVelocity(100, vex::rpm);
+            ConveyorMotors.spin(vex::forward);
+        } else if (Controller.ButtonR2.pressing()) {
+            ConveyorMotors.setVelocity(100, vex::rpm);
+            ConveyorMotors.spin(vex::reverse);
+        }
+
+        //Auto Conveyor
+        if(autoConveyor) {
+            ConveyorMotors.setVelocity(100, vex::rpm);
+            ConveyorMotors.spin(vex::directionType::fwd);
+        }
+
         
         vex::wait(20, vex::msec);
         //Add some delay for computations

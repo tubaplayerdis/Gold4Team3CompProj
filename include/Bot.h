@@ -19,8 +19,14 @@ class Bot {
         static vex::motor_group LeftMotors;
         static vex::motor_group RightMotors;
 
-        //Others
+        //MGPM
         static vex::motor MGPM; //Mobile goal post motor
+
+        //Conveyor Motors
+        static vex::motor ConveyorTop;
+        static vex::motor ConveyorBottom;
+        static vex::motor_group ConveyorMotors;
+        static bool autoConveyor;
 
         //Hidden API Compatability
         static void updateDeviceList();
