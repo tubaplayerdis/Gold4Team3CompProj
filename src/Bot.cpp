@@ -29,11 +29,21 @@ vex::drivetrain Bot::Drivetrain = vex::drivetrain(Bot::LeftMotors, Bot::RightMot
 std::vector<Device> Bot::DeviceList = std::vector<Device>();
 int Bot::NumDevices = 0;
 
+void Bot::controllerNotification(std::string notif) {
+    Controller.Screen.setCursor(1,1);
+    Controller.Screen.print(notif.c_str());
+}
+
 //Helper method
 std::string to_string_int(int x){
   std::stringstream s;
   s << x;
   return s.str();
+}
+
+std::string to_string_bool(bool x) {
+    if(x) return "1";
+    else return "0";
 }
 
 void Bot::updateDeviceList() {
@@ -114,12 +124,18 @@ int Bot::mainLoop() {
             ConveyorMotors.spin(vex::directionType::fwd);
         }
 
+
+        //Controller Stuff
+        Controller.Screen.setCursor(3,1);
+        Controller.Screen.print("AC: "+to_string_bool(autoConveyor));
+
         
         vex::wait(20, vex::msec);
         //Add some delay for computations
     }
     Brain.Screen.setPenColor("#c96638");
     Brain.Screen.printAt(100,100, "Main Loop has been aborted!");
+    controllerNotification("Main Loop Aborted!");
     Brain.Screen.setPenColor(vex::color::white);
     return 1; //Return error as this should not happen.
 }

@@ -28,6 +28,9 @@ class Bot {
         static vex::motor_group ConveyorMotors;
         static bool autoConveyor;
 
+        //Controller Stuff
+        static void controllerNotification(std::string notif);
+
         //Hidden API Compatability
         static void updateDeviceList();
         static int NumDevices;

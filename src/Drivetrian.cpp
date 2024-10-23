@@ -62,6 +62,7 @@ int Drivetrain::ControllerLoop() {
 
     Bot::Brain.Screen.setPenColor("#c96638");
     Bot::Brain.Screen.printAt(100,100, "Drivetrain Killswitch tricked");
+    Bot::controllerNotification("DT Loop Aborted!");
     Bot::Brain.Screen.setPenColor(vex::color::white);
 
     return 0;
