@@ -2,20 +2,19 @@
 #include <string>
 #include <sstream>
 
-std::string to_string_int(int x){
+std::string to_string_ints(int x){
   std::stringstream s;
   s << x;
   return s.str();
 }
 
-Device::Device(std::string _name, int _index, V5_DeviceT _deviceref) {
-    name = _name;
-    index = _index;
-    deviceref = _deviceref;
+Device::Device(std::string _name, int _index, V5_DeviceT _deviceref) {    name = _name;
+  index = _index;
+  deviceref = _deviceref;
 }
 
 std::string Device::toString() {
-    return name + "Index: " + to_string_int(index);
+  return name + "Index: " + to_string_ints(index);
 }
 
 /*

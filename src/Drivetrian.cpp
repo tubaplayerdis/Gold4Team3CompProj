@@ -8,7 +8,7 @@ bool Drivetrain::DrivetrainRNeedsToBeStopped = true;
 
 int Drivetrain::ControllerLoop() {
     while(true) {
-      if(Bot::Controller.ButtonUp.pressing()) break;
+      //if(Bot::Controller.ButtonUp.pressing()) break;
 
       if(RemoteControlCodeEnabled) {
         

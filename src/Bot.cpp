@@ -91,9 +91,15 @@ int Bot::mainLoop() {
         } else if (Controller.ButtonA.pressing()) {
             MGPM.setVelocity(400, vex::rpm);
             MGPM.spin(vex::directionType::fwd);
+            //Controller Stuff
+        Controller.Screen.setCursor(3,1);
+        Controller.Screen.print("MGPM UP");
         } else if(Controller.ButtonB.pressing()) {
             MGPM.setVelocity(400, vex::rpm);
             MGPM.spin(vex::directionType::rev);
+            //Controller Stuff
+        Controller.Screen.setCursor(3,1);
+        Controller.Screen.print("MGMP DOWN");
         } else {
             MGPM.setVelocity(0, vex::rpm);
             MGPM.stop();
@@ -120,11 +126,6 @@ int Bot::mainLoop() {
             Intake.setVelocity(0, vex::rpm);
             Intake.stop();
         }
-
-
-        //Controller Stuff
-        Controller.Screen.setCursor(3,1);
-        Controller.Screen.print("AC: "+to_string_bool(autoConveyor));
 
         
         vex::wait(20, vex::msec);
