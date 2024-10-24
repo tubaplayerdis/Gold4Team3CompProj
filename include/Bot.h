@@ -19,8 +19,9 @@ class Bot {
         static vex::motor_group LeftMotors;
         static vex::motor_group RightMotors;
 
-        //MGPM
+        //Misc
         static vex::motor MGPM; //Mobile goal post motor
+        static vex::motor Intake;
 
         //Conveyor Motors
         static vex::motor ConveyorTop;
