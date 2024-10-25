@@ -5,17 +5,17 @@
 vex::brain Bot::Brain = vex::brain();
 
 //Define Motors
-vex::motor Bot::LeftFront = vex::motor(vex::PORT1, vex::ratio18_1,false);
-vex::motor Bot::LeftRear = vex::motor(vex::PORT11, vex::ratio18_1, false);
-vex::motor Bot::RightFront = vex::motor(vex::PORT10, vex::ratio18_1, true);
-vex::motor Bot::RightRear = vex::motor(vex::PORT20, vex::ratio18_1, true);
+vex::motor Bot::LeftFront = vex::motor(vex::PORT1, vex::ratio18_1,false);//Regular
+vex::motor Bot::LeftRear = vex::motor(vex::PORT11, vex::ratio18_1, false);//Regular
+vex::motor Bot::RightFront = vex::motor(vex::PORT10, vex::ratio18_1, true);//Regular
+vex::motor Bot::RightRear = vex::motor(vex::PORT20, vex::ratio18_1, true);//Regular
 
-vex::motor Bot::MGPM = vex::motor(vex::PORT4, vex::ratio6_1, false);
-vex::motor Bot::Intake = vex::motor(vex::PORT5, vex::ratio18_1, false);
+vex::motor Bot::MGPM = vex::motor(vex::PORT4, vex::ratio6_1, false);//High Speed
+vex::motor Bot::Intake = vex::motor(vex::PORT5, vex::ratio18_1, false);//Low Power
 
-vex::motor Bot::ConveyorTop = vex::motor(vex::PORT6, vex::ratio6_1, false);
-vex::motor Bot::ConveyorBottom = vex::motor(vex::PORT7, vex::ratio6_1, false);
-vex::motor_group Bot::ConveyorMotors = vex::motor_group(Bot::ConveyorTop, Bot::ConveyorBottom);
+vex::motor Bot::ConveyorTop = vex::motor(vex::PORT6, vex::ratio6_1, true);//High Speed
+vex::motor Bot::ConveyorBottom = vex::motor(vex::PORT7, vex::ratio6_1, true);//High Speed
+vex::motor_group Bot::ConveyorMotors = vex::motor_group(Bot::ConveyorTop, Bot::ConveyorBottom);//Dual High Speed
 bool Bot::autoConveyor = false;
 
 //Define Motor Groups
@@ -66,12 +66,12 @@ void Bot::setup() {
     RightRear.setBrake(vex::hold);
     MGPM.setBrake(vex::hold);
 
-    int voltagelimold = vexDeviceMotorVoltageLimitGet(Device::getInternalDevicePointer(MGPM));
-    vexDeviceMotorVoltageLimitSet(Device::getInternalDevicePointer(MGPM), 15);
-    int voltagelimnew = vexDeviceMotorVoltageLimitGet(Device::getInternalDevicePointer(MGPM));
-    Brain.Screen.printAt(300, 10, "Voltage Limit Test!");
-    Brain.Screen.printAt(300, 30, to_string_int(voltagelimold).c_str());
-    Brain.Screen.printAt(330, 30, to_string_int(voltagelimnew).c_str());
+    //int voltagelimold = vexDeviceMotorVoltageLimitGet(Device::getInternalDevicePointer(MGPM));
+    //vexDeviceMotorVoltageLimitSet(Device::getInternalDevicePointer(MGPM), 15);
+    //int voltagelimnew = vexDeviceMotorVoltageLimitGet(Device::getInternalDevicePointer(MGPM));
+    //Brain.Screen.printAt(300, 10, "Voltage Limit Test!");
+    //Brain.Screen.printAt(300, 30, to_string_int(voltagelimold).c_str());
+    //Brain.Screen.printAt(330, 30, to_string_int(voltagelimnew).c_str());
 
 }
 
