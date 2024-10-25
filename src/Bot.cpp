@@ -93,7 +93,7 @@ int Bot::mainLoop() {
             MGPM.spin(vex::directionType::fwd);
             //Controller Stuff
         Controller.Screen.setCursor(3,1);
-        Controller.Screen.print("MGPM UP");
+        Controller.Screen.print("MGPM UP  ");
         } else if(Controller.ButtonB.pressing()) {
             MGPM.setVelocity(400, vex::rpm);
             MGPM.spin(vex::directionType::rev);
