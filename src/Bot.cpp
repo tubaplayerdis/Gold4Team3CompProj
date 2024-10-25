@@ -119,7 +119,7 @@ int Bot::mainLoop() {
             ConveyorMotors.setVelocity(100, vex::rpm);
             ConveyorMotors.spin(vex::reverse);
             Intake.setVelocity(200, vex::rpm);
-            Intake.spin(vex::forward);
+            Intake.spin(vex::reverse);
         } else {
             ConveyorMotors.setVelocity(0, vex::rpm);
             ConveyorMotors.stop();
