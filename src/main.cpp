@@ -21,7 +21,6 @@ using namespace vex;
 // A global instance of competition
 competition Competition;
 
-// Tasks!
 task ControllerLoop = task(Drivetrain::ControllerLoop);
 task MainLoop = task(Bot::mainLoop);
 
@@ -39,7 +38,8 @@ task MainLoop = task(Bot::mainLoop);
 
 void pre_auton(void)
 {
-
+  Bot::updateDeviceList();
+  Bot::setup();
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
