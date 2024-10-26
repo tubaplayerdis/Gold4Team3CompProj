@@ -110,7 +110,7 @@ int main()
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
 
-  Bot::updateDeviceList();
+  //Bot::updateDeviceList();
   Bot::Brain.Screen.printAt(10, 10, "Device Num: %d", Bot::NumDevices);
 
   Bot::Brain.Screen.printAt(10, 30, "Device List");

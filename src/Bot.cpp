@@ -11,7 +11,8 @@ vex::motor Bot::RightFront = vex::motor(vex::PORT10, vex::ratio18_1, true);//Reg
 vex::motor Bot::RightRear = vex::motor(vex::PORT20, vex::ratio18_1, true);//Regular
 
 vex::motor Bot::MGPM = vex::motor(vex::PORT4, vex::ratio6_1, false);//High Speed
-vex::motor Bot::Intake = vex::motor(vex::PORT5, vex::ratio18_1, false);//Low Power
+vex::motor Bot::Intake = vex::motor(vex::PORT5, vex::ratio18_1, true);//Low Power
+vex::motor Bot::Jank = vex::motor(vex::PORT15, vex::ratio18_1, false);//Low power
 
 vex::motor Bot::ConveyorTop = vex::motor(vex::PORT6, vex::ratio6_1, true);//High Speed
 vex::motor Bot::ConveyorBottom = vex::motor(vex::PORT7, vex::ratio6_1, true);//High Speed
@@ -65,6 +66,8 @@ void Bot::setup() {
     RightFront.setBrake(vex::hold);
     RightRear.setBrake(vex::hold);
     MGPM.setBrake(vex::hold);
+    Jank.setBrake(vex::hold);
+    Jank.setPosition(0, vex::rotationUnits::deg);
 
     //int voltagelimold = vexDeviceMotorVoltageLimitGet(Device::getInternalDevicePointer(MGPM));
     //vexDeviceMotorVoltageLimitSet(Device::getInternalDevicePointer(MGPM), 15);
@@ -79,10 +82,11 @@ int Bot::mainLoop() {
     setup();
     updateDeviceList(); //If not done already.
     //Brain.Screen.printAt(100,100, "Main Loop started");
+    Jank.spinTo(-95, vex::rotationUnits::deg, true);
     while (true)
     {
         //Abort Loop
-        if(Controller.ButtonDown.pressing()) break;
+        //if(Controller.ButtonDown.pressing()) break;
 
         //MGPM impl
         if(Controller.ButtonA.pressing() && Controller.ButtonB.pressing()) {
@@ -111,12 +115,12 @@ int Bot::mainLoop() {
             Intake.setVelocity(0, vex::rpm);
             Intake.stop();
         } else if (Controller.ButtonL2.pressing()) {
-            ConveyorMotors.setVelocity(100, vex::rpm);
+            ConveyorMotors.setVelocity(200, vex::rpm);
             ConveyorMotors.spin(vex::forward);
             Intake.setVelocity(200, vex::rpm);
             Intake.spin(vex::forward);
         } else if (Controller.ButtonR2.pressing()) {
-            ConveyorMotors.setVelocity(100, vex::rpm);
+            ConveyorMotors.setVelocity(200, vex::rpm);
             ConveyorMotors.spin(vex::reverse);
             Intake.setVelocity(200, vex::rpm);
             Intake.spin(vex::reverse);
@@ -127,7 +131,16 @@ int Bot::mainLoop() {
             Intake.stop();
         }
 
-        
+        if(Controller.ButtonUp.pressing()) {
+            Jank.setVelocity(30, vex::rpm);
+            Jank.spin(vex::reverse);
+        } else if (Controller.ButtonDown.pressing()) {
+            Jank.setVelocity(30, vex::rpm);
+            Jank.spin(vex::forward);
+        } else {
+            Jank.stop();
+        }
+
         vex::wait(20, vex::msec);
         //Add some delay for computations
     }

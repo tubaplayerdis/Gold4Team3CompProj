@@ -22,6 +22,7 @@ class Bot {
         //Misc
         static vex::motor MGPM; //Mobile goal post motor
         static vex::motor Intake;
+        static vex::motor Jank;
 
         //Conveyor Motors
         static vex::motor ConveyorTop;
