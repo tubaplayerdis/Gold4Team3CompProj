@@ -1,28 +1,22 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
-/*    Author:       aaronwilk                                                 */
-/*    Created:      10/11/2024, 12:09:17 PM                                    */
+/*    Author:       Aaron Wilk                                                */
+/*    Created:      11/6/2024, 3:26:54 PM                                     */
 /*    Description:  V5 project                                                */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
 #include "vex.h"
-#include "v5_api.h"
 #include "Bot.h"
-#include "Drivetrain.h"
-#include "Device.h"
-#include <string>
-#include <vector>
-#include <sstream>
+#include "Odometry.h"
+#include "ColorDetection.h"
+#include "Drivetrain.h""
 
 using namespace vex;
 
 // A global instance of competition
 competition Competition;
-
-task ControllerLoop = task(Drivetrain::ControllerLoop);
-task MainLoop = task(Bot::mainLoop);
 
 // define your global instances of motors and other devices here
 
@@ -36,8 +30,7 @@ task MainLoop = task(Bot::mainLoop);
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
 
-void pre_auton(void)
-{
+void pre_auton(void) {
   Bot::updateDeviceList();
   Bot::setup();
   // All activities that occur before the competition starts
@@ -54,8 +47,7 @@ void pre_auton(void)
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void autonomous(void)
-{
+void autonomous(void) {
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
@@ -71,11 +63,9 @@ void autonomous(void)
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void usercontrol(void)
-{
+void usercontrol(void) {
   // User control code here, inside the loop
-  while (true)
-  {
+  while (1) {
     // This is the main execution loop for the user control program.
     // Each time through the loop your program should update motor + servo
     // values based on feedback from the joysticks.
@@ -91,41 +81,33 @@ void usercontrol(void)
 }
 
 
-
-std::string to_string(int x)
-{
-  std::stringstream s;
-  s << x;
-  return s.str();
-}
-
 //
 // Main will set up the competition functions and callbacks.
 //
-int main()
-{
+int main() {
+  Odometry::setupAndStartOdometry();
+  Bot::Aliance = aliance::Nuetral;
+  Bot::Controller.Screen.setCursor(3,1);
+  Bot::Controller.Screen.print("NO ALIANCE  ");
 
-  // Bot::Brain.Screen.printAt(100, 100, "Begining Setup!");
-  //  Set up callbacks for autonomous and driver control periods.
+  Bot::Controller.ButtonY.pressed(Bot::switchAlliance);
+  Bot::Controller.ButtonLeft.pressed(ColorDetection::toggleEnabled);
+  Bot::Controller.ButtonA.pressed(Bot::clampMobileGoal);
+  Bot::Controller.ButtonB.pressed(Bot::releaseMobileGoal);
+
+  vex::task drivetrian(Drivetrain::ControllerLoop);
+  vex::task mainLoop(Bot::mainLoop);
+  vex::task colorsensing(ColorDetection::visionTask);
+  
+  // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
-
-  //Bot::updateDeviceList();
-  Bot::Brain.Screen.printAt(10, 10, "Device Num: %d", Bot::NumDevices);
-
-  Bot::Brain.Screen.printAt(10, 30, "Device List");
-  int ind = 50;
-  for (Device obj : Bot::DeviceList)
-  {
-    Bot::Brain.Screen.printAt(10, ind, obj.toString().c_str());
-    ind += 20;
-  }
 
   // Run the pre-autonomous function.
   pre_auton();
 
   // Prevent main from exiting with an infinite loop.
-  // while (true) {
-  //  wait(100, msec);
-  //}
+  while (true) {
+    wait(100, msec);
+  }
 }
