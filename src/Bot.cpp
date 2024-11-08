@@ -166,6 +166,7 @@ void Bot::releaseMobileGoal() {
     Bot::MogoMech.set(false);
 }
 
+//use this eventually?
 void Bot::checkInstall() {
     Bot::Brain.Screen.printAt(0, 30, "Arm: %d", Bot::Arm.installed());
     Bot::Brain.Screen.printAt(0, 50, "Intake: %d", Bot::Intake.installed());
