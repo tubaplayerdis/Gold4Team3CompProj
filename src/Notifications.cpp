@@ -1,9 +1,12 @@
 #include "Notifications.h"
 #include "vector"
 #include "string"
+#include <mutex>
 
 std::vector<std::string> Notifications::NotificationList = std::vector<std::string>();
 int Notifications::notifIndex = 0;
+
+//std::mutex mtx;
 
 void Notifications::addNotification(std::string notif) {
     //Only new notifs not the same crap

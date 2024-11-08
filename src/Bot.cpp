@@ -158,7 +158,7 @@ void Bot::releaseMobileGoal() {
     Bot::MogoMech.set(false);
 }
 
-//use this eventually?
+//use this eventually? no!
 void Bot::checkInstall() {
     Bot::Brain.Screen.printAt(0, 30, "Arm: %d", Bot::Arm.installed());
     Bot::Brain.Screen.printAt(0, 50, "Intake: %d", Bot::Intake.installed());
@@ -226,8 +226,19 @@ int Bot::monitorLoop() {
         if(LiftL.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LiftL TEMP");
         if(LiftR.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LiftR TEMP");
 
+        if(!LeftA.installed()) Notifications::addNotification("LeftA DISC");
+        if(!LeftB.installed()) Notifications::addNotification("LeftB DISC");
+        if(!LeftC.installed()) Notifications::addNotification("LeftC DISC");
+        if(!RightA.installed()) Notifications::addNotification("RightA DISC");
+        if(!RightB.installed()) Notifications::addNotification("RightB DISC");
+        if(!RightC.installed()) Notifications::addNotification("RightC DISC");
+        if(!Intake.installed()) Notifications::addNotification("Intake DISC");
+        if(!Arm.installed()) Notifications::addNotification("Arm DISC");
+        if(!LiftL.installed()) Notifications::addNotification("LiftL DISC");
+        if(!LiftR.installed()) Notifications::addNotification("LiftR DISC");
 
-        vex::this_thread::sleep_for(50);
+
+        vex::this_thread::sleep_for(1000);
     }
     return 0;
 }
