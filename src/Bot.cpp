@@ -134,26 +134,18 @@ void Bot::switchAlliance() {
     {
         case aliance::Nuetral:
             Bot::Aliance = aliance::Blue;
-            Bot::Controller.Screen.setCursor(3,1);
-            Bot::Controller.Screen.print("BLUE ALIANCE");
             break;
 
         case aliance::Blue:
             Bot::Aliance = aliance::Red;
-            Bot::Controller.Screen.setCursor(3,1);
-            Bot::Controller.Screen.print("RED ALIANCE ");
             break;
 
         case aliance::Red:
             Bot::Aliance = aliance::Nuetral;
-            Bot::Controller.Screen.setCursor(3,1);
-            Bot::Controller.Screen.print("NO ALIANCE  ");
             break;
 
         default:
             Bot::Aliance = aliance::Nuetral;
-            Bot::Controller.Screen.setCursor(3,1);
-            Bot::Controller.Screen.print("NO ALIANCE ^!");
             break;
     }
 }
@@ -193,13 +185,13 @@ int Bot::displayLoop() {
         switch (Bot::Aliance)
         {
             case aliance::Nuetral:
-                Bot::Controller.Screen.print("NO ALIANCE");
+                Bot::Controller.Screen.print("NO ALIANCE   CS%d", ColorDetection::isEnabled);
                 break;
             case aliance::Blue:
-                Bot::Controller.Screen.print("NO ALIANCE");
+                Bot::Controller.Screen.print("BLUE ALIANCE CS:%d", ColorDetection::isEnabled);
                 break;
             case aliance::Red:
-                Bot::Controller.Screen.print("NO ALIANCE");
+                Bot::Controller.Screen.print("RED ALIANCE  CS:%d", ColorDetection::isEnabled);
                 break;
         
         }

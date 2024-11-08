@@ -29,8 +29,6 @@ class ColorDetection {
     public:
         static int visionTask();
         static void toggleEnabled();
-
-    private:
         static bool isEnabled;
 
 };
