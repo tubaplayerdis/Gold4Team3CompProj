@@ -175,6 +175,7 @@ void Bot::checkInstall() {
 }
 
 int Bot::displayLoop() {
+    Bot::Controller.Screen.clearScreen();
     while (true) {
         /*
             CONTROLLER
@@ -185,13 +186,13 @@ int Bot::displayLoop() {
         switch (Bot::Aliance)
         {
             case aliance::Nuetral:
-                Bot::Controller.Screen.print("NO ALIANCE   CS%d", ColorDetection::isEnabled);
+                Bot::Controller.Screen.print("NO ALIANCE   CS%01d", ColorDetection::isEnabled);
                 break;
             case aliance::Blue:
-                Bot::Controller.Screen.print("BLUE ALIANCE CS:%d", ColorDetection::isEnabled);
+                Bot::Controller.Screen.print("BLUE ALIANCE CS:%01d", ColorDetection::isEnabled);
                 break;
             case aliance::Red:
-                Bot::Controller.Screen.print("RED ALIANCE  CS:%d", ColorDetection::isEnabled);
+                Bot::Controller.Screen.print("RED ALIANCE  CS:%01d", ColorDetection::isEnabled);
                 break;
         
         }

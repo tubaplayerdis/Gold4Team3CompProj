@@ -88,9 +88,6 @@ void usercontrol(void) {
 int main() {
   Odometry::setupAndStartOdometry();
   Bot::Aliance = aliance::Nuetral;
-  Bot::Controller.Screen.clearScreen();
-  Bot::Controller.Screen.setCursor(3,1);
-  Bot::Controller.Screen.print("NO ALIANCE  ");
 
   Bot::Controller.ButtonY.pressed(Bot::switchAlliance);
   Bot::Controller.ButtonL1.pressed(ColorDetection::toggleEnabled);
@@ -102,9 +99,12 @@ int main() {
 
   vex::task drivetrian(Drivetrain::ControllerLoop);
   vex::task mainLoop(Bot::mainLoop);
-  vex::task colorsensing(ColorDetection::visionTask);
+  vex::task displayLoop(Bot::displayLoop);
+  //vex::task colorsensing(ColorDetection::visionTask);
   vex::task monitoring(Bot::monitorLoop);
   vex::task notifcationLoop(Notifications::notificationLoop);
+
+  Bot::Brain.Screen.printAt(0, 150, "Systems Go!");
   
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);

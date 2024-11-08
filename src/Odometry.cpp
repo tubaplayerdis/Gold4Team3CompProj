@@ -147,15 +147,15 @@ int Odometry::odometry() {
 
 //DO NOT USE THIS FUNCTION
 int displayCoordinates() {
-    while (true) {
-        Bot::Controller.Screen.setCursor(1,1);
-        Bot::Controller.Screen.setCursor(1,1);
-        Bot::Controller.Screen.print("X:%.2f, Y:%.2f", Odometry::x, Odometry::y);
+    while (false) {
+        //Bot::Controller.Screen.setCursor(1,1);
+        //Bot::Controller.Screen.setCursor(1,1);
+        //Bot::Controller.Screen.print("X:%.2f, Y:%.2f", Odometry::x, Odometry::y);
 
-        Bot::Brain.Screen.clearScreen(); // Clear the screen for updated information
-        Bot::Brain.Screen.setCursor(1, 1);
-        Bot::Brain.Screen.print("X = %.2f, Y = %.2f", Odometry::x, Odometry::y); // Print current coordinates
-        vex::this_thread::sleep_for(20); // Update rate for display (in milliseconds)
+        //Bot::Brain.Screen.clearScreen(); // Clear the screen for updated information
+        //Bot::Brain.Screen.setCursor(1, 1);
+        //Bot::Brain.Screen.print("X = %.2f, Y = %.2f", Odometry::x, Odometry::y); // Print current coordinates
+        //vex::this_thread::sleep_for(20); // Update rate for display (in milliseconds)
     }
     return 0;
 }
