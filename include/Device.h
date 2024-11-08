@@ -3,6 +3,10 @@
 #include "vex.h"
 #include <string>
 
+struct DeviceInstall {
+    std::string Name;
+    bool isInstalled;
+};
 
 class Device {
     public:

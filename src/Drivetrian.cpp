@@ -8,7 +8,7 @@ bool Drivetrain::DrivetrainRNeedsToBeStopped = true;
 
 int Drivetrain::ControllerLoop() {
     while(true) {
-      if(Bot::Controller.ButtonUp.pressing()) break;
+      //if(Bot::Controller.ButtonUp.pressing()) break;
 
       if(RemoteControlCodeEnabled) {
         
@@ -48,12 +48,12 @@ int Drivetrain::ControllerLoop() {
         // only tell the left drive motor to spin if the values are not in the deadband range
         if (DrivetrainLNeedsToBeStopped) {
           Bot::LeftMotors.setVelocity(drivetrainLeftSideSpeed, vex::percent);
-          Bot::LeftMotors.spin(vex::forward);
+          Bot::LeftMotors.spin(vex::reverse);
         }
         // only tell the right drive motor to spin if the values are not in the deadband range
         if (DrivetrainRNeedsToBeStopped) {
           Bot::RightMotors.setVelocity(drivetrainRightSideSpeed, vex::percent);
-          Bot::RightMotors.spin(vex::forward);
+          Bot::RightMotors.spin(vex::reverse);
         }
       }
       // wait before repeating the process
@@ -62,6 +62,7 @@ int Drivetrain::ControllerLoop() {
 
     Bot::Brain.Screen.setPenColor("#c96638");
     Bot::Brain.Screen.printAt(100,100, "Drivetrain Killswitch tricked");
+    Bot::controllerNotification("DT Loop Aborted!");
     Bot::Brain.Screen.setPenColor(vex::color::white);
 
     return 0;

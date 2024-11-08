@@ -1,3 +1,23 @@
+todo:
+    Implement Throwing mechanism of color detection;
+    
+CONTROLS:
+    Joystick Left - Forward/backward
+    Joystick Right - Left/Right
+    L1 - Toggle Color Sort
+    L2 - Intake In
+    R2 - Intake Out
+    A - Clamp Down
+    B - Clamp up
+    Y - Cycle Aliiance
+    X - Drive to nearest wall stake
+    Up - Arm Up
+    Down - Arm Down
+    Left - Cycle Notification Backward
+    Right - Cycle Notifications Forward
+
+
+
 IMPORTANT(tldr):
 
 This project requires the vex robotics extension for vs code to function.
@@ -28,4 +48,3 @@ BASIC UNDERSTANDING:
 
 1. All electronics are under Bot.
 2. Drivetrain is well, drivetrain code.
-
