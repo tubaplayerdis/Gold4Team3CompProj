@@ -30,6 +30,9 @@ class Bot {
         //Misc
         static vex::motor Intake;
         static vex::motor Arm;
+        static vex::motor LiftL;
+        static vex::motor LiftR;
+        static vex::motor_group LiftMotors;
         static vex::digital_out MogoMech;
 
         //Gryos and stuff
@@ -56,5 +59,6 @@ class Bot {
         static void releaseMobileGoal();
         static void checkInstall();
         static int displayLoop();
+        static int monitorLoop();
 
 };

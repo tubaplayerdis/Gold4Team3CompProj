@@ -1,7 +1,6 @@
 #include "ColorDetection.h"
 #include "Bot.h"
 
-vex::controller::button ColorDetection::ToggleButton = Bot::Controller.ButtonLeft;
 bool ColorDetection::isEnabled = false;
 
 int ColorDetection::visionTask() {

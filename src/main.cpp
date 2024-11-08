@@ -11,7 +11,8 @@
 #include "Bot.h"
 #include "Odometry.h"
 #include "ColorDetection.h"
-#include "Drivetrain.h""
+#include "Drivetrain.h"
+#include "Notifications.h"
 
 using namespace vex;
 
@@ -87,17 +88,23 @@ void usercontrol(void) {
 int main() {
   Odometry::setupAndStartOdometry();
   Bot::Aliance = aliance::Nuetral;
+  Bot::Controller.Screen.clearScreen();
   Bot::Controller.Screen.setCursor(3,1);
   Bot::Controller.Screen.print("NO ALIANCE  ");
 
   Bot::Controller.ButtonY.pressed(Bot::switchAlliance);
-  Bot::Controller.ButtonLeft.pressed(ColorDetection::toggleEnabled);
+  Bot::Controller.ButtonL1.pressed(ColorDetection::toggleEnabled);
   Bot::Controller.ButtonA.pressed(Bot::clampMobileGoal);
   Bot::Controller.ButtonB.pressed(Bot::releaseMobileGoal);
+
+  Bot::Controller.ButtonLeft.pressed(Notifications::notifBackward);
+  Bot::Controller.ButtonRight.pressed(Notifications::notifForward);
 
   vex::task drivetrian(Drivetrain::ControllerLoop);
   vex::task mainLoop(Bot::mainLoop);
   vex::task colorsensing(ColorDetection::visionTask);
+  vex::task monitoring(Bot::monitorLoop);
+  vex::task notifcationLoop(Notifications::notificationLoop);
   
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);

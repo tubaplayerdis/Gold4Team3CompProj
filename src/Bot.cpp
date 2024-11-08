@@ -2,6 +2,7 @@
 #include "Device.h"
 #include "Odometry.h"
 #include "ColorDetection.h"
+#include "Notifications.h"
 
 //Define Brain
 vex::brain Bot::Brain = vex::brain();
@@ -17,17 +18,20 @@ vex::motor Bot::RightC = vex::motor(vex::PORT6, vex::ratio18_1, false);//Low Pow
 
 vex::motor Bot::Intake = vex::motor(vex::PORT7, vex::ratio18_1, true);//Low Power
 vex::motor Bot::Arm = vex::motor(vex::PORT8, vex::ratio36_1, false);//High Torque
+vex::motor Bot::LiftL = vex::motor(vex::PORT9, vex::ratio18_1, true);//Low Power
+vex::motor Bot::LiftR = vex::motor(vex::PORT10, vex::ratio18_1, true);//Low Power
 vex::digital_out Bot::MogoMech = vex::digital_out(Bot::Brain.ThreeWirePort.A);
 
-vex::inertial Bot::Inertial = vex::inertial(vex::PORT10);
-vex::rotation Bot::RotationForward = vex::rotation(vex::PORT11); //Forward
-vex::rotation Bot::RotationLateral = vex::rotation(vex::PORT12);; //Lateral
-vex::optical Bot::ColorSensor = vex::optical(vex::PORT13);;
+vex::inertial Bot::Inertial = vex::inertial(vex::PORT11);
+vex::rotation Bot::RotationForward = vex::rotation(vex::PORT12); //Forward
+vex::rotation Bot::RotationLateral = vex::rotation(vex::PORT13);; //Lateral
+vex::optical Bot::ColorSensor = vex::optical(vex::PORT14);;
 aliance Bot::Aliance = aliance::Nuetral;
 
 //Define Motor Groups
 vex::motor_group Bot::LeftMotors = vex::motor_group(Bot::LeftA, Bot::LeftB, Bot::LeftC);
 vex::motor_group Bot::RightMotors = vex::motor_group(Bot::RightA, Bot::RightB, Bot::RightC);
+vex::motor_group Bot::LiftMotors = vex::motor_group(Bot::LiftL, Bot::LiftR);
 
 //Define important stuff
 vex::controller Bot::Controller = vex::controller(vex::primary);
@@ -37,9 +41,9 @@ vex::drivetrain Bot::Drivetrain = vex::drivetrain(Bot::LeftMotors, Bot::RightMot
 std::vector<Device> Bot::DeviceList = std::vector<Device>();
 int Bot::NumDevices = 0;
 
+//Realisticly dont use this. I dont like it.
 void Bot::controllerNotification(std::string notif) {
-    Controller.Screen.setCursor(2,1);
-    Controller.Screen.print(notif.c_str());
+    Notifications::addNotification(notif);
 }
 
 //Helper method
@@ -184,7 +188,7 @@ int Bot::displayLoop() {
         */
         Bot::Controller.Screen.setCursor(1,1);
         Bot::Controller.Screen.print("X:%.2f, Y:%.2f", Odometry::x, Odometry::y);
-        Bot::Controller.Screen.setCursor(0,3);
+        Bot::Controller.Screen.setCursor(3,1);
         switch (Bot::Aliance)
         {
             case aliance::Nuetral:
@@ -211,6 +215,25 @@ int Bot::displayLoop() {
             REFRESH RATE
         */
         vex::this_thread::sleep_for(20); // Update rate for display (in milliseconds)
+    }
+    return 0;
+}
+
+int Bot::monitorLoop() {
+    while (true) {
+        if(LeftA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LeftA TEMP");
+        if(LeftB.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LeftB TEMP");
+        if(LeftC.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LeftC TEMP");
+        if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightA TEMP");
+        if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightB TEMP");
+        if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightC TEMP");
+        if(Intake.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("Intake TEMP");
+        if(Arm.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("Arm TEMP");
+        if(LiftL.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LiftL TEMP");
+        if(LiftR.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LiftR TEMP");
+
+
+        vex::this_thread::sleep_for(50);
     }
     return 0;
 }

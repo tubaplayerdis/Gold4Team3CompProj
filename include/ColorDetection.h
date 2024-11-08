@@ -28,7 +28,6 @@
 class ColorDetection {
     public:
         static int visionTask();
-        static vex::controller::button ToggleButton;
         static void toggleEnabled();
 
     private:

@@ -4,6 +4,7 @@ todo:
 CONTROLS:
     Joystick Left - Forward/backward
     Joystick Right - Left/Right
+    L1 - Toggle Color Sort
     L2 - Intake In
     R2 - Intake Out
     A - Clamp Down
@@ -12,7 +13,8 @@ CONTROLS:
     X - Drive to nearest wall stake
     Up - Arm Up
     Down - Arm Down
-    Left - Toggle Color Sort
+    Left - Cycle Notification Backward
+    Right - Cycle Notifications Forward
 
 
 
