@@ -34,7 +34,7 @@ void Odometry::driveToPosition(double targetX, double targetY) {
         distance_to_target = calculateDistanceToStake(targetX, targetY);
         angle_to_target = atan2(targetY - Odometry::y, targetX - Odometry::x) * (180 / M_PI) - Odometry::heading;
 
-        Bot::Brain.Screen.printAt(0, 50, "Distance to Target: %f", distance_to_target);
+        //Bot::Brain.Screen.printAt(0, 50, "Distance to Target: %f", distance_to_target);
 
         if (distance_to_target < 25.4) { // Tolerance in mm (1 inch)
             Bot::LeftMotors.stop();

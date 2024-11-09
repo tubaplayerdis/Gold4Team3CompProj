@@ -11,8 +11,6 @@ class Notifications {
         static void addNotification(std::string notif);
         static void notifBackward();
         static void notifForward();
-
-    private:
         static int notifIndex;
         static std::vector<std::string> NotificationList;
 

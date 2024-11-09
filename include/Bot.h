@@ -10,6 +10,12 @@ enum aliance {
     Red = 2
 };
 
+enum gameElements {
+  mobileGoal,
+  redRing,
+  blueRing,
+};
+
 class Bot {
     public:
         //Brain
@@ -41,6 +47,7 @@ class Bot {
         static vex::rotation RotationLateral; //Lateral
         static vex::optical ColorSensor;
         static aliance Aliance;
+        static vex::aivision AIVisionF;
 
         //Controller Stuff
         static void controllerNotification(std::string notif);
@@ -60,5 +67,6 @@ class Bot {
         static void checkInstall();
         static int displayLoop();
         static int monitorLoop();
+        static int aiLoop();
 
 };

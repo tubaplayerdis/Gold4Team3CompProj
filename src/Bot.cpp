@@ -28,6 +28,10 @@ vex::rotation Bot::RotationLateral = vex::rotation(vex::PORT13);; //Lateral
 vex::optical Bot::ColorSensor = vex::optical(vex::PORT14);;
 aliance Bot::Aliance = aliance::Nuetral;
 
+// AI Vision Color Descriptions
+// AI Vision Code Descriptions
+vex::aivision Bot::AIVisionF(vex::PORT20, vex::aivision::ALL_TAGS, vex::aivision::ALL_AIOBJS);
+
 //Define Motor Groups
 vex::motor_group Bot::LeftMotors = vex::motor_group(Bot::LeftA, Bot::LeftB, Bot::LeftC);
 vex::motor_group Bot::RightMotors = vex::motor_group(Bot::RightA, Bot::RightB, Bot::RightC);
@@ -186,7 +190,7 @@ int Bot::displayLoop() {
         switch (Bot::Aliance)
         {
             case aliance::Nuetral:
-                Bot::Controller.Screen.print("NO ALIANCE   CS%01d", ColorDetection::isEnabled);
+                Bot::Controller.Screen.print("NO ALIANCE   CS:%01d", ColorDetection::isEnabled);
                 break;
             case aliance::Blue:
                 Bot::Controller.Screen.print("BLUE ALIANCE CS:%01d", ColorDetection::isEnabled);
@@ -196,6 +200,18 @@ int Bot::displayLoop() {
                 break;
         
         }
+
+        if(Notifications::NotificationList.empty()) continue;
+        if(Notifications::notifIndex > Notifications::NotificationList.size()-1 || Notifications::notifIndex < 0) {
+            Notifications::notifIndex = 0;
+            continue;
+        }
+        
+        Bot::Controller.Screen.setCursor(2,1);
+        Bot::Controller.Screen.clearLine(2);
+        Bot::Controller.Screen.print("%02d:", Notifications::notifIndex);
+        Bot::Controller.Screen.setCursor(2,4);
+        Bot::Controller.Screen.print(Notifications::NotificationList.at(Notifications::notifIndex).c_str());
 
 
         /*
@@ -226,19 +242,36 @@ int Bot::monitorLoop() {
         if(LiftL.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LiftL TEMP");
         if(LiftR.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LiftR TEMP");
 
-        if(!LeftA.installed()) Notifications::addNotification("LeftA DISC");
-        if(!LeftB.installed()) Notifications::addNotification("LeftB DISC");
-        if(!LeftC.installed()) Notifications::addNotification("LeftC DISC");
-        if(!RightA.installed()) Notifications::addNotification("RightA DISC");
-        if(!RightB.installed()) Notifications::addNotification("RightB DISC");
-        if(!RightC.installed()) Notifications::addNotification("RightC DISC");
-        if(!Intake.installed()) Notifications::addNotification("Intake DISC");
-        if(!Arm.installed()) Notifications::addNotification("Arm DISC");
-        if(!LiftL.installed()) Notifications::addNotification("LiftL DISC");
-        if(!LiftR.installed()) Notifications::addNotification("LiftR DISC");
+        if(!LeftA.installed()) Notifications::addNotification("LeftA DISCONNECT");
+        if(!LeftB.installed()) Notifications::addNotification("LeftB DISCONNECT");
+        if(!LeftC.installed()) Notifications::addNotification("LeftC DISCONNECT");
+        if(!RightA.installed()) Notifications::addNotification("RightA DISCONNECT");
+        if(!RightB.installed()) Notifications::addNotification("RightB DISCONNECT");
+        if(!RightC.installed()) Notifications::addNotification("RightC DISCONNECT");
+        if(!Intake.installed()) Notifications::addNotification("Intake DISCONNECT");
+        if(!Arm.installed()) Notifications::addNotification("Arm DISCONNECT");
+        if(!LiftL.installed()) Notifications::addNotification("LiftL DISCONNECT");
+        if(!LiftR.installed()) Notifications::addNotification("LiftR DISCONNECT");
 
 
         vex::this_thread::sleep_for(1000);
+    }
+    return 0;
+}
+
+
+int Bot::aiLoop() {
+    while(true) {
+        AIVisionF.takeSnapshot(vex::aivision::ALL_AIOBJS);
+        Brain.Screen.printAt(0,50, "AI Vision Count: %d", AIVisionF.objectCount);
+        for(int i = 0; i < AIVisionF.objectCount; i++) {
+            const char* str = strcat(strcat("Name: ", Bot::AIVisionF.objects[i].className),", X:%d, Y:%d");
+            Brain.Screen.printAt(0, 70+(20*i), str, AIVisionF.objects[i].centerX, AIVisionF.objects[i].centerY);
+            //ID: %s, 
+            //AIVisionF.objects[i].name
+        }
+
+        vex::this_thread::sleep_for(50);
     }
     return 0;
 }
