@@ -74,6 +74,21 @@ void Bot::updateDeviceList() {
 
 }
 
+const char* Bot::getGameElementNameFromID(int32_t id) {
+    switch (id)
+    {
+    case 0:
+        return "0";
+    case 1:
+        return "1";
+    case 2:
+        return "2";
+    
+    default:
+        return "-1";
+    }
+}
+
 void Bot::setup() {
     LeftA.setBrake(vex::hold);
     RightA.setBrake(vex::hold);
@@ -265,7 +280,7 @@ int Bot::aiLoop() {
         AIVisionF.takeSnapshot(vex::aivision::ALL_AIOBJS);
         Brain.Screen.printAt(0,50, "AI Vision Count: %d", AIVisionF.objectCount);
         for(int i = 0; i < AIVisionF.objectCount; i++) {
-            const char* str = strcat(strcat("Name: ", Bot::AIVisionF.objects[i].className),", X:%d, Y:%d");
+            const char* str = strcat(strcat("Name: ", getGameElementNameFromID(Bot::AIVisionF.objects[i].id)),", X:%d, Y:%d");
             Brain.Screen.printAt(0, 70+(20*i), str, AIVisionF.objects[i].centerX, AIVisionF.objects[i].centerY);
             //ID: %s, 
             //AIVisionF.objects[i].name

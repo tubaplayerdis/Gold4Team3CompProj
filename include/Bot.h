@@ -57,10 +57,14 @@ class Bot {
         static int NumDevices;
         static std::vector<Device> DeviceList;
 
+        //helper
+        static const char* getGameElementNameFromID(int32_t id);
+
         //setup stuf
         static void setup();
         //Main Loop Function use at task
         static int mainLoop();
+        //"tasks"
         static void switchAlliance();
         static void clampMobileGoal();
         static void releaseMobileGoal();
