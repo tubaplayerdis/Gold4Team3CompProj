@@ -13,5 +13,5 @@ class Notifications {
         static void notifForward();
         static int notifIndex;
         static std::vector<std::string> NotificationList;
-
+        static bool isNotifying;
 };

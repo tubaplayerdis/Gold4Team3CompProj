@@ -222,11 +222,13 @@ int Bot::displayLoop() {
             continue;
         }
         
-        Bot::Controller.Screen.setCursor(2,1);
-        Bot::Controller.Screen.clearLine(2);
-        Bot::Controller.Screen.print("%02d:", Notifications::notifIndex);
-        Bot::Controller.Screen.setCursor(2,4);
-        Bot::Controller.Screen.print(Notifications::NotificationList.at(Notifications::notifIndex).c_str());
+        if(!Notifications::isNotifying) {
+            Bot::Controller.Screen.setCursor(2,1);
+            Bot::Controller.Screen.clearLine(2);
+            Bot::Controller.Screen.print("%02d:", Notifications::notifIndex);
+            Bot::Controller.Screen.setCursor(2,4);
+            Bot::Controller.Screen.print(Notifications::NotificationList.at(Notifications::notifIndex).c_str());
+        }
 
 
         /*
