@@ -1,0 +1,452 @@
+typedef unsigned char   undefined;
+
+typedef unsigned char    byte;
+typedef unsigned int    dword;
+typedef unsigned long    ulong;
+typedef unsigned char    undefined1;
+typedef unsigned int    undefined4;
+typedef unsigned short    word;
+typedef struct task task, *Ptask;
+
+struct task { // PlaceHolder Structure
+};
+
+typedef struct competition competition, *Pcompetition;
+
+struct competition { // PlaceHolder Structure
+};
+
+typedef struct mevent mevent, *Pmevent;
+
+struct mevent { // PlaceHolder Structure
+};
+
+typedef struct Elf32_Shdr Elf32_Shdr, *PElf32_Shdr;
+
+typedef enum Elf_SectionHeaderType_ARM {
+    SHT_NULL=0,
+    SHT_PROGBITS=1,
+    SHT_SYMTAB=2,
+    SHT_STRTAB=3,
+    SHT_RELA=4,
+    SHT_HASH=5,
+    SHT_DYNAMIC=6,
+    SHT_NOTE=7,
+    SHT_NOBITS=8,
+    SHT_REL=9,
+    SHT_SHLIB=10,
+    SHT_DYNSYM=11,
+    SHT_INIT_ARRAY=14,
+    SHT_FINI_ARRAY=15,
+    SHT_PREINIT_ARRAY=16,
+    SHT_GROUP=17,
+    SHT_SYMTAB_SHNDX=18,
+    SHT_ANDROID_REL=1610612737,
+    SHT_ANDROID_RELA=1610612738,
+    SHT_GNU_ATTRIBUTES=1879048181,
+    SHT_GNU_HASH=1879048182,
+    SHT_GNU_LIBLIST=1879048183,
+    SHT_CHECKSUM=1879048184,
+    SHT_SUNW_move=1879048186,
+    SHT_SUNW_COMDAT=1879048187,
+    SHT_SUNW_syminfo=1879048188,
+    SHT_GNU_verdef=1879048189,
+    SHT_GNU_verneed=1879048190,
+    SHT_GNU_versym=1879048191,
+    SHT_ARM_EXIDX=1879048193,
+    SHT_ARM_PREEMPTMAP=1879048194,
+    SHT_ARM_ATTRIBUTES=1879048195,
+    SHT_ARM_DEBUGOVERLAY=1879048196,
+    SHT_ARM_OVERLAYSECTION=1879048197
+} Elf_SectionHeaderType_ARM;
+
+struct Elf32_Shdr {
+    dword sh_name;
+    enum Elf_SectionHeaderType_ARM sh_type;
+    dword sh_flags;
+    dword sh_addr;
+    dword sh_offset;
+    dword sh_size;
+    dword sh_link;
+    dword sh_info;
+    dword sh_addralign;
+    dword sh_entsize;
+};
+
+typedef struct Elf32_Rel Elf32_Rel, *PElf32_Rel;
+
+struct Elf32_Rel {
+    dword r_offset; // location to apply the relocation action
+    dword r_info; // the symbol table index and the type of relocation
+};
+
+typedef struct Elf32_Sym Elf32_Sym, *PElf32_Sym;
+
+struct Elf32_Sym {
+    dword st_name;
+    dword st_value;
+    dword st_size;
+    byte st_info;
+    byte st_other;
+    word st_shndx;
+};
+
+typedef struct Elf32_Ehdr Elf32_Ehdr, *PElf32_Ehdr;
+
+struct Elf32_Ehdr {
+    byte e_ident_magic_num;
+    char e_ident_magic_str[3];
+    byte e_ident_class;
+    byte e_ident_data;
+    byte e_ident_version;
+    byte e_ident_osabi;
+    byte e_ident_abiversion;
+    byte e_ident_pad[7];
+    word e_type;
+    word e_machine;
+    dword e_version;
+    dword e_entry;
+    dword e_phoff;
+    dword e_shoff;
+    dword e_flags;
+    word e_ehsize;
+    word e_phentsize;
+    word e_phnum;
+    word e_shentsize;
+    word e_shnum;
+    word e_shstrndx;
+};
+
+
+
+
+// vex::competition::_disable(void*)
+
+void vex::competition::_disable(void *param_1)
+
+{
+  byte bVar1;
+  
+  if (bStopTasksBetweenModes != '\0') {
+    if (_autonomous_callback != (void *)0x0) {
+      vex::task::stop(_autonomous_callback,0);
+    }
+    if (_drivercontrol_callback != (void *)0x0) {
+      vex::task::stop(_drivercontrol_callback,0);
+    }
+    if (param_1 == (void *)0x0) {
+      bVar1 = 0;
+    }
+    else {
+      bVar1 = bStopAllTasksBetweenModes & 1;
+    }
+    if ((bVar1 != 0) && (*(char *)((int)param_1 + 4) != '\0')) {
+      vex::task::_stopAll();
+    }
+  }
+  _auton_pending = 0;
+  _driver_pending = 0;
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::competition::_autonomous()
+
+void vex::competition::_autonomous(void)
+
+{
+  task atStack_10 [16];
+  
+  if ((bStopTasksBetweenModes != '\0') && (_drivercontrol_callback != (void *)0x0)) {
+    vex::task::stop(_drivercontrol_callback,0);
+  }
+  if (_autonomous_callback == (_func_int *)0x0) {
+    _auton_pending = 1;
+    _driver_pending = 0;
+  }
+  else {
+    vex::task::task(atStack_10,_autonomous_callback);
+    vex::task::~task(atStack_10);
+  }
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::competition::_drivercontrol()
+
+void vex::competition::_drivercontrol(void)
+
+{
+  task atStack_10 [16];
+  
+  if ((bStopTasksBetweenModes != '\0') && (_autonomous_callback != (void *)0x0)) {
+    vex::task::stop(_autonomous_callback,0);
+  }
+  if (_drivercontrol_callback == (_func_int *)0x0) {
+    _driver_pending = 1;
+    _auton_pending = 0;
+  }
+  else {
+    vex::task::task(atStack_10,_drivercontrol_callback);
+    vex::task::~task(atStack_10);
+  }
+  return;
+}
+
+
+
+// vex::competition::competition()
+
+competition * __thiscall vex::competition::competition(competition *this)
+
+{
+  ulong uVar1;
+  int iVar2;
+  
+  uVar1 = vex::brain::_getIndex();
+  vex::mevent::mevent((mevent *)(this + 8),uVar1,8);
+  uVar1 = vex::brain::_getIndex();
+  vex::mevent::mevent((mevent *)(this + 0x10),uVar1,9);
+  uVar1 = vex::brain::_getIndex();
+  vex::mevent::mevent((mevent *)(this + 0x18),uVar1,10);
+  uVar1 = vex::brain::_getIndex();
+  vex::mevent::mevent((mevent *)(this + 0x20),uVar1,0xb);
+  uVar1 = vex::brain::_getIndex();
+  *(ulong *)this = uVar1;
+  bStopTasksBetweenModes = 1;
+  bStopAllTasksBetweenModes = 0;
+  _autonomous_callback = ::autonomous;
+  _drivercontrol_callback = usercontrol;
+  vex::event::init(uVar1,0x800,_disable,this);
+  vex::event::init(*(ulong *)this,0x200,_autonomous);
+  vex::event::init(*(ulong *)this,0x400,_drivercontrol);
+  this[4] = (competition)0x0;
+  _auton_pending = 0;
+  _driver_pending = 0;
+  iVar2 = vex::task::_index((_func_int *)&main);
+  if (iVar2 < 0) {
+    this[4] = (competition)0x1;
+  }
+  return this;
+}
+
+
+
+// vex::competition::~competition()
+
+void __thiscall vex::competition::~competition(competition *this)
+
+{
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::competition::_getIndex()
+
+void vex::competition::_getIndex(void)
+
+{
+  vex::brain::_getIndex();
+  return;
+}
+
+
+
+// vex::competition::autonomous(void (*)())
+
+void __thiscall vex::competition::autonomous(competition *this,_func_void *param_1)
+
+{
+  competition *pcStack_10;
+  _func_void *p_Stack_c;
+  
+  _autonomous_callback = param_1;
+  if (_auton_pending != '\0') {
+    pcStack_10 = this;
+    p_Stack_c = param_1;
+    vex::task::task((task *)&pcStack_10,(_func_int *)param_1);
+    _auton_pending = '\0';
+    vex::task::~task((task *)&pcStack_10);
+  }
+  return;
+}
+
+
+
+// vex::competition::drivercontrol(void (*)())
+
+void __thiscall vex::competition::drivercontrol(competition *this,_func_void *param_1)
+
+{
+  competition *pcStack_10;
+  _func_void *p_Stack_c;
+  
+  _drivercontrol_callback = param_1;
+  if (_driver_pending != '\0') {
+    pcStack_10 = this;
+    p_Stack_c = param_1;
+    vex::task::task((task *)&pcStack_10,(_func_int *)param_1);
+    _driver_pending = '\0';
+    vex::task::~task((task *)&pcStack_10);
+  }
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::competition::isEnabled()
+
+uint vex::competition::isEnabled(void)
+
+{
+  uint uVar1;
+  
+  uVar1 = vexCompetitionStatus();
+  return uVar1 & 1 ^ 1;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::competition::isDriverControl()
+
+uint vex::competition::isDriverControl(void)
+
+{
+  uint uVar1;
+  
+  uVar1 = vexCompetitionStatus();
+  return ((uVar1 ^ 2) << 0x1e) >> 0x1f;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::competition::isAutonomous()
+
+byte vex::competition::isAutonomous(void)
+
+{
+  byte bVar1;
+  
+  bVar1 = isDriverControl();
+  return bVar1 ^ 1;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::competition::isCompetitionSwitch()
+
+bool vex::competition::isCompetitionSwitch(void)
+
+{
+  uint uVar1;
+  
+  uVar1 = vexCompetitionStatus();
+  return (uVar1 & 0xc) == 4;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::competition::isFieldControl()
+
+uint vex::competition::isFieldControl(void)
+
+{
+  int iVar1;
+  
+  iVar1 = vexCompetitionStatus();
+  return (uint)(iVar1 << 0x1c) >> 0x1f;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::competition::test_auton()
+
+void vex::competition::test_auton(void)
+
+{
+  task atStack_10 [16];
+  
+  if ((bStopTasksBetweenModes != '\0') && (_drivercontrol_callback != (void *)0x0)) {
+    vex::task::stop(_drivercontrol_callback,0);
+  }
+  if (_autonomous_callback == (_func_int *)0x0) {
+    _auton_pending = 1;
+    _driver_pending = 0;
+  }
+  else {
+    vex::task::task(atStack_10,_autonomous_callback);
+    vex::task::~task(atStack_10);
+  }
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::competition::test_driver()
+
+void vex::competition::test_driver(void)
+
+{
+  task atStack_10 [16];
+  
+  if ((bStopTasksBetweenModes != '\0') && (_autonomous_callback != (void *)0x0)) {
+    vex::task::stop(_autonomous_callback,0);
+  }
+  if (_drivercontrol_callback == (_func_int *)0x0) {
+    _driver_pending = 1;
+    _auton_pending = 0;
+  }
+  else {
+    vex::task::task(atStack_10,_drivercontrol_callback);
+    vex::task::~task(atStack_10);
+  }
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::competition::test_disable()
+
+void vex::competition::test_disable(void)
+
+{
+  int in_r0;
+  byte bVar1;
+  
+  if (bStopTasksBetweenModes != '\0') {
+    if (_autonomous_callback != (void *)0x0) {
+      vex::task::stop(_autonomous_callback,0);
+    }
+    if (_drivercontrol_callback != (void *)0x0) {
+      vex::task::stop(_drivercontrol_callback,0);
+    }
+    if (in_r0 == 0) {
+      bVar1 = 0;
+    }
+    else {
+      bVar1 = bStopAllTasksBetweenModes & 1;
+    }
+    if ((bVar1 != 0) && (*(char *)(in_r0 + 4) != '\0')) {
+      vex::task::_stopAll();
+    }
+  }
+  _auton_pending = 0;
+  _driver_pending = 0;
+  return;
+}
+
+
