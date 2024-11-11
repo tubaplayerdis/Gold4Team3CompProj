@@ -1,0 +1,41 @@
+https://www.vexforum.com/t/undocumented-vex-tech-scavenger-hunt/108833/5 //Main page
+https://www.vexforum.com/t/animated-gif-demo-vexcode/58755/6 //Heap size change
+https://www.vexforum.com/t/animated-gif-demo-vexcode/58755/8 //Gifs?
+https://www.vexforum.com/t/full-alignment-procedure-for-inertial-sensor/81836 //Inertial Sensor stuff
+https://www.vexforum.com/t/why-are-game-elements-so-expensive/98256/23 //LOL
+https://www.vexforum.com/t/v5-optical-sensor-refresh-rate/109632/3 //Optical Sensor Refresh Rate Change
+https://www.vexforum.com/t/pictures-of-internals-of-v5-components/49896 //Motor Internals
+https://www.vexforum.com/t/vexcode-v5-pro-lvgl-music-demo/89451 //LVGL on vexcode
+
+
+
+
+
+
+
+
+
+
+
+//LVGL for non pros
+https://github.com/jpearman/vexcode-lvgl-music-demo
+https://github.com/jpearman/vexcode-lvgllib7_X
+
+//Default Drive Code
+https://github.com/jpearman/v5-drivecode
+
+
+
+//Article on main page
+A few finds from messing around this season, including some random fun facts.
+
+vex::vision::code 9 is largely undocumented/unexplained. I believe these work similar to Pixy2 Vision Codes 7
+Suprisingly, vex::pneumatics 8 isn’t listed anywhere on VEX help resources (they recommend using digital_out instead). This offers an easier abstraction over digital_out.
+vex::this_thread::sleep_for(); offers an alternative API to vex::task::sleep, which better matches the standard library implementation of threads.
+Headers for libv5rt can be easily accessed via the vscode extension (since lv5rt.a is a static library). api.vexcode.cloud 4 seems to be generated on these headers using doxygen (or something similar). These include the undocumented C API, but not the actual private API (v5_apiprivate.h is omitted from the actual production distribution of the V5 SDK).
+The actual entrypoint for the V5 API is actually v5_cpp.h and not v5_vcs.h. v5_vcs.hseems to be included in vex.h as a relic of the older VEX coding studio program.
+vex::competition::bStopAllTasksBetweenModes 3
+For some reason vex::inertial::getTurnType is marked as protected, making it impossible to tell which direction the gyro of an inertial sensor reads as positive.
+VEXCode Pro is written using nw.js 2 and uses Monaco 1 for its internal editor.
+This is documented, but not well known. vex::triport::installed allows you to get the status and type of a triport device, similar to how smart port devices have an installed method.
+vex::controller::axis::position returns integers from [-100, 100], while vex::controller::axis::value returns integers from [-127, 127]. This isn’t really listed anywhere, and could be a footgun if you use value instead of position.
