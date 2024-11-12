@@ -36,10 +36,11 @@ class Bot {
         //Misc
         static vex::motor Intake;
         static vex::motor Arm;
-        static vex::motor LiftL;
-        static vex::motor LiftR;
-        static vex::motor_group LiftMotors;
+        //static vex::motor LiftL;
+        //static vex::motor LiftR;
+        //static vex::motor_group LiftMotors;
         static vex::digital_out MogoMech;
+        static vex::digital_out Clutch;
 
         //Gryos and stuff
         static vex::inertial Inertial;
@@ -64,6 +65,8 @@ class Bot {
         static void switchAlliance();
         static void clampMobileGoal();
         static void releaseMobileGoal();
+        static void pushClutch();
+        static void releaseClutch();
         static void checkInstall();
         static int displayLoop();
         static int monitorLoop();
