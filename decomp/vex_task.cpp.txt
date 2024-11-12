@@ -1,0 +1,589 @@
+typedef unsigned char   undefined;
+
+typedef unsigned char    byte;
+typedef unsigned int    dword;
+typedef unsigned long    ulong;
+typedef unsigned char    undefined1;
+typedef unsigned int    int32_t;
+typedef unsigned short    word;
+typedef struct task task, *Ptask;
+
+struct task { // PlaceHolder Structure
+};
+
+typedef struct semaphore semaphore, *Psemaphore;
+
+struct semaphore { // PlaceHolder Structure
+};
+
+typedef struct Elf32_Rel Elf32_Rel, *PElf32_Rel;
+
+struct Elf32_Rel {
+    dword r_offset; // location to apply the relocation action
+    dword r_info; // the symbol table index and the type of relocation
+};
+
+typedef enum Elf_SectionHeaderType_ARM {
+    SHT_NULL=0,
+    SHT_PROGBITS=1,
+    SHT_SYMTAB=2,
+    SHT_STRTAB=3,
+    SHT_RELA=4,
+    SHT_HASH=5,
+    SHT_DYNAMIC=6,
+    SHT_NOTE=7,
+    SHT_NOBITS=8,
+    SHT_REL=9,
+    SHT_SHLIB=10,
+    SHT_DYNSYM=11,
+    SHT_INIT_ARRAY=14,
+    SHT_FINI_ARRAY=15,
+    SHT_PREINIT_ARRAY=16,
+    SHT_GROUP=17,
+    SHT_SYMTAB_SHNDX=18,
+    SHT_ANDROID_REL=1610612737,
+    SHT_ANDROID_RELA=1610612738,
+    SHT_GNU_ATTRIBUTES=1879048181,
+    SHT_GNU_HASH=1879048182,
+    SHT_GNU_LIBLIST=1879048183,
+    SHT_CHECKSUM=1879048184,
+    SHT_SUNW_move=1879048186,
+    SHT_SUNW_COMDAT=1879048187,
+    SHT_SUNW_syminfo=1879048188,
+    SHT_GNU_verdef=1879048189,
+    SHT_GNU_verneed=1879048190,
+    SHT_GNU_versym=1879048191,
+    SHT_ARM_EXIDX=1879048193,
+    SHT_ARM_PREEMPTMAP=1879048194,
+    SHT_ARM_ATTRIBUTES=1879048195,
+    SHT_ARM_DEBUGOVERLAY=1879048196,
+    SHT_ARM_OVERLAYSECTION=1879048197
+} Elf_SectionHeaderType_ARM;
+
+typedef struct Elf32_Sym Elf32_Sym, *PElf32_Sym;
+
+struct Elf32_Sym {
+    dword st_name;
+    dword st_value;
+    dword st_size;
+    byte st_info;
+    byte st_other;
+    word st_shndx;
+};
+
+typedef struct Elf32_Shdr Elf32_Shdr, *PElf32_Shdr;
+
+struct Elf32_Shdr {
+    dword sh_name;
+    enum Elf_SectionHeaderType_ARM sh_type;
+    dword sh_flags;
+    dword sh_addr;
+    dword sh_offset;
+    dword sh_size;
+    dword sh_link;
+    dword sh_info;
+    dword sh_addralign;
+    dword sh_entsize;
+};
+
+typedef struct Elf32_Ehdr Elf32_Ehdr, *PElf32_Ehdr;
+
+struct Elf32_Ehdr {
+    byte e_ident_magic_num;
+    char e_ident_magic_str[3];
+    byte e_ident_class;
+    byte e_ident_data;
+    byte e_ident_version;
+    byte e_ident_osabi;
+    byte e_ident_abiversion;
+    byte e_ident_pad[7];
+    word e_type;
+    word e_machine;
+    dword e_version;
+    dword e_entry;
+    dword e_phoff;
+    dword e_shoff;
+    dword e_flags;
+    word e_ehsize;
+    word e_phentsize;
+    word e_phnum;
+    word e_shentsize;
+    word e_shnum;
+    word e_shstrndx;
+};
+
+
+
+
+// vex::task::task()
+
+task * __thiscall vex::task::task(task *this)
+
+{
+  int iVar1;
+  int32_t uVar2;
+  
+  iVar1 = vexTaskGetIndex();
+  if (-1 < iVar1) {
+    uVar2 = vexTaskGetCallbackAndId(iVar1,this + 4);
+    *(int32_t *)this = uVar2;
+  }
+  return this;
+}
+
+
+
+// vex::task::task(int (*)())
+
+task * __thiscall vex::task::task(task *this,_func_int *param_1)
+
+{
+  undefined auStack_20 [20];
+  
+  *(_func_int **)this = param_1;
+  *(int32_t *)(this + 4) = 0;
+  _labelId = _labelId + 1;
+  vex_sprintf(auStack_20,"TASK_%02d");
+  vexTaskAdd(param_1,2,auStack_20);
+  return this;
+}
+
+
+
+// vex::task::task(int (*)(void*), void*)
+
+task * __thiscall vex::task::task(task *this,_func_int_void_ptr *param_1,void *param_2)
+
+{
+  int32_t uVar1;
+  task *ptStack_20;
+  _func_int_void_ptr *p_Stack_1c;
+  void *pvStack_18;
+  
+  *(_func_int_void_ptr **)this = param_1;
+  _labelId = _labelId + 1;
+  ptStack_20 = this;
+  p_Stack_1c = param_1;
+  pvStack_18 = param_2;
+  vex_sprintf(&ptStack_20,"TASA_%02d");
+  uVar1 = vexTaskAddWithArg(param_1,2,param_2,&ptStack_20);
+  *(int32_t *)(this + 4) = uVar1;
+  return this;
+}
+
+
+
+// vex::task::task(int (*)(), long)
+
+task * __thiscall vex::task::task(task *this,_func_int *param_1,long param_2)
+
+{
+  task *ptStack_20;
+  _func_int *p_Stack_1c;
+  long lStack_18;
+  
+  *(_func_int **)this = param_1;
+  *(int32_t *)(this + 4) = 0;
+  _labelId = _labelId + 1;
+  ptStack_20 = this;
+  p_Stack_1c = param_1;
+  lStack_18 = param_2;
+  vex_sprintf(&ptStack_20,"TASK_%02d");
+  vexTaskAddWithPriority(param_1,2,&ptStack_20,param_2);
+  return this;
+}
+
+
+
+// vex::task::task(int (*)(void*), void*, long)
+
+task * __thiscall vex::task::task(task *this,_func_int_void_ptr *param_1,void *param_2,long param_3)
+
+{
+  int32_t uVar1;
+  undefined auStack_28 [20];
+  
+  *(_func_int_void_ptr **)this = param_1;
+  _labelId = _labelId + 1;
+  vex_sprintf(auStack_28,"TASA_%02d");
+  uVar1 = vexTaskAddWithPriorityWithArg(param_1,2,param_2,auStack_28,param_3);
+  *(int32_t *)(this + 4) = uVar1;
+  return this;
+}
+
+
+
+// vex::task::~task()
+
+void __thiscall vex::task::~task(task *this)
+
+{
+  return;
+}
+
+
+
+// vex::task::stop(vex::task const&)
+
+void vex::task::stop(task *param_1)
+
+{
+  if (*(int *)param_1 == 0) {
+    return;
+  }
+  vexTaskStopWithId(*(int *)param_1,*(int32_t *)(param_1 + 4));
+  return;
+}
+
+
+
+// vex::task::suspend(vex::task const&)
+
+void vex::task::suspend(task *param_1)
+
+{
+  if (*(int *)param_1 == 0) {
+    return;
+  }
+  vexTaskSuspendWithId(*(int *)param_1,*(int32_t *)(param_1 + 4));
+  return;
+}
+
+
+
+// vex::task::resume(vex::task const&)
+
+void vex::task::resume(task *param_1)
+
+{
+  if (*(int *)param_1 == 0) {
+    return;
+  }
+  vexTaskResumeWithId(*(int *)param_1,*(int32_t *)(param_1 + 4));
+  return;
+}
+
+
+
+// vex::task::priority(vex::task const&)
+
+void vex::task::priority(task *param_1)
+
+{
+  if (*(int *)param_1 == 0) {
+    return;
+  }
+  vexTaskPriorityGetWithId(*(int *)param_1,*(int32_t *)(param_1 + 4));
+  return;
+}
+
+
+
+// vex::task::setPriority(vex::task const&, long)
+
+void vex::task::setPriority(task *param_1,long param_2)
+
+{
+  if (*(int *)param_1 == 0) {
+    return;
+  }
+  vexTaskPrioritySetWithId(*(int *)param_1,param_2,*(int32_t *)(param_1 + 4));
+  return;
+}
+
+
+
+// vex::task::stop(void*, int)
+
+void vex::task::stop(void *param_1,int param_2)
+
+{
+  if (param_1 != (void *)0x0) {
+    param_1 = (void *)0x1;
+  }
+  if (param_2 < 0) {
+    param_1 = (void *)0x0;
+  }
+  if (param_1 == (void *)0x0) {
+    return;
+  }
+  vexTaskStopWithId();
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::task::stopAll()
+
+void vex::task::stopAll(void)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  int priority;
+  int32_t local_14;
+  
+  iVar1 = vexTaskGetTaskIndex();
+  iVar2 = vexTaskHardwareConcurrency();
+  local_14 = 0;
+  while( true ) {
+    iVar1 = iVar1 + 1;
+    if (iVar2 <= iVar1) {
+      return;
+    }
+    iVar3 = vexTaskGetCallbackAndId(iVar1,&local_14);
+    if (iVar3 == 0) break;
+    priority = vexTaskPriorityGetWithId(iVar3,local_14);
+    if ((priority < 0x10) && (priority = vexTaskStateGetWithId(iVar3,local_14), priority != 99)) {
+      vexTaskStopWithId(iVar3,local_14);
+    }
+  }
+  vexTaskYield();
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::task::stop()
+
+void vex::task::stop(void)
+
+{
+  int *in_r0;
+  
+  if (*in_r0 == 0) {
+    return;
+  }
+  vexTaskStopWithId(*in_r0,in_r0[1]);
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::task::suspend()
+
+void vex::task::suspend(void)
+
+{
+  int *in_r0;
+  
+  if (*in_r0 == 0) {
+    return;
+  }
+  vexTaskSuspendWithId(*in_r0,in_r0[1]);
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::task::resume()
+
+void vex::task::resume(void)
+
+{
+  int *in_r0;
+  
+  if (*in_r0 == 0) {
+    return;
+  }
+  vexTaskResumeWithId(*in_r0,in_r0[1]);
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::task::priority()
+
+void vex::task::priority(void)
+
+{
+  int *in_r0;
+  
+  if (*in_r0 == 0) {
+    return;
+  }
+  vexTaskPriorityGetWithId(*in_r0,in_r0[1]);
+  return;
+}
+
+
+
+// vex::task::setPriority(long)
+
+void __thiscall vex::task::setPriority(task *this,long param_1)
+
+{
+  if (*(int *)this == 0) {
+    return;
+  }
+  vexTaskPrioritySetWithId(*(int *)this,*(int32_t *)(this + 4),param_1);
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::task::index()
+
+void vex::task::index(void)
+
+{
+  vexTaskGetIndex();
+  return;
+}
+
+
+
+// vex::task::sleep(unsigned long)
+
+void vex::task::sleep(ulong param_1)
+
+{
+  vexTaskSleep();
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::task::yield()
+
+void vex::task::yield(void)
+
+{
+  vexTaskYield();
+  return;
+}
+
+
+
+// vex::task::_index(int (*)())
+
+int32_t vex::task::_index(_func_int *param_1)
+
+{
+  int32_t uVar1;
+  
+  if (param_1 != (_func_int *)0x0) {
+    uVar1 = vexTaskGetTaskIndex();
+    return uVar1;
+  }
+  return 0xffffffff;
+}
+
+
+
+// WARNING: Removing unreachable block (ram,0x00010374)
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::task::_stopAll()
+
+void vex::task::_stopAll(void)
+
+{
+  uint uVar1;
+  
+  uVar1 = vexSystemVersion();
+  if (0x1000200 < uVar1) {
+    vexTaskRemoveAllUser(&main);
+    vexEventsCleanup();
+    vexTaskYield();
+    return;
+  }
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::task::_dump()
+
+void vex::task::_dump(void)
+
+{
+  vexTasksDump();
+  return;
+}
+
+
+
+// vex::semaphore::semaphore()
+
+semaphore * __thiscall vex::semaphore::semaphore(semaphore *this)
+
+{
+  if (_initialized == '\0') {
+    *(int32_t *)this = 0;
+    vexSemaphoreInit();
+    _initialized = '\x01';
+  }
+  return this;
+}
+
+
+
+// vex::semaphore::~semaphore()
+
+void __thiscall vex::semaphore::~semaphore(semaphore *this)
+
+{
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::semaphore::lock()
+
+void vex::semaphore::lock(void)
+
+{
+  int32_t in_r0;
+  
+  vexSemaphoreLock(in_r0,10000);
+  return;
+}
+
+
+
+// vex::semaphore::lock(unsigned long)
+
+void vex::semaphore::lock(ulong param_1)
+
+{
+  vexSemaphoreLock();
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::semaphore::unlock()
+
+void vex::semaphore::unlock(void)
+
+{
+  vexSemaphoreUnlock();
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+// vex::semaphore::owner()
+
+bool vex::semaphore::owner(void)
+
+{
+  int iVar1;
+  
+  iVar1 = vexSemaphoreGetOwner();
+  return iVar1 == 1;
+}
+
+

@@ -1,0 +1,1 @@
+//add impl for task bypass. check decomp vex::task.cpp.txt line 319. if state is not 99 and 16 the task RUNS. use opposition

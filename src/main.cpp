@@ -104,11 +104,14 @@ int main() {
   vex::task monitoring(Bot::monitorLoop);
   vex::task aivisionLoop(Bot::aiLoop);
 
+
   Bot::Brain.Screen.printAt(0, 150, "Systems Go!");
   
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
+
+
 
   // Run the pre-autonomous function.
   pre_auton();

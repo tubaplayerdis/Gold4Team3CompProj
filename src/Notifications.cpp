@@ -4,14 +4,17 @@
 
 std::vector<std::string> Notifications::NotificationList = std::vector<std::string>();
 int Notifications::notifIndex = 0;
+bool Notifications::isNotifying = false;
 
 void Notifications::addNotification(std::string notif) {
     //Only new notifs not the same crap
     for(std::string obj : NotificationList) {
         if(obj == notif) return;
     }
+    isNotifying = true;
     NotificationList.push_back(notif);
     notifIndex = NotificationList.size()-1;
+    isNotifying = false;
 }
 
 //Dont use
