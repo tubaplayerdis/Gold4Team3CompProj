@@ -8,18 +8,18 @@
 vex::brain Bot::Brain = vex::brain();
 
 //Define Motors
-vex::motor Bot::LeftA = vex::motor(vex::PORT1, vex::ratio18_1,false);//Regular
-vex::motor Bot::LeftB = vex::motor(vex::PORT2, vex::ratio18_1, false);//Regular
-vex::motor Bot::LeftC = vex::motor(vex::PORT3, vex::ratio18_1, true);//Low Power
-vex::motor Bot::RightA = vex::motor(vex::PORT4, vex::ratio18_1, true);//Regular
-vex::motor Bot::RightB = vex::motor(vex::PORT5, vex::ratio18_1, true);//Regular
-vex::motor Bot::RightC = vex::motor(vex::PORT6, vex::ratio18_1, false);//Low Power
+vex::motor Bot::LeftA = vex::motor(vex::PORT1, vex::ratio6_1,false);//High Speed
+vex::motor Bot::LeftB = vex::motor(vex::PORT2, vex::ratio6_1, false);//High Speed
+vex::motor Bot::LeftC = vex::motor(vex::PORT3, vex::ratio6_1, true);//High Speed
+vex::motor Bot::RightA = vex::motor(vex::PORT4, vex::ratio6_1, true);//High Speed
+vex::motor Bot::RightB = vex::motor(vex::PORT5, vex::ratio6_1, true);//High Speed
+vex::motor Bot::RightC = vex::motor(vex::PORT6, vex::ratio6_1, false);//High Speed
 
 
 vex::motor Bot::Intake = vex::motor(vex::PORT7, vex::ratio18_1, true);//Low Power
 vex::motor Bot::Arm = vex::motor(vex::PORT8, vex::ratio36_1, false);//High Torque
-vex::motor Bot::LiftL = vex::motor(vex::PORT9, vex::ratio18_1, true);//Low Power
-vex::motor Bot::LiftR = vex::motor(vex::PORT10, vex::ratio18_1, true);//Low Power
+//vex::motor Bot::LiftL = vex::motor(vex::PORT9, vex::ratio18_1, true);//Low Power
+//vex::motor Bot::LiftR = vex::motor(vex::PORT10, vex::ratio18_1, true);//Low Power
 vex::digital_out Bot::MogoMech = vex::digital_out(Bot::Brain.ThreeWirePort.A);
 
 vex::inertial Bot::Inertial = vex::inertial(vex::PORT11);
@@ -35,7 +35,7 @@ vex::aivision Bot::AIVisionF(vex::PORT20, vex::aivision::ALL_TAGS, vex::aivision
 //Define Motor Groups
 vex::motor_group Bot::LeftMotors = vex::motor_group(Bot::LeftA, Bot::LeftB, Bot::LeftC);
 vex::motor_group Bot::RightMotors = vex::motor_group(Bot::RightA, Bot::RightB, Bot::RightC);
-vex::motor_group Bot::LiftMotors = vex::motor_group(Bot::LiftL, Bot::LiftR);
+//vex::motor_group Bot::LiftMotors = vex::motor_group(Bot::LiftL, Bot::LiftR);
 
 //Define important stuff
 vex::controller Bot::Controller = vex::controller(vex::primary);
@@ -96,6 +96,9 @@ void Bot::setup() {
     RightB.setBrake(vex::hold);
     LeftC.setBrake(vex::hold);
     RightC.setBrake(vex::hold);
+
+    MogoMech.set(false);
+    Clutch.set(true);
 
     //int voltagelimold = vexDeviceMotorVoltageLimitGet(Device::getInternalDevicePointer(MGPM));
     //vexDeviceMotorVoltageLimitSet(Device::getInternalDevicePointer(MGPM), 15);
@@ -177,6 +180,13 @@ void Bot::releaseMobileGoal() {
     Bot::MogoMech.set(false);
 }
 
+void Bot::pushClutch() {
+    Bot::Clutch.set(true);
+}
+
+void Bot::releaseClutch() {
+    Bot::Clutch.set(false);
+}
 //use this eventually? no!
 void Bot::checkInstall() {
     Bot::Brain.Screen.printAt(0, 30, "Arm: %d", Bot::Arm.installed());
@@ -256,8 +266,6 @@ int Bot::monitorLoop() {
         if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightC TEMP");
         if(Intake.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("Intake TEMP");
         if(Arm.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("Arm TEMP");
-        if(LiftL.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LiftL TEMP");
-        if(LiftR.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LiftR TEMP");
 
         if(!LeftA.installed()) Notifications::addNotification("LeftA DISCONNECT");
         if(!LeftB.installed()) Notifications::addNotification("LeftB DISCONNECT");
@@ -267,8 +275,8 @@ int Bot::monitorLoop() {
         if(!RightC.installed()) Notifications::addNotification("RightC DISCONNECT");
         if(!Intake.installed()) Notifications::addNotification("Intake DISCONNECT");
         if(!Arm.installed()) Notifications::addNotification("Arm DISCONNECT");
-        if(!LiftL.installed()) Notifications::addNotification("LiftL DISCONNECT");
-        if(!LiftR.installed()) Notifications::addNotification("LiftR DISCONNECT");
+        if(!RotationForward.installed()) Notifications::addNotification("RotationF DISCONNECT");
+        if(!RotationLateral.installed()) Notifications::addNotification("RotationL DISCONNECT");
 
 
         vex::this_thread::sleep_for(1000);
