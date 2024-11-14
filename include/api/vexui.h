@@ -52,6 +52,12 @@ int rgbToHue(int r, int g, int b) {
     return static_cast<int>(std::round(hue));
 }
 
+std::string to_string_int(int x){
+  std::stringstream s;
+  s << x;
+  return s.str();
+}
+
 #pragma endregion
 
 namespace vexui
@@ -185,7 +191,7 @@ namespace vexui
         public:
             std::string text;
             Color bdcolor{0, 0, 0}, txcolor{0, 0, 0}, bgcolor{140, 140, 140};
-            bool renderBackgroud;
+            bool renderBackground;
             bool renderBorder;
 
             Button(int x, int y, int width, int height, const std::string &text) {
@@ -193,7 +199,7 @@ namespace vexui
                 this->y = y;
                 this->width = width;
                 this->height = height;
-                this->renderBackgroud = true;
+                this->renderBackground = true;
                 this->renderBorder = true;
                 this->text = text;
             }
@@ -204,7 +210,7 @@ namespace vexui
             void render() {
                 if(!dorender) return;
                 bgcolor.gset();
-                if(renderBackgroud) vexDisplayRectFill(x, y, x+width, y+width);
+                if(renderBackground) vexDisplayRectFill(x, y, x+width, y+height);
                 bdcolor.gset();
                 if(renderBorder) vexDisplayRectDraw(x, y, x+width, y+ height);
                 txcolor.gset();
@@ -300,7 +306,7 @@ namespace vexui
         public:
             std::string text;
             Color bdcolor{0, 0, 0}, txcolor{0, 0, 0}, bgcolor{140, 140, 140}, oncolor{160,160,160}, ofcolor{0,0,0};
-            bool renderBackgroud;
+            bool renderBackground;
             bool renderBorder;
             bool toggle;
 
@@ -309,7 +315,7 @@ namespace vexui
                 this->y = y;
                 this->width = width;
                 this->height = height;
-                this->renderBackgroud = true;
+                this->renderBackground = true;
                 this->renderBorder = true;
                 this->toggle = false;
                 this->text = text;
@@ -327,9 +333,9 @@ namespace vexui
             void render() {
                 if(!dorender) return;
                 bgcolor.gset();
-                if(renderBackgroud) vexDisplayRectFill(x, y, x+width, y+width);
+                if(renderBackground) vexDisplayRectFill(x, y, x+width, y+height);
                 bdcolor.gset();
-                if(renderBorder) vexDisplayRectDraw(x, y, x+width, y+ height);
+                if(renderBorder) vexDisplayRectDraw(x, y, x+width, y+height);
 
                 if(toggle) oncolor.gset(); else ofcolor.gset();
                 vexDisplayCircleFill(x+(height/2), y+(height/2), height/3);
@@ -344,7 +350,7 @@ namespace vexui
             std::vector<UIElement> items;
 
         public:
-            bool renderBackgroud;
+            bool renderBackground;
             bool renderBorder;
             Color color{55,55,55}, bdcolor{0,0,0};
 
@@ -353,7 +359,7 @@ namespace vexui
                 this->y = y;
                 this->width = width;
                 this->height = height;
-                this->renderBackgroud = true;
+                this->renderBackground = true;
                 this->renderBorder = true;
                 items = std::vector<UIElement>();
             }
@@ -375,7 +381,7 @@ namespace vexui
             void render() {
                 if(!dorender) return;
                 color.gset();
-                if(renderBackgroud) vexDisplayRectFill(x, y, x+width, y+width);
+                if(renderBackground) vexDisplayRectFill(x, y, x+width, y+width);
                 bdcolor.gset();
                 if(renderBorder) vexDisplayRectDraw(x, y, x+width, y+ height);
                 for(UIElement item : items) {
@@ -387,13 +393,14 @@ namespace vexui
 
     class Slider : public UIElement {
         private:
-            int x, y, width, height;
-            float rangemax, rangemin, value;
-            bool isint, ischange;
-            Color bgcolor{160,160,160}, bdcolor{0,0,0}, slcolor{105, 105, 105}, selcolor{0,0,0}, lncolor{0,0,0}, maxtxcolor{0,0,0}, mintxcolor{0,0,0}, valbxcolor{150,150,150}, valtxcolor{0,0,0};
             float prvalue;
 
         public:
+            int x, y, width, height;
+            float rangemax, rangemin, value;
+            bool isint, ischange, renderBackground, renderBorder;
+            Color bgcolor{160,160,160}, bdcolor{0,0,0}, slcolor{105, 105, 105}, selcolor{0,0,0}, lncolor{0,0,0}, maxtxcolor{0,0,0}, mintxcolor{0,0,0}, valbxcolor{150,150,150}, valtxcolor{0,0,0};
+           
             Event onValueChange = Event();
             Event onSelectValue = Event(); 
             // Constructor
@@ -406,6 +413,8 @@ namespace vexui
                 this->rangemin = min;
                 this->rangemax = max;
                 this->isint = isint;
+                this->renderBackground = true;
+                this->renderBorder = true;
                 prvalue = x + (width / 2);
                 ischange = false;
             }
@@ -422,6 +431,25 @@ namespace vexui
 
             void render() {
                 if(!dorender) return;
+                bgcolor.gset();
+                if(renderBackground) vexDisplayRectFill(x, y, x+width, y+width);
+                bdcolor.gset();
+                if(renderBorder) vexDisplayRectDraw(x, y, x+width, y+ height);
+                lncolor.gset();
+                vexDisplayLineDraw(x+5,y+(height/1.5),(x+width)-5,y+(height/1.5));
+                slcolor.gset();
+                vexDisplayCircleFill(prvalue,y+(height/1.5),5);
+                if(isPress()) {
+                    int tempval = vexui::Screen.xPosition();
+                    prvalue = tempval;
+                    if(prvalue < x+5) prvalue = x+5;
+                    if (prvalue > x+width-5) prvalue = x+width-5;
+                    evalValue();
+                }
+                mintxcolor.gset();
+                vexDisplayVStringAt(x+2,y+(height/3)-8, to_string_int(rangemin).c_str(), "");
+                maxtxcolor.gset();
+                vexDisplayVStringAt(x+width-getStringWidth(to_string_int(rangemax).c_str()),y+(height/3)-8, to_string_int(rangemax).c_str(), "");
             }
     };
 
