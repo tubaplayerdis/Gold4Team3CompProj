@@ -69,6 +69,13 @@ uint32_t vexTaskAddWithPriority(int (*callback)(void), int interval, const char 
  * @warning This function is untested and not guaranteed to function as expected.
  */
 uint32_t vexTaskAddWithPriorityWithArg(int (*callback)(void), int interval, void *arg, const char *label, int32_t priority);
+
+/**
+ * @brief Internally checks if vex tasks are running on the correct timeslice.
+ * @returns Void.
+ * @warning This function is untested and not guaranteed to function as expected.
+ */
+void vexTaskCheckTimeslice(void);
 /*
   vexTaskBreakpointDump
   vexTaskBreakpointSet
@@ -94,9 +101,11 @@ void *vexTaskGetCallbackAndId(uint32_t index, int *callback_id);
 uint32_t vexTaskGetIndex();
 
 /**
+ * @brief Get task index from task pointer
+ * @param task Callback function of task like from vexTaskGetCallbackAndId()
  * @returns Gets the task index of a task.
  */
-uint32_t vexTaskGetTaskIndex();
+uint32_t vexTaskGetTaskIndex(void* task);
 
 /*
   vexTaskGetTaskIndexWithId

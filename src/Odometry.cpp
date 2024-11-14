@@ -137,13 +137,14 @@ int Odometry::odometry() {
         Bot::Controller.Screen.print("Calib Intert!");
         vex::this_thread::sleep_for(20);
     }
-    Bot::Controller.Screen.print("              ");
+    //Bot::Controller.Screen.print("              ");
     while (true) {
         Odometry::updateOdometry();
         vex::this_thread::sleep_for(10);  // Update rate in milliseconds
     }
     return 0;
 }
+
 
 //DO NOT USE THIS FUNCTION
 int displayCoordinates() {
