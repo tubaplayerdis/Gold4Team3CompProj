@@ -21,9 +21,10 @@ vex::motor Bot::Arm = vex::motor(vex::PORT8, vex::ratio36_1, false);//High Torqu
 //vex::motor Bot::LiftL = vex::motor(vex::PORT9, vex::ratio18_1, true);//Low Power
 //vex::motor Bot::LiftR = vex::motor(vex::PORT10, vex::ratio18_1, true);//Low Power
 vex::digital_out Bot::MogoMech = vex::digital_out(Bot::Brain.ThreeWirePort.A);
+vex::digital_out Bot::Clutch = vex::digital_out(Bot::Brain.ThreeWirePort.B);
 
 vex::inertial Bot::Inertial = vex::inertial(vex::PORT11);
-vex::rotation Bot::RotationForward = vex::rotation(vex::PORT12); //Forward
+vex::rotation Bot::RotationForward = vex::rotation(vex::PORT12); //Forwards
 vex::rotation Bot::RotationLateral = vex::rotation(vex::PORT13);; //Lateral
 vex::optical Bot::ColorSensor = vex::optical(vex::PORT14);;
 aliance Bot::Aliance = aliance::Nuetral;

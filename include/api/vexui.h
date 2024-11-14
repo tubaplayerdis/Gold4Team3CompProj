@@ -22,7 +22,7 @@
 #include <cmath>
 
 
-#pragma region badFunc 
+#pragma region Helper_Functions 
 int rgbToHue(int r, int g, int b) {
     float fr = r / 255.0f;
     float fg = g / 255.0f;
@@ -88,38 +88,36 @@ namespace vexui
                 vexDisplayForegroundColor(rgbToHue(R,G,B));
                 vexDisplayBackgroundColor(rgbToHue(R,G,B));
             }
+
+            private:
+                static Color getColor(const std::string &color) {
+                    if (color == "red") return Color(178,31,53);
+                        else if (color == "redorange") return Color(216, 39, 53);
+                        else if (color == "orange") return Color(255, 116, 53);
+                        else if (color == "orangeyellow") return Color(255, 161, 53);
+                        else if (color == "yellow") return Color(255, 240, 53);
+                        else if (color == "darkgreen") return Color(0, 117, 58);
+                        else if (color == "green") return Color(0, 158, 71);
+                        else if (color == "lightgreen") return Color(22, 221, 53);
+                        else if (color == "darkblue") return Color(0, 82, 165);
+                        else if (color == "blue") return Color(0, 121, 252);
+                        else if (color == "lightblue") return Color(0, 169, 252);
+                        else if (color == "cyan") return Color(0, 255, 255);
+                        else if (color == "violet") return Color(104, 30, 126);
+                        else if (color == "purple") return Color(125, 60, 181);
+                        else if (color == "lightpurple") return Color(189, 122, 246);
+                        else if (color == "underwearcrust") return Color(169, 104, 64);
+                        else if (color == "brown") return Color(183, 97, 39);
+                        else if (color == "lightbrown") return Color(210, 138, 90);
+                        else if (color == "darkbrown") return Color(95, 44, 10);
+                        else if (color == "black") return Color(0, 0, 0);
+                        else if (color == "white") return Color(255, 255, 255);
+                        else if (color == "gold") return Color(160, 160, 60);
+                        else if (color == "gray") return Color(160, 160, 160);
+                        else if (color == "lightgray") return Color(211, 211, 211);
+                        else if (color == "darkgray") return Color(105, 105, 105);
+                }
     };
-
-    Color getColor(const std::string &color) {
-        if (color == "red") return Color(178, 31, 53);
-        else if (color == "redorange") return Color(216, 39, 53);
-        else if (color == "orange") return Color(255, 116, 53);
-        else if (color == "orangeyellow") return Color(255, 161, 53);
-        else if (color == "yellow") return Color(255, 240, 53);
-        else if (color == "darkgreen") return Color(0, 117, 58);
-        else if (color == "green") return Color(0, 158, 71);
-        else if (color == "lightgreen") return Color(22, 221, 53);
-        else if (color == "darkblue") return Color(0, 82, 165);
-        else if (color == "blue") return Color(0, 121, 252);
-        else if (color == "lightblue") return Color(0, 169, 252);
-        else if (color == "cyan") return Color(0, 255, 255);
-        else if (color == "violet") return Color(104, 30, 126);
-        else if (color == "purple") return Color(125, 60, 181);
-        else if (color == "lightpurple") return Color(189, 122, 246);
-        else if (color == "underwearcrust") return Color(169, 104, 64);
-        else if (color == "brown") return Color(183, 97, 39);
-        else if (color == "lightbrown") return Color(210, 138, 90);
-        else if (color == "darkbrown") return Color(95, 44, 10);
-        else if (color == "black") return Color(0, 0, 0);
-        else if (color == "white") return Color(255, 255, 255);
-        else if (color == "gold") return Color(160, 160, 60);
-        else if (color == "gray") return Color(160, 160, 160);
-        else if (color == "lightgray") return Color(211, 211, 211);
-        else if (color == "darkgray") return Color(105, 105, 105);
-
-        //Default
-        return Color(0, 0, 0);
-    }
 
     inline int getStringWidth(const std::string &text) {
         return Bot::Brain.Screen.getStringWidth(text.c_str());
@@ -392,7 +390,7 @@ namespace vexui
             int x, y, width, height;
             float rangemax, rangemin, value;
             bool isint, ischange;
-            Color bgcolor, bdcolor, slcolor, selcolor, lncolor, maxtxcolor, mintxcolor, valbxcolor, valtxcolor;
+            Color bgcolor{160,160,160}, bdcolor{0,0,0}, slcolor{105, 105, 105}, selcolor{0,0,0}, lncolor{0,0,0}, maxtxcolor{0,0,0}, mintxcolor{0,0,0}, valbxcolor{150,150,150}, valtxcolor{0,0,0};
             float prvalue;
 
         public:
@@ -400,10 +398,14 @@ namespace vexui
             Event onSelectValue = Event(); 
             // Constructor
             Slider(int x, int y, int width, int height, float min, float max, float value, bool isInt)
-                : x(x), y(y), width(width), height(height), rangemax(max), rangemin(min), value(value), isint(isInt),
-                bgcolor(160, 160, 160), bdcolor(0, 0, 0), slcolor(105, 105, 105), selcolor(0, 0, 0),
-                lncolor(0, 0, 0), maxtxcolor(0, 0, 0), mintxcolor(0, 0, 0), valbxcolor(150, 150, 150), valtxcolor(0, 0, 0) 
             {
+                this->x = x;
+                this->y = y;
+                this->width = width;
+                this->height = height;
+                this->rangemin = min;
+                this->rangemax = max;
+                this->isint = isint;
                 prvalue = x + (width / 2);
                 ischange = false;
             }
@@ -417,11 +419,23 @@ namespace vexui
                     value = (medval * frange) - abs(rangemin);
                 }
             }
+
+            void render() {
+                if(!dorender) return;
+            }
     };
 
     class OdometryMap : public UIElement {
 
-    }
+        public:
+            OdometryMap() {
+
+            }
+
+            void render() {
+
+            }
+    };
 
 }
 

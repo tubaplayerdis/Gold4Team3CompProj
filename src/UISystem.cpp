@@ -7,5 +7,5 @@ void UISystem::toggleUI() {
 }
 
 int UISystem::renderLoop() {
-    
+    return 1;
 }
