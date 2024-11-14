@@ -131,13 +131,16 @@ namespace vexui
 
     class Event {
         public:
-            std::vector<std::function<void(void*)>> listeners;
+            std::vector<void (*)(void)> listeners;
 
-            void addListener(std::function<void(void*)> listener) { listeners.push_back(listener); }
+            Event() {
+                this->listeners = std::vector<void (*)(void)>();
+            }
+            void addListener(void (*listener)(void)) { listeners.push_back(listener); }
             void removeListener(int index) { listeners.erase(listeners.begin() + index); }
             void removeAll() { listeners.clear(); }
-            void InvokeListeners(void *ref) {
-                for (auto &listener : listeners) listener(ref);
+            void InvokeListeners() {
+                for (auto &listener : listeners) listener();
             }
     };
 
@@ -145,10 +148,15 @@ namespace vexui
         public:
             int x = 0, y = 0, width = 100, height = 20;
             bool input = false, dorender = true;
-            Event pressEvent();
+            Event pressEvent = Event();
 
             bool isPress() {
-                return (vexui::Screen.pressing() && ((vexui::Screen.xPosition() <= x && vexui::Screen.xPosition() >= x+width) && (vexui::Screen.yPosition() <= y && vexui::Screen.yPosition() >= y+height)));
+                if(vexui::Screen.pressing() && ((vexui::Screen.xPosition() <= x && vexui::Screen.xPosition() >= x+width) && (vexui::Screen.yPosition() <= y && vexui::Screen.yPosition() >= y+height))) {
+                    pressEvent.InvokeListeners();
+                    return true;
+                }
+                return false;
+              
             }
 
             virtual void render();
@@ -168,7 +176,8 @@ namespace vexui
             void setText(const std::string &nt) { text = nt; width = getStringWidth(text); }
             std::string getText() const { return text; }
 
-            void render() {
+            void render() { 
+                if(!dorender) return;
                 color.gset();
                 vexui::Screen.printAt(x,y, text.c_str());
             }
@@ -195,6 +204,7 @@ namespace vexui
             std::pair<int, int> getSize() const { return {width, height}; }
             void setSize(int w, int h) { width = w; height = h; }
             void render() {
+                if(!dorender) return;
                 bgcolor.gset();
                 if(renderBackgroud) vexDisplayRectFill(x, y, x+width, y+width);
                 bdcolor.gset();
@@ -224,6 +234,11 @@ namespace vexui
                 this->height = height;
                 this->renderBorder = true;
                 this->isCollapsable = iscollapsable;
+                items = std::vector<UIElement>();
+            }
+
+            void toggle() {
+                collapsed = !collapsed;
             }
 
             void addElement(UIElement element) {
@@ -239,12 +254,174 @@ namespace vexui
             }
 
             void render() {
+                if(!dorender) return;
+                if(isPress()) toggle();
+
+                bgcolor.gset();
+                vexDisplayRectFill(x, y, x+width, y+width);
+                bdcolor.gset();
+                if(renderBorder) vexDisplayRectDraw(x, y, x+width, y+ height);
+                txcolor.gset();
+                vexDisplayStringAt(x+3,y+(height/10),text.c_str());
+
+                if(!collapsed) {
+                    if(items.size() > 0) {
+                        btcolor.gset();
+                        vexDisplayLineDraw(x+5,y+(height/1.5),x+10,y+(height/3));
+                        vexDisplayLineDraw(x+15,(y+height/1.5),x+10,y+(height/3));
+                        int space = 0;
+                        int enumeration = 0;
+                        for(UIElement item : items) {
+                            item.x = this->x+5;
+                            int addto = 5;
+                            for(int i = 0; i < enumeration; i++) {
+                                addto += items[i].height;
+                                addto += buffer;
+                            }
+                            space += (item.height+buffer);
+                            item.y = y-(height/2+addto+buffer);
+                            enumeration=enumeration+1;
+                        }
+                        bgcolor.gset();
+                        vexDisplayRectFill(x+1, y-space, x+width-1, space+1);
+                        for(UIElement item : items) {
+                            item.render();
+                        }
+                    }
+                } else {
+                    btcolor.gset();
+                    vexDisplayLineDraw(x+5,y+(height/3),x+10,y+(height/1.5));
+                    vexDisplayLineDraw(x+15,y+(height/3),x+10,y+(height/1.5));
+                }
                 //Tomorrow add IMPL
             }
             
     };
-    
 
+    class TButton : public UIElement {
+        public:
+            std::string text;
+            Color bdcolor{0, 0, 0}, txcolor{0, 0, 0}, bgcolor{140, 140, 140}, oncolor{160,160,160}, ofcolor{0,0,0};
+            bool renderBackgroud;
+            bool renderBorder;
+            bool toggle;
+
+            TButton(int x, int y, int width, int height, const std::string &text) {
+                this->x = x;
+                this->y = y;
+                this->width = width;
+                this->height = height;
+                this->renderBackgroud = true;
+                this->renderBorder = true;
+                this->toggle = false;
+                this->text = text;
+            }
+
+            void toggleToggle() { toggle = !toggle; }
+
+
+            std::string getText() const { return text; }
+
+            std::pair<int, int> getSize() const { return {width, height}; }
+
+            void setSize(int w, int h) { width = w; height = h; }
+
+            void render() {
+                if(!dorender) return;
+                bgcolor.gset();
+                if(renderBackgroud) vexDisplayRectFill(x, y, x+width, y+width);
+                bdcolor.gset();
+                if(renderBorder) vexDisplayRectDraw(x, y, x+width, y+ height);
+
+                if(toggle) oncolor.gset(); else ofcolor.gset();
+                vexDisplayCircleFill(x+(height/2), y+(height/2), height/3);
+
+                txcolor.gset();
+                vexDisplayStringAt(x+height,y+(height/10),text.c_str());
+            }
+    };
+    
+    class Panel : public UIElement {
+        private:
+            std::vector<UIElement> items;
+
+        public:
+            bool renderBackgroud;
+            bool renderBorder;
+            Color color{55,55,55}, bdcolor{0,0,0};
+
+            Panel(int x, int y, int width, int height) {
+                this->x = x;
+                this->y = y;
+                this->width = width;
+                this->height = height;
+                this->renderBackgroud = true;
+                this->renderBorder = true;
+                items = std::vector<UIElement>();
+            }
+
+            void addElement(UIElement element) {
+                element.x = x+element.x;
+                element.y = y+element.y;
+                items.push_back(element);
+            }
+
+            void removeElement(int index) {
+                items.erase(items.begin() + index);
+            }
+
+            void removeAll() {
+                items.clear();
+            }
+
+            void render() {
+                if(!dorender) return;
+                color.gset();
+                if(renderBackgroud) vexDisplayRectFill(x, y, x+width, y+width);
+                bdcolor.gset();
+                if(renderBorder) vexDisplayRectDraw(x, y, x+width, y+ height);
+                for(UIElement item : items) {
+                    item.render();
+                }
+            }
+
+    };
+
+    class Slider : public UIElement {
+        private:
+            int x, y, width, height;
+            float rangemax, rangemin, value;
+            bool isint, ischange;
+            Color bgcolor, bdcolor, slcolor, selcolor, lncolor, maxtxcolor, mintxcolor, valbxcolor, valtxcolor;
+            float prvalue;
+
+        public:
+            Event onValueChange = Event();
+            Event onSelectValue = Event(); 
+            // Constructor
+            Slider(int x, int y, int width, int height, float min, float max, float value, bool isInt)
+                : x(x), y(y), width(width), height(height), rangemax(max), rangemin(min), value(value), isint(isInt),
+                bgcolor(160, 160, 160), bdcolor(0, 0, 0), slcolor(105, 105, 105), selcolor(0, 0, 0),
+                lncolor(0, 0, 0), maxtxcolor(0, 0, 0), mintxcolor(0, 0, 0), valbxcolor(150, 150, 150), valtxcolor(0, 0, 0) 
+            {
+                prvalue = x + (width / 2);
+                ischange = false;
+            }
+
+            void evalValue() {
+                float medval = (prvalue - x - 5) / (width - 10);
+                float frange = abs(rangemax) + abs(rangemin);
+                if (isint) {
+                    value = round((medval * frange) - abs(rangemin));
+                } else {
+                    value = (medval * frange) - abs(rangemin);
+                }
+            }
+    };
+
+    class OdometryMap : public UIElement {
+
+    }
 
 }
 
