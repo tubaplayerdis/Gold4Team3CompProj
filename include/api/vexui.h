@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <cmath>
 
+/*The Vex Brain Sceen is 480 x 240*/
 
 #pragma region Helper_Functions 
 int rgbToHue(int r, int g, int b) {
@@ -58,6 +59,17 @@ std::string to_string_int(int x){
   return s.str();
 }
 
+std::string to_string_float(float x){
+  std::stringstream s;
+  s << x;
+  return s.str();
+}
+
+void resetColor() {
+    vexDisplayForegroundColor(rgbToHue(255,255,255));
+    vexDisplayBackgroundColor(rgbToHue(255,255,255));
+}
+
 #pragma endregion
 
 namespace vexui
@@ -65,7 +77,8 @@ namespace vexui
     class vexui
     {
         public:
-           static inline vex::brain::lcd Screen = Bot::Brain.Screen;
+            //Update this with your refrence to your brain screen!
+            static inline vex::brain::lcd Screen = Bot::Brain.Screen;
     };
     
     class Color {
@@ -135,28 +148,28 @@ namespace vexui
 
     class Event {
         public:
-            std::vector<void (*)(void)> listeners;
+            std::vector<void (*)(UIElement* element)> listeners;
 
             Event() {
-                this->listeners = std::vector<void (*)(void)>();
+                this->listeners = std::vector<void (*)(UIElement*)>();
             }
-            void addListener(void (*listener)(void)) { listeners.push_back(listener); }
+            void addListener(void (*listener)(UIElement*)) { listeners.push_back(listener); }
             void removeListener(int index) { listeners.erase(listeners.begin() + index); }
             void removeAll() { listeners.clear(); }
-            void InvokeListeners() {
-                for (auto &listener : listeners) listener();
+            void InvokeListeners(UIElement* element) {
+                for (auto &listener : listeners) listener(element);
             }
     };
 
     class UIElement {
         public:
             int x = 0, y = 0, width = 100, height = 20;
-            bool input = false, dorender = true;
+            bool dorender = true;
             Event pressEvent = Event();
 
             bool isPress() {
                 if(vexui::Screen.pressing() && ((vexui::Screen.xPosition() <= x && vexui::Screen.xPosition() >= x+width) && (vexui::Screen.yPosition() <= y && vexui::Screen.yPosition() >= y+height))) {
-                    pressEvent.InvokeListeners();
+                    pressEvent.InvokeListeners(this);
                     return true;
                 }
                 return false;
@@ -184,6 +197,7 @@ namespace vexui
                 if(!dorender) return;
                 color.gset();
                 vexui::Screen.printAt(x,y, text.c_str());
+                resetColor();
             }
     };
 
@@ -215,6 +229,7 @@ namespace vexui
                 if(renderBorder) vexDisplayRectDraw(x, y, x+width, y+ height);
                 txcolor.gset();
                 vexDisplayStringAt(x+3,y+(height/10),text.c_str());
+                resetColor();
             }
     };
 
@@ -297,7 +312,7 @@ namespace vexui
                     vexDisplayLineDraw(x+5,y+(height/3),x+10,y+(height/1.5));
                     vexDisplayLineDraw(x+15,y+(height/3),x+10,y+(height/1.5));
                 }
-                //Tomorrow add IMPL
+                resetColor();
             }
             
     };
@@ -342,6 +357,7 @@ namespace vexui
 
                 txcolor.gset();
                 vexDisplayStringAt(x+height,y+(height/10),text.c_str());
+                resetColor();
             }
     };
     
@@ -387,6 +403,7 @@ namespace vexui
                 for(UIElement item : items) {
                     item.render();
                 }
+                resetColor();
             }
 
     };
@@ -398,11 +415,10 @@ namespace vexui
         public:
             int x, y, width, height;
             float rangemax, rangemin, value;
-            bool isint, ischange, renderBackground, renderBorder;
+            bool isint, renderBackground, renderBorder;
             Color bgcolor{160,160,160}, bdcolor{0,0,0}, slcolor{105, 105, 105}, selcolor{0,0,0}, lncolor{0,0,0}, maxtxcolor{0,0,0}, mintxcolor{0,0,0}, valbxcolor{150,150,150}, valtxcolor{0,0,0};
            
             Event onValueChange = Event();
-            Event onSelectValue = Event(); 
             // Constructor
             Slider(int x, int y, int width, int height, float min, float max, float value, bool isInt)
             {
@@ -416,7 +432,6 @@ namespace vexui
                 this->renderBackground = true;
                 this->renderBorder = true;
                 prvalue = x + (width / 2);
-                ischange = false;
             }
 
             void evalValue() {
@@ -437,31 +452,68 @@ namespace vexui
                 if(renderBorder) vexDisplayRectDraw(x, y, x+width, y+ height);
                 lncolor.gset();
                 vexDisplayLineDraw(x+5,y+(height/1.5),(x+width)-5,y+(height/1.5));
-                slcolor.gset();
-                vexDisplayCircleFill(prvalue,y+(height/1.5),5);
+
                 if(isPress()) {
                     int tempval = vexui::Screen.xPosition();
                     prvalue = tempval;
                     if(prvalue < x+5) prvalue = x+5;
                     if (prvalue > x+width-5) prvalue = x+width-5;
                     evalValue();
+
+                    valbxcolor.gset();
+                    vexDisplayRectFill(prvalue-10,y+height+3,35,15);
+                    valtxcolor.gset();
+                    vexDisplayVStringAt(prvalue-8, y+height+4, to_string_float(value).c_str(), "");
+
+                    onValueChange.InvokeListeners(this);
                 }
+
+                slcolor.gset();
+                vexDisplayCircleFill(prvalue,y+(height/1.5),5);
                 mintxcolor.gset();
-                vexDisplayVStringAt(x+2,y+(height/3)-8, to_string_int(rangemin).c_str(), "");
+                vexDisplayVStringAt(x+2,y+(height/3)-8, to_string_float(rangemin).c_str(), "");
                 maxtxcolor.gset();
-                vexDisplayVStringAt(x+width-getStringWidth(to_string_int(rangemax).c_str()),y+(height/3)-8, to_string_int(rangemax).c_str(), "");
+                vexDisplayVStringAt(x+width-getStringWidth(to_string_float(rangemax).c_str()),y+(height/3)-8, to_string_float(rangemax).c_str(), "");
+                resetColor();
             }
     };
 
+    enum OdometryUnits {
+        INCHES = 0,
+        FEET = 1,
+        MILIMETERS = 2,
+        METERS = 3
+    };
+
     class OdometryMap : public UIElement {
+        private:
+            float* xref;
+            float* yref;
+            float* headingref;
 
         public:
-            OdometryMap() {
+            Color mpgcolor{192,192,192}, lncolor{81,81,81}, blcolor{25, 173, 207};
+            OdometryUnits unit = OdometryUnits::INCHES;
 
+            OdometryMap(int x, int y, float* xref, float* yref, float* headingref, OdometryUnits uints) {
+                this->x = x;
+                this->y = y;
+                this->width = 250;
+                this->height = 250;
+                this->xref = xref;
+                this->yref = yref;
+                this->headingref = headingref;
+                this->unit = uints;
             }
 
             void render() {
+                //Draw Map 200x200
+                mpgcolor.gset();
+                vexDisplayRectDraw(x,y,200,200);
 
+                //Draw Position and Heading on map
+
+                //Draw Info
             }
     };
 
