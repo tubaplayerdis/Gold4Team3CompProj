@@ -514,6 +514,9 @@ namespace vexui
                 //Draw Position and Heading on map
 
                 //Draw Info
+
+                //Reset Color
+                resetColor();
             }
     };
 
