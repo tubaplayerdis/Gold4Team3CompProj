@@ -73,14 +73,7 @@ void resetColor() {
 #pragma endregion
 
 namespace vexui
-{
-    class vexui
-    {
-        public:
-            //Update this with your refrence to your brain screen!
-            static inline vex::brain::lcd Screen = Bot::Brain.Screen;
-    };
-    
+{   
     class Color {
         public:
             int R, G, B;
@@ -162,18 +155,34 @@ namespace vexui
     };
 
     class UIElement {
+        private:
+            int lastPressX = -1;
+            int lastPressY = -1;
         public:
             int x = 0, y = 0, width = 100, height = 20;
             bool dorender = true;
             Event pressEvent = Event();
 
             bool isPress() {
-                if(vexui::Screen.pressing() && ((vexui::Screen.xPosition() <= x && vexui::Screen.xPosition() >= x+width) && (vexui::Screen.yPosition() <= y && vexui::Screen.yPosition() >= y+height))) {
+                V5_TouchStatus status;
+                vexTouchDataGet(&status);
+
+                if(status.pressCount > 0 && ((status.lastXpos <= x && status.lastXpos >= x+width) && (status.lastYpos <= y && status.lastYpos >= y+height))) {
                     pressEvent.InvokeListeners(this);
+                    lastPressX = status.lastXpos;
+                    lastPressY = status.lastYpos;
                     return true;
                 }
                 return false;
               
+            }
+
+            int getLastPressX() {
+                return lastPressX;
+            }
+
+            int getLastPressY() {
+                return lastPressY;
             }
 
             virtual void render();
@@ -196,7 +205,7 @@ namespace vexui
             void render() { 
                 if(!dorender) return;
                 color.gset();
-                vexui::Screen.printAt(x,y, text.c_str());
+                vexDisplayVStringAt(x,y, text.c_str(), "");
                 resetColor();
             }
     };
@@ -454,7 +463,7 @@ namespace vexui
                 vexDisplayLineDraw(x+5,y+(height/1.5),(x+width)-5,y+(height/1.5));
 
                 if(isPress()) {
-                    int tempval = vexui::Screen.xPosition();
+                    int tempval = getLastPressX();
                     prvalue = tempval;
                     if(prvalue < x+5) prvalue = x+5;
                     if (prvalue > x+width-5) prvalue = x+width-5;
@@ -485,20 +494,33 @@ namespace vexui
         METERS = 3
     };
 
+    typedef struct {
+        float x;
+        float y;
+    } OdometryPoint;
+
+    int fti(float value) {
+        return (int)(value >= 0.0f ? value + 0.5f : value - 0.5f);
+    }
+
     class OdometryMap : public UIElement {
         private:
             float* xref;
             float* yref;
             float* headingref;
 
+            int mapheight = 200;
+            int mapwidth = 200;
+            float botLinelen = 20;
+
         public:
-            Color mpgcolor{192,192,192}, lncolor{81,81,81}, blcolor{25, 173, 207};
+            Color mpgcolor{192,192,192}, lncolor{81,81,81}, blcolor{25, 173, 207}, botcolor{150, 61, 39}, botheadingcolor{150, 132, 39};
             OdometryUnits unit = OdometryUnits::INCHES;
 
             OdometryMap(int x, int y, float* xref, float* yref, float* headingref, OdometryUnits uints) {
                 this->x = x;
                 this->y = y;
-                this->width = 250;
+                this->width = 200;
                 this->height = 250;
                 this->xref = xref;
                 this->yref = yref;
@@ -506,14 +528,131 @@ namespace vexui
                 this->unit = uints;
             }
 
+            #define DEG_TO_RAD(deg) ((deg) * M_PI / 180.0)
+
+            OdometryPoint* translateCoords() {
+                OdometryPoint* corners = (OdometryPoint*)malloc(6 * sizeof(OdometryPoint));
+
+                const float scaleX = 200.0f / 12.0f;
+                const float scaleY = 200.0f / 12.0f;
+
+                float feetx = 0.0f, feety = 0.0f;
+                switch (unit)
+                {
+                    case INCHES:
+                        feetx = *xref/12.0f;
+                        feety = *yref/12.0f;
+                        break;
+
+                    case FEET:
+                        feetx = *xref;
+                        feety = *yref;
+                        break;
+
+                    case MILIMETERS:
+                        feetx = *xref/304.8f;
+                        feety = *yref/304.8f;
+                        break;
+
+                    case METERS:
+                        feetx = *xref*3.281f;
+                        feety = *yref*3.281f;
+                        break;
+                }
+
+                float centerX = feetx * scaleX;
+                float centerY = feety * scaleY;
+
+
+                float angleRad = DEG_TO_RAD(*headingref);
+
+                
+                float halfWidth = 10 / 2.0f;
+                float halfHeight = 10 / 2.0f;
+
+                
+                OdometryPoint localCorners[4] = {
+                    { -halfWidth, -halfHeight }, // Top-left
+                    {  halfWidth, -halfHeight }, // Top-right
+                    {  halfWidth,  halfHeight }, // Bottom-right
+                    { -halfWidth,  halfHeight }  // Bottom-left
+                };
+
+                // Rotate and translate each corner
+                for (int i = 0; i < 4; i++) {
+                    // Apply rotation
+                    float rotatedX = localCorners[i].x * cos(angleRad) - localCorners[i].y * sin(angleRad);
+                    float rotatedY = localCorners[i].x * sin(angleRad) + localCorners[i].y * cos(angleRad);
+
+                    // Translate to the center position
+                    corners[i].x = centerX + rotatedX;
+                    corners[i].y = centerY + rotatedY;
+                }
+
+                corners[4].x = centerX + botLinelen * cos(angleRad);
+                corners[4].y = centerY + botLinelen * sin(angleRad);
+
+                corners[5].x = centerX;
+                corners[5].y = centerY;
+
+                return corners;
+            } 
+
             void render() {
                 //Draw Map 200x200
                 mpgcolor.gset();
-                vexDisplayRectDraw(x,y,200,200);
+                vexDisplayRectDraw(x,y,x+mapwidth,y+mapheight);
+                lncolor.gset();
+                for(int i = 0; i < 5; i++) {
+                    vexDisplayLineDraw(x+(i*40+40),y, x+(i*40+40), y+mapheight);
+                }
+                for(int i = 0; i < 5; i++) {
+                    vexDisplayLineDraw(x,y+(i*40+40), x+mapwidth, y+(i*40+40));
+                }
+                blcolor.gset();
+                vexDisplayLineDraw(x+100, y, x+100, y+mapheight);
+                vexDisplayLineDraw(x, y+100, x+mapwidth, y+100);
 
-                //Draw Position and Heading on map
+                //Get Unit as String
+                std::string unitstring = "";
+                switch (unit)
+                {
+                    case INCHES:
+                        unitstring = "in";
 
-                //Draw Info
+                    case FEET:
+                        unitstring = "ft";
+
+                    case MILIMETERS:
+                        unitstring = "mm";
+
+                    case METERS:
+                        unitstring = "m";
+                
+                    default:
+                        unitstring = "in";
+                }
+
+
+                //Draw Position and Heading on Info
+                std::stringstream ss;
+                ss << "X: " << *xref << " " << unitstring << ", Y: " << *yref << " " << unitstring << ", H: " << *headingref << " deg";
+                vexDisplayVStringAt(x+20, y+220, ss.str().c_str(), "");
+
+                //Draw Bot Character
+                OdometryPoint* cc = translateCoords();
+                //20x20 Bot, x and y are middle pos
+                botcolor.gset();
+                vexDisplayLineDraw(fti(cc[0].x), fti(cc[0].y),fti(cc[1].x), fti(cc[1].y));
+                vexDisplayLineDraw(fti(cc[1].x), fti(cc[1].y),fti(cc[2].x), fti(cc[2].y));
+                vexDisplayLineDraw(fti(cc[2].x), fti(cc[2].y),fti(cc[3].x), fti(cc[3].y));
+                vexDisplayLineDraw(fti(cc[3].x), fti(cc[3].y),fti(cc[0].x), fti(cc[0].y));
+
+                botheadingcolor.gset();
+                vexDisplayLineDraw(fti(cc[4].x), fti(cc[4].y), fti(cc[5].x), fti(cc[5].y));
+
+                //Free the mem
+                free(cc);
 
                 //Reset Color
                 resetColor();
