@@ -11,12 +11,11 @@ class UISystem
 {
     private:
         static bool doRender;
-
+    public:
         //callbacks
         static void mainTabButton_Press();
         static void odometryTabButton_Press();
         static void consoleTabButton_Press();
-    public:
         //UI Elements
         static vexui::Button mainTabButton;
         static vexui::Button odometryTabButton;
