@@ -14,6 +14,8 @@ Panel UISystem::mainPanel = Panel(0,20,480,220);
 Panel UISystem::odometryPanel = Panel(0,20,480,220);
 Panel UISystem::consolePanel = Panel(0,20,480,220);
 
+Label UISystem::watermark = Label(120, 10, "38535B");
+
 void UISystem::mainTabButton_Press() {
     mainPanel.dorender = true;
     odometryPanel.dorender = false;

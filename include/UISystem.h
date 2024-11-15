@@ -25,6 +25,8 @@ class UISystem
         static vexui::Panel odometryPanel;
         static vexui::Panel consolePanel;
 
+        static vexui::Label watermark;
+
         //Functions and list
         static void setup();
         static int renderLoop();
