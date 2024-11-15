@@ -24,40 +24,6 @@
 /*The Vex Brain Sceen is 480 x 240*/
 
 #pragma region Helper_Functions 
-int rgbToHue(int r, int g, int b) {
-    float fr = r / 255.0f;
-    float fg = g / 255.0f;
-    float fb = b / 255.0f;
-
-    float max_val = std::max({fr, fg, fb});
-    float min_val = std::min({fr, fg, fb});
-    float delta = max_val - min_val;
-
-    // Calculate Hue
-    float hue;
-    if (delta == 0) {
-        hue = 0; // Gray (no color)
-    } else if (max_val == fr) {
-        hue = 60 * (std::fmod(((fg - fb) / delta), 6));
-    } else if (max_val == fg) {
-        hue = 60 * (((fb - fr) / delta) + 2);
-    } else {
-        hue = 60 * (((fr - fg) / delta) + 4);
-    }
-
-    // Make sure hue is in the range 0-360
-    if (hue < 0) {
-        hue += 360;
-    }
-
-    return static_cast<int>(std::round(hue));
-}
-
-std::string to_string_int(int x){
-  std::stringstream s;
-  s << x;
-  return s.str();
-}
 
 std::string to_string_float(float x){
   std::stringstream s;
@@ -66,8 +32,9 @@ std::string to_string_float(float x){
 }
 
 void resetColor() {
-    vexDisplayForegroundColor(rgbToHue(255,255,255));
-    vexDisplayBackgroundColor(rgbToHue(255,255,255));
+    uint32_t color_code = (255 << 16) | (255 << 8) | 255;
+    vexDisplayForegroundColor(color_code);
+    vexDisplayBackgroundColor(color_code);
 }
 
 #pragma endregion
@@ -97,8 +64,10 @@ namespace vexui
             }
 
             void gset() {
-                vexDisplayForegroundColor(rgbToHue(R,G,B));
-                vexDisplayBackgroundColor(rgbToHue(R,G,B));
+                uint32_t color_code = (R << 16) | (G << 8) | B;
+                //Colors
+                vexDisplayForegroundColor(color_code);
+                vexDisplayBackgroundColor(color_code);
             }
 
             private:
@@ -141,16 +110,16 @@ namespace vexui
 
     class Event {
         public:
-            std::vector<void (*)(UIElement* element)> listeners;
+            std::vector<void (*)(void)> listeners;
 
             Event() {
-                this->listeners = std::vector<void (*)(UIElement*)>();
+                this->listeners = std::vector<void (*)(void)>();
             }
-            void addListener(void (*listener)(UIElement*)) { listeners.push_back(listener); }
+            void addListener(void (*listener)(void)) { listeners.push_back(listener); }
             void removeListener(int index) { listeners.erase(listeners.begin() + index); }
             void removeAll() { listeners.clear(); }
-            void InvokeListeners(UIElement* element) {
-                for (auto &listener : listeners) listener(element);
+            void InvokeListeners() {
+                for (auto &listener : listeners) listener();
             }
     };
 
@@ -163,12 +132,16 @@ namespace vexui
             bool dorender = true;
             Event pressEvent = Event();
 
+            UIElement() {
+                
+            }
+
             bool isPress() {
                 V5_TouchStatus status;
                 vexTouchDataGet(&status);
 
                 if(status.pressCount > 0 && ((status.lastXpos <= x && status.lastXpos >= x+width) && (status.lastYpos <= y && status.lastYpos >= y+height))) {
-                    pressEvent.InvokeListeners(this);
+                    pressEvent.InvokeListeners();
                     lastPressX = status.lastXpos;
                     lastPressY = status.lastYpos;
                     return true;
@@ -193,7 +166,7 @@ namespace vexui
             std::string text;
             Color color{0, 0, 0};
 
-            Label(int x, int y, const std::string &text) { 
+            Label(int x, int y, const std::string &text) : UIElement() { 
                 this->x = x;
                 this->y = y;
                 this->text = text;
@@ -205,7 +178,7 @@ namespace vexui
             void render() { 
                 if(!dorender) return;
                 color.gset();
-                vexDisplayVStringAt(x,y, text.c_str(), "");
+                vexDisplayStringAt(x,y, text.c_str());
                 resetColor();
             }
     };
@@ -217,7 +190,7 @@ namespace vexui
             bool renderBackground;
             bool renderBorder;
 
-            Button(int x, int y, int width, int height, const std::string &text) {
+            Button(int x, int y, int width, int height, const std::string &text) : UIElement() {
                 this->x = x;
                 this->y = y;
                 this->width = width;
@@ -255,7 +228,7 @@ namespace vexui
             bool isCollapsable;
             bool collapsed;
 
-            Dropdown(int x, int y, int width, int height, const std::string &text, bool iscollapsable) {
+            Dropdown(int x, int y, int width, int height, const std::string &text, bool iscollapsable) : UIElement() {
                 this->x = x;
                 this->y = y;
                 this->width = width;
@@ -334,7 +307,7 @@ namespace vexui
             bool renderBorder;
             bool toggle;
 
-            TButton(int x, int y, int width, int height, const std::string &text) {
+            TButton(int x, int y, int width, int height, const std::string &text) : UIElement() {
                 this->x = x;
                 this->y = y;
                 this->width = width;
@@ -379,7 +352,7 @@ namespace vexui
             bool renderBorder;
             Color color{55,55,55}, bdcolor{0,0,0};
 
-            Panel(int x, int y, int width, int height) {
+            Panel(int x, int y, int width, int height) : UIElement() {
                 this->x = x;
                 this->y = y;
                 this->width = width;
@@ -429,7 +402,7 @@ namespace vexui
            
             Event onValueChange = Event();
             // Constructor
-            Slider(int x, int y, int width, int height, float min, float max, float value, bool isInt)
+            Slider(int x, int y, int width, int height, float min, float max, float value, bool isInt) : UIElement()
             {
                 this->x = x;
                 this->y = y;
@@ -472,17 +445,17 @@ namespace vexui
                     valbxcolor.gset();
                     vexDisplayRectFill(prvalue-10,y+height+3,35,15);
                     valtxcolor.gset();
-                    vexDisplayVStringAt(prvalue-8, y+height+4, to_string_float(value).c_str(), "");
+                    vexDisplayStringAt(prvalue-8, y+height+4, to_string_float(value).c_str());
 
-                    onValueChange.InvokeListeners(this);
+                    onValueChange.InvokeListeners();
                 }
 
                 slcolor.gset();
                 vexDisplayCircleFill(prvalue,y+(height/1.5),5);
                 mintxcolor.gset();
-                vexDisplayVStringAt(x+2,y+(height/3)-8, to_string_float(rangemin).c_str(), "");
+                vexDisplayStringAt(x+2,y+(height/3)-8, to_string_float(rangemin).c_str());
                 maxtxcolor.gset();
-                vexDisplayVStringAt(x+width-getStringWidth(to_string_float(rangemax).c_str()),y+(height/3)-8, to_string_float(rangemax).c_str(), "");
+                vexDisplayStringAt(x+width-getStringWidth(to_string_float(rangemax).c_str()),y+(height/3)-8, to_string_float(rangemax).c_str());
                 resetColor();
             }
     };
@@ -517,7 +490,7 @@ namespace vexui
             Color mpgcolor{192,192,192}, lncolor{81,81,81}, blcolor{25, 173, 207}, botcolor{150, 61, 39}, botheadingcolor{150, 132, 39};
             OdometryUnits unit = OdometryUnits::INCHES;
 
-            OdometryMap(int x, int y, float* xref, float* yref, float* headingref, OdometryUnits uints) {
+            OdometryMap(int x, int y, float* xref, float* yref, float* headingref, OdometryUnits uints) : UIElement() {
                 this->x = x;
                 this->y = y;
                 this->width = 200;
@@ -637,7 +610,7 @@ namespace vexui
                 //Draw Position and Heading on Info
                 std::stringstream ss;
                 ss << "X: " << *xref << " " << unitstring << ", Y: " << *yref << " " << unitstring << ", H: " << *headingref << " deg";
-                vexDisplayVStringAt(x+20, y+220, ss.str().c_str(), "");
+                vexDisplayStringAt(x+20, y+220, ss.str().c_str());
 
                 //Draw Bot Character
                 OdometryPoint* cc = translateCoords();

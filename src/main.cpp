@@ -13,6 +13,7 @@
 #include "ColorDetection.h"
 #include "Drivetrain.h"
 #include "Notifications.h"
+#include "UISystem.h"
 
 using namespace vex;
 
