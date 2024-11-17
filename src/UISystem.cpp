@@ -1,20 +1,21 @@
 #include "UISystem.h"
+#include "vex.h"
+#include "api/vexui.h"
 
-using namespace vexui;
 
 bool UISystem::doRender = false;
 
 /*The Vex Brain Sceen is 480 x 240*/
 
-Button UISystem::mainTabButton = Button(0,0,40,20, "Main");
-Button UISystem::odometryTabButton = Button(40,0,40,20, "Odometry");
-Button UISystem::consoleTabButton = Button(80,0,40,20, "Console");
+vexui::Button UISystem::mainTabButton = vexui::Button(0,0,40,20, "Main");
+vexui::Button UISystem::odometryTabButton = vexui::Button(40,0,40,20, "Odometry");
+vexui::Button UISystem::consoleTabButton = vexui::Button(80,0,40,20, "Console");
 
-Panel UISystem::mainPanel = Panel(0,20,480,220);
-Panel UISystem::odometryPanel = Panel(0,20,480,220);
-Panel UISystem::consolePanel = Panel(0,20,480,220);
+vexui::Panel UISystem::mainPanel = vexui::Panel(0,20,480,220);
+vexui::Panel UISystem::odometryPanel = vexui::Panel(0,20,480,220);
+vexui::Panel UISystem::consolePanel = vexui::Panel(0,20,480,220);
 
-Label UISystem::watermark = Label(120, 10, "38535B");
+vexui::Label UISystem::watermark = vexui::Label(120, 10, "GBS 38535B");
 
 void UISystem::mainTabButton_Press() {
     mainPanel.dorender = true;
@@ -42,9 +43,9 @@ void UISystem::setup() {
     odometryPanel.dorender = false;
     consolePanel.dorender = false;
 
-    mainPanel.addElement(Label(10,10,"Main Panel"));
-    odometryPanel.addElement(Label(10,10,"Odometry Panel"));
-    consolePanel.addElement(Label(10,10,"Console Panel"));
+    mainPanel.addElement(vexui::Label(10,10,"Main Panel"));
+    odometryPanel.addElement(vexui::Label(10,10,"Odometry Panel"));
+    consolePanel.addElement(vexui::Label(10,10,"Console Panel"));
 }
 
 void UISystem::toggleUI() {
@@ -53,7 +54,10 @@ void UISystem::toggleUI() {
 
 int UISystem::renderLoop() {
     while(true) {
+
         //render Elements
+        if(!doRender) continue;
+        UISystem::watermark.render();
         UISystem::mainTabButton.render();
         UISystem::odometryTabButton.render();
         UISystem::consoleTabButton.render();

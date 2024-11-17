@@ -13,7 +13,7 @@
 #include "ColorDetection.h"
 #include "Drivetrain.h"
 #include "Notifications.h"
-#include "UISystem.h"
+//#include "UISystem.h"
 
 using namespace vex;
 
@@ -106,7 +106,7 @@ int main() {
   vex::task aivisionLoop(Bot::aiLoop);
 
 
-  Bot::Brain.Screen.printAt(0, 150, "Systems Go!");
+  //Bot::Brain.Screen.printAt(0, 150, "Systems Go!");
   
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);

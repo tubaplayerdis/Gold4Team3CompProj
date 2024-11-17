@@ -1,10 +1,10 @@
 #include "vex.h"
+#include "api/vexui.h"
 #include "Bot.h"
 #include "Odometry.h"
 #include "ColorDetection.h"
 #include "Drivetrain.h"
 #include "Notifications.h"
-#include "api/vexui.h"
 
 
 class UISystem
