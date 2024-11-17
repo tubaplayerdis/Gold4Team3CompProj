@@ -3,6 +3,7 @@
 /*    Module:     vexui.h                      */
 /*    Author:     Aaron Wilk                   */
 /*    Created:    13 Nov 2024                  */
+/*    Description: Header for vexui lib        */
 /*                                             */
 /*---------------------------------------------*/
 

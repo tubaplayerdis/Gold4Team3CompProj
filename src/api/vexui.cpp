@@ -1,3 +1,14 @@
+/*---------------------------------------------*/
+/*                                             */
+/*    Module:     vexui.h                      */
+/*    Author:     Aaron Wilk                   */
+/*    Created:    16 Nov 2024                  */
+/*    Description: Source for vexui lib        */
+/*                                             */
+/*---------------------------------------------*/
+
+
+
 #include "api/vexui.h"
 #include "vex.h"
 #include "v5_api.h"
