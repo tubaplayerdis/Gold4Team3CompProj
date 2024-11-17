@@ -11,6 +11,7 @@
 
 #include "vex.h"
 #include <string>
+#include <sstream>
 #include <vector>
 #include <functional>
 #include <algorithm>
@@ -112,7 +113,11 @@ namespace vexui
 
             int getLastPressY();
 
-            virtual void render() = 0;
+            virtual std::pair<int, int> getSize();
+
+            virtual void setSize(int w, int h);
+
+            virtual void render();
 
             
     };
@@ -122,7 +127,7 @@ namespace vexui
             std::string text;
             vexui::Color color{0, 0, 0};
 
-            inline Label(int x, int y, const std::string &text);
+            Label(int x, int y, const std::string &text);
 
             ~Label() = default;
 
@@ -144,7 +149,7 @@ namespace vexui
             ~Button() = default;
 
             std::string getText() const;
-            void setSize(int w, int h);
+            void setSize(int w, int h) override;
             void render() override;
     };
 
@@ -165,7 +170,7 @@ namespace vexui
 
             void toggle();
 
-            void addElement(UIElement &element);
+            void addElement(UIElement element);
 
             void removeElement(int index);
 
@@ -189,8 +194,6 @@ namespace vexui
 
             std::string getText();
 
-            void setSize(int w, int h);
-
             void render() override;
     };
     
@@ -205,7 +208,7 @@ namespace vexui
 
             Panel(int x, int y, int width, int height);
 
-            void addElement(UIElement &element);
+            void addElement(UIElement element);
 
             void removeElement(int index);
 
@@ -262,7 +265,7 @@ namespace vexui
 
         public:
             vexui::Color mpgcolor{192,192,192}, lncolor{81,81,81}, blcolor{25, 173, 207}, botcolor{150, 61, 39}, botheadingcolor{150, 132, 39};
-            OdometryUnits unit = OdometryUnits::INCHES;
+            OdometryUnits unit;
 
             OdometryMap(int x, int y, float* xref, float* yref, float* headingref, OdometryUnits uints);
 

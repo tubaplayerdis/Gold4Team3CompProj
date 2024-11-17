@@ -27,6 +27,15 @@ class UISystem
 
         static vexui::Label watermark;
 
+        //Main Panel Elements
+        static vexui::Label labm;
+
+        //Odometry Panel Elements
+        static vexui::Label labo;
+
+        //Console Panel Elements
+        static vexui::Label labc;
+
         //Functions and list
         static void setup();
         static int renderLoop();
