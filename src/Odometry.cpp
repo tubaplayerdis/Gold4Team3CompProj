@@ -116,7 +116,7 @@ void Odometry::updateOdometry() {
     Odometry::heading = Bot::Inertial.heading(vex::degrees);
 
     double forward_distance = (Bot::RotationForward.position(vex::degrees) / 360) * Odometry::tracking_wheel_circumference; // Forward movement
-    Bot::Brain.Screen.printAt(100,100,"Forward Dis %f", forward_distance);
+    //Bot::Brain.Screen.printAt(100,100,"Forward Dis %f", forward_distance);
     double lateral_distance = (Bot::RotationLateral.position(vex::degrees) / 360) * Odometry::tracking_wheel_circumference; // Lateral movement
 
     Bot::RotationForward.resetPosition();

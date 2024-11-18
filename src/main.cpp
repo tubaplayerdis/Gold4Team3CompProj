@@ -104,6 +104,8 @@ int main() {
   vex::task colorsensing(ColorDetection::visionTask);
   vex::task monitoring(Bot::monitorLoop);
   vex::task aivisionLoop(Bot::aiLoop);
+  UISystem::setup();
+  vex::task gui(UISystem::renderLoop);
 
 
   //Bot::Brain.Screen.printAt(0, 150, "Systems Go!");

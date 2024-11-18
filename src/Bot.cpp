@@ -245,9 +245,11 @@ int Bot::displayLoop() {
         /*
             BRAIN
         */
+       /*
         Bot::Brain.Screen.clearScreen(); // Clear the screen for updated information
         Bot::Brain.Screen.setCursor(1, 1);
         Bot::Brain.Screen.print("X = %.2f, Y = %.2f", Odometry::x, Odometry::y); // Print current coordinates
+        */
 
         /*
             REFRESH RATE
@@ -289,10 +291,10 @@ int Bot::monitorLoop() {
 int Bot::aiLoop() {
     while(true) {
         AIVisionF.takeSnapshot(vex::aivision::ALL_AIOBJS);
-        Brain.Screen.printAt(0,50, "AI Vision Count: %d", AIVisionF.objectCount);
+        //Brain.Screen.printAt(0,50, "AI Vision Count: %d", AIVisionF.objectCount);
         for(int i = 0; i < AIVisionF.objectCount; i++) {
             const char* str = strcat(strcat("Name: ", getGameElementNameFromID(Bot::AIVisionF.objects[i].id)),", X:%d, Y:%d");
-            Brain.Screen.printAt(0, 70+(20*i), str, AIVisionF.objects[i].centerX, AIVisionF.objects[i].centerY);
+            //Brain.Screen.printAt(0, 70+(20*i), str, AIVisionF.objects[i].centerX, AIVisionF.objects[i].centerY);
             //ID: %s, 
             //AIVisionF.objects[i].name
         }

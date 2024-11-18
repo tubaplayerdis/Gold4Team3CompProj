@@ -8,13 +8,13 @@ int ColorDetection::visionTask() {
     {
         double brightness = Bot::ColorSensor.brightness(false);
         double hue = Bot::ColorSensor.hue();
-        Bot::Brain.Screen.printAt(130,0, "hue: %f brightness: %f", hue, brightness);
+        //Bot::Brain.Screen.printAt(130,0, "hue: %f brightness: %f", hue, brightness);
 
 
         double GV = Bot::ColorSensor.hue();
         if(GV < BLUE_HUE_HIGH && GV > BLUE_HEU_LOW) {
             //Blue Ring
-            Bot::Brain.Screen.printAt(0,190, "Blue Ring Detected!");
+            //Bot::Brain.Screen.printAt(0,190, "Blue Ring Detected!");
             if(Bot::Aliance == aliance::Nuetral) continue;
             if(!isEnabled) continue;
             //Blue Ring Detected
@@ -35,7 +35,7 @@ int ColorDetection::visionTask() {
             }
         } else if( GV < RED_HUE_EXCLUSION_LOW && GV > RED_HUE_EXCLUSION_HIGH) {
             //Red Ring
-            Bot::Brain.Screen.printAt(0,190, "Red Ring Detected!");
+            //Bot::Brain.Screen.printAt(0,190, "Red Ring Detected!");
             if(Bot::Aliance == aliance::Nuetral) continue;
             if(!isEnabled) continue;
             //Red Ring Detected
