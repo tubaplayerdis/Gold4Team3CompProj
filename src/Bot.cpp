@@ -8,12 +8,12 @@
 vex::brain Bot::Brain = vex::brain();
 
 //Define Motors
-vex::motor Bot::LeftA = vex::motor(vex::PORT1, vex::ratio6_1,false);//High Speed
-vex::motor Bot::LeftB = vex::motor(vex::PORT2, vex::ratio6_1, false);//High Speed
-vex::motor Bot::LeftC = vex::motor(vex::PORT3, vex::ratio6_1, true);//High Speed
-vex::motor Bot::RightA = vex::motor(vex::PORT4, vex::ratio6_1, true);//High Speed
-vex::motor Bot::RightB = vex::motor(vex::PORT5, vex::ratio6_1, true);//High Speed
-vex::motor Bot::RightC = vex::motor(vex::PORT6, vex::ratio6_1, false);//High Speed
+vex::motor Bot::LeftA = vex::motor(vex::PORT1, vex::ratio6_1,true);//High Speed
+vex::motor Bot::LeftB = vex::motor(vex::PORT2, vex::ratio6_1, true);//High Speed
+vex::motor Bot::LeftC = vex::motor(vex::PORT3, vex::ratio6_1, false);//High Speed
+vex::motor Bot::RightA = vex::motor(vex::PORT4, vex::ratio6_1, false);//High Speed
+vex::motor Bot::RightB = vex::motor(vex::PORT5, vex::ratio6_1, false);//High Speed
+vex::motor Bot::RightC = vex::motor(vex::PORT6, vex::ratio6_1, true);//High Speed
 
 
 vex::motor Bot::Intake = vex::motor(vex::PORT7, vex::ratio18_1, true);//Low Power
@@ -77,7 +77,7 @@ void Bot::updateDeviceList() {
 
 const char* Bot::getGameElementNameFromID(int32_t id) {
     switch (id)
-    {
+    { 
     case 0:
         return "0";
     case 1:

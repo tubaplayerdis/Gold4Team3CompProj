@@ -99,11 +99,11 @@ int main() {
   Bot::Controller.ButtonRight.pressed(Notifications::notifForward);
 
   vex::task drivetrian(Drivetrain::ControllerLoop);
-  vex::task mainLoop(Bot::mainLoop);
+  //vex::task mainLoop(Bot::mainLoop);
   vex::task displayLoop(Bot::displayLoop);
   vex::task colorsensing(ColorDetection::visionTask);
   vex::task monitoring(Bot::monitorLoop);
-  vex::task aivisionLoop(Bot::aiLoop);
+  //vex::task aivisionLoop(Bot::aiLoop);
   UISystem::setup();
   vex::task gui(UISystem::renderLoop);
 

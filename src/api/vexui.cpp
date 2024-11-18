@@ -17,6 +17,7 @@
 #include <functional>
 #include <algorithm>
 #include <cmath>
+#include "Bot.h"
 
 
 vexui::Color::Color(int r, int g, int b) {
@@ -122,6 +123,7 @@ void vexui::Label::setText(const std::string &nt) { text = nt; width = getString
 std::string vexui::Label::getText() const { return text; }
 
 void vexui::Label::render() { 
+    Bot::Brain.Screen.clearScreen();
     if(!dorender) return;
     color.gset();
     vexDisplayStringAt(x,y, text.c_str());

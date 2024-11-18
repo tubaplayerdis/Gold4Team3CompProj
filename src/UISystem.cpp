@@ -58,8 +58,9 @@ void UISystem::toggleUI() {
 
 int UISystem::renderLoop() {
     while(true) {
-
+        UISystem::watermark.render();
         //render Elements
+        /*
         if(!doRender) continue;
         UISystem::watermark.render();
         UISystem::mainTabButton.render();
@@ -68,6 +69,9 @@ int UISystem::renderLoop() {
         UISystem::mainPanel.render();
         UISystem::odometryPanel.render();
         UISystem::consolePanel.render();
+        */
+
+        vex::this_thread::sleep_for(20);
     }
     return 1;
 }
