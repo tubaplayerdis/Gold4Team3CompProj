@@ -31,8 +31,8 @@ vexui::Label UISystem::watermark = vexui::Label(315, 15, "GBS 38535B");
 vexui::Label UISystem::labm = vexui::Label(10,10, "Main Panel");
 
 //Odometry Panel Elements
-vexui::Label UISystem::labo = vexui::Label(10,10, "Odometry Panel");
-vexui::OdometryMap UISystem::odoMap = vexui::OdometryMap(100,0, &Odometry::x, &Odometry::y, &Odometry::heading, vexui::OdometryUnits::INCHES);
+vexui::Label UISystem::labo = vexui::Label(250,10, "Calibration");
+vexui::OdometryMap UISystem::odoMap = vexui::OdometryMap(5,5, &Odometry::x, &Odometry::y, &Odometry::heading, vexui::OdometryUnits::INCHES);
 
 //Console Panel Elements
 vexui::Label UISystem::labc = vexui::Label(10,10, "Console Panel");
@@ -73,6 +73,7 @@ void UISystem::setup() {
 
     mainPanel.addElement(&labm);
     odometryPanel.addElement(&labo);
+    odometryPanel.addElement(&odoMap);
     consolePanel.addElement(&labc);
 }
 
@@ -81,6 +82,10 @@ void UISystem::toggleUI() {
 }
 
 int UISystem::renderLoop() {
+
+    Odometry::x = 45;
+    Odometry::y = 99;
+
     while(true) {
         vexDisplayErase();
         

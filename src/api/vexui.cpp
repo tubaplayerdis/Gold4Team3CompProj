@@ -17,6 +17,7 @@
 #include <functional>
 #include <algorithm>
 #include <cmath>
+#include <math.h>
 
 
 vexui::Color::Color(int r, int g, int b, bool foreground_only) {
@@ -375,14 +376,14 @@ void vexui::Slider::render() {
     resetColor();
 }
 
-vexui::OdometryMap::OdometryMap(int x, int y, double* xref, double* yref, double* headingref, OdometryUnits uints) : UIElement() {
+vexui::OdometryMap::OdometryMap(int x, int y, double* xref, double* yref, double* Headingref, OdometryUnits uints) : UIElement() {
     this->x = x;
     this->y = y;
     this->width = 150;
     this->height = 200;
     this->xref = xref;
     this->yref = yref;
-    this->headingref = headingref;
+    this->headingref = Headingref;
     this->unit = uints;
 }
 
@@ -391,8 +392,8 @@ vexui::OdometryMap::OdometryMap(int x, int y, double* xref, double* yref, double
 vexui::OdometryPoint* vexui::OdometryMap::translateCoords() {
     vexui::OdometryPoint* corners = (vexui::OdometryPoint*)malloc(6 * sizeof(vexui::OdometryPoint));
 
-    const float scaleX = 200.0f / 12.0f;
-    const float scaleY = 200.0f / 12.0f;
+    const float scaleX = 150.0f / 24.0f;
+    const float scaleY = 150.0f / 24.0f;
 
     float feetx = 0.0f, feety = 0.0f;
     switch (unit)
@@ -447,8 +448,13 @@ vexui::OdometryPoint* vexui::OdometryMap::translateCoords() {
         corners[i].y = centerY + rotatedY;
     }
 
-    corners[4].x = centerX + botLinelen * cos(angleRad);
-    corners[4].y = centerY + botLinelen * sin(angleRad);
+    /*
+        let x2 = Math.round(Math.cos(angle * Math.PI / 180) * distance + x1);
+        let y2 = Math.round(Math.sin(angle * Math.PI / 180) * distance + y1);
+    */
+
+    corners[4].x = cos((*headingref -90) * M_PI / 180) * botLinelen + centerX;
+    corners[4].y = sin((*headingref -90) * M_PI / 180) * botLinelen + centerY;
 
     corners[5].x = centerX;
     corners[5].y = centerY;
@@ -498,19 +504,20 @@ void vexui::OdometryMap::render() {
     std::stringstream ss;
     ss << "X: " << *xref << " " << unitstring << ", Y: " << *yref << " " << unitstring << ", H: " << *headingref << " deg";
     txcolor.gset();
-    vexDisplayStringAt(x+20, y+160, ss.str().c_str());
+    vexDisplayBackgroundColor(rgbtocol(txbgcolor.R, txbgcolor.G, txbgcolor.B));
+    vexDisplaySmallStringAt(x, y+160, ss.str().c_str());
 
     //Draw Bot Character
     OdometryPoint* cc = translateCoords();
     //20x20 Bot, x and y are middle pos
     botcolor.gset();
-    vexDisplayLineDraw(fti(cc[0].x), fti(cc[0].y),fti(cc[1].x), fti(cc[1].y));
-    vexDisplayLineDraw(fti(cc[1].x), fti(cc[1].y),fti(cc[2].x), fti(cc[2].y));
-    vexDisplayLineDraw(fti(cc[2].x), fti(cc[2].y),fti(cc[3].x), fti(cc[3].y));
-    vexDisplayLineDraw(fti(cc[3].x), fti(cc[3].y),fti(cc[0].x), fti(cc[0].y));
+    vexDisplayLineDraw(fti(cc[0].x+(x+75)), fti(cc[0].y+(y+75)),fti(cc[1].x+(x+75)), fti(cc[1].y)+(y+75));
+    vexDisplayLineDraw(fti(cc[1].x+(x+75)), fti(cc[1].y+(y+75)),fti(cc[2].x+(x+75)), fti(cc[2].y)+(y+75));
+    vexDisplayLineDraw(fti(cc[2].x+(x+75)), fti(cc[2].y+(y+75)),fti(cc[3].x+(x+75)), fti(cc[3].y)+(y+75));
+    vexDisplayLineDraw(fti(cc[3].x+(x+75)), fti(cc[3].y+(y+75)),fti(cc[0].x+(x+75)), fti(cc[0].y)+(y+75));
 
     botheadingcolor.gset();
-    vexDisplayLineDraw(fti(cc[4].x), fti(cc[4].y), fti(cc[5].x), fti(cc[5].y));
+    vexDisplayLineDraw(fti(cc[4].x+(x+75)), fti(cc[4].y+(y+75)), fti(cc[5].x+(x+75)), fti(cc[5].y+(y+75)));
 
     //Free the mem
     free(cc);
