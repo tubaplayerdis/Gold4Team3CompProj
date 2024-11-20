@@ -32,6 +32,7 @@ class UISystem
 
         //Odometry Panel Elements
         static vexui::Label labo;
+        static vexui::OdometryMap odoMap;
 
         //Console Panel Elements
         static vexui::Label labc;

@@ -27,9 +27,16 @@ vexui::Panel UISystem::consolePanel = vexui::Panel(0,40,480,200);
 
 vexui::Label UISystem::watermark = vexui::Label(315, 15, "GBS 38535B");
 
+//Main Panel Elements
 vexui::Label UISystem::labm = vexui::Label(10,10, "Main Panel");
+
+//Odometry Panel Elements
 vexui::Label UISystem::labo = vexui::Label(10,10, "Odometry Panel");
+vexui::OdometryMap UISystem::odoMap = vexui::OdometryMap(100,0, &Odometry::x, &Odometry::y, &Odometry::heading, vexui::OdometryUnits::INCHES);
+
+//Console Panel Elements
 vexui::Label UISystem::labc = vexui::Label(10,10, "Console Panel");
+ 
 
 void UISystem::mainTabButton_Press() {
     mainPanel.dorender = true;
@@ -63,9 +70,6 @@ void UISystem::setup() {
     labm.bgcolor = mainPanel.color;
     labo.bgcolor = odometryPanel.color;
     labc.bgcolor = consolePanel.color;
-    labm.txsize = vexui::LabelSize::LARGE;
-    labo.txsize = vexui::LabelSize::LARGE;
-    labc.txsize = vexui::LabelSize::LARGE;
 
     mainPanel.addElement(&labm);
     odometryPanel.addElement(&labo);

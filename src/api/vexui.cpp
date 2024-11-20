@@ -375,11 +375,11 @@ void vexui::Slider::render() {
     resetColor();
 }
 
-vexui::OdometryMap::OdometryMap(int x, int y, float* xref, float* yref, float* headingref, OdometryUnits uints) : UIElement() {
+vexui::OdometryMap::OdometryMap(int x, int y, double* xref, double* yref, double* headingref, OdometryUnits uints) : UIElement() {
     this->x = x;
     this->y = y;
-    this->width = 199;
-    this->height = 250;
+    this->width = 150;
+    this->height = 200;
     this->xref = xref;
     this->yref = yref;
     this->headingref = headingref;
@@ -464,14 +464,14 @@ void vexui::OdometryMap::render() {
     vexDisplayRectDraw(x,y,x+mapwidth,y+mapheight);
     lncolor.gset();
     for(int i = 0; i < 5; i++) {
-        vexDisplayLineDraw(x+(i*40+40),y, x+(i*40+40), y+mapheight);
+        vexDisplayLineDraw(x+(i*30+30),y, x+(i*30+30), y+mapheight);
     }
     for(int i = 0; i < 5; i++) {
-        vexDisplayLineDraw(x,y+(i*40+40), x+mapwidth, y+(i*40+40));
+        vexDisplayLineDraw(x,y+(i*30+30), x+mapwidth, y+(i*30+30));
     }
     blcolor.gset();
-    vexDisplayLineDraw(x+100, y, x+100, y+mapheight);
-    vexDisplayLineDraw(x, y+100, x+mapwidth, y+100);
+    vexDisplayLineDraw(x+75, y, x+75, y+mapheight);
+    vexDisplayLineDraw(x, y+75, x+mapwidth, y+75);
 
     //Get Unit as String
     std::string unitstring = "";
@@ -497,7 +497,8 @@ void vexui::OdometryMap::render() {
     //Draw Position and Heading on Info
     std::stringstream ss;
     ss << "X: " << *xref << " " << unitstring << ", Y: " << *yref << " " << unitstring << ", H: " << *headingref << " deg";
-    vexDisplayStringAt(x+20, y+220, ss.str().c_str());
+    txcolor.gset();
+    vexDisplayStringAt(x+20, y+160, ss.str().c_str());
 
     //Draw Bot Character
     OdometryPoint* cc = translateCoords();
