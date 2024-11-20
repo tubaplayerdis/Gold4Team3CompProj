@@ -87,7 +87,7 @@ int Odometry::driveToNearestWallStake() {
         double distanceToStake1 = Odometry::calculateDistanceToStake(Odometry::tallWallStake1X, Odometry::tallWallStake1Y);
         double distanceToStake2 = Odometry::calculateDistanceToStake(Odometry::tallWallStake2X, Odometry::tallWallStake2Y);
 
-        Bot::Brain.Screen.printAt(0, 70, "Calculated Distance Of Stakes");
+        //Bot::Brain.Screen.printAt(0, 70, "Calculated Distance Of Stakes");
 
         double targetX, targetY, perpendicularAngle;
 

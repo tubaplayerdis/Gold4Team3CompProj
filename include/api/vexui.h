@@ -25,9 +25,10 @@
 namespace vexui
 {   
     inline void resetColor() {
-        uint32_t color_code = (255 << 16) | (255 << 8) | 255;
-        vexDisplayForegroundColor(color_code);
-        vexDisplayBackgroundColor(color_code);
+        uint32_t white = (255 << 16) | (255 << 8) | 255;
+        uint32_t black = (0 << 16) | (0 << 8) | 0;
+        vexDisplayForegroundColor(white);
+        vexDisplayBackgroundColor(black);
     }
 
     inline std::string to_string_float(float x){
@@ -38,7 +39,8 @@ namespace vexui
     class Color {
         public:
             int R, G, B;
-            Color(int r, int g, int b);
+            bool Foreground;
+            Color(int r, int g, int b, bool foreground_only);
 
             void set(const std::string &color);
 
@@ -46,33 +48,33 @@ namespace vexui
 
             void gset();
 
-            static inline Color getColor(const std::string &color) {
-                if (color == "red") return vexui::Color(178,31,53);
-                else if (color == "redorange") return vexui::Color(216, 39, 53);
-                else if (color == "orange") return vexui::Color(255, 116, 53);
-                else if (color == "orangeyellow") return vexui::Color(255, 161, 53);
-                else if (color == "yellow") return vexui::Color(255, 240, 53);
-                else if (color == "darkgreen") return vexui::Color(0, 117, 58);
-                else if (color == "green") return vexui::Color(0, 158, 71);
-                else if (color == "lightgreen") return vexui::Color(22, 221, 53);
-                else if (color == "darkblue") return vexui::Color(0, 82, 165);
-                else if (color == "blue") return vexui::Color(0, 121, 252);
-                else if (color == "lightblue") return vexui::Color(0, 169, 252);
-                else if (color == "cyan") return vexui::Color(0, 255, 255);
-                else if (color == "violet") return vexui::Color(104, 30, 126);
-                else if (color == "purple") return vexui::Color(125, 60, 181);
-                else if (color == "lightpurple") return vexui::Color(189, 122, 246);
-                else if (color == "underwearcrust") return vexui::Color(169, 104, 64);
-                else if (color == "brown") return vexui::Color(183, 97, 39);
-                else if (color == "lightbrown") return vexui::Color(210, 138, 90);
-                else if (color == "darkbrown") return vexui::Color(95, 44, 10);
-                else if (color == "black") return vexui::Color(0, 0, 0);
-                else if (color == "white") return vexui::Color(255, 255, 255);
-                else if (color == "gold") return vexui::Color(160, 160, 60);
-                else if (color == "gray") return vexui::Color(160, 160, 160);
-                else if (color == "lightgray") return vexui::Color(211, 211, 211);
-                else if (color == "darkgray") return vexui::Color(105, 105, 105);
-                else return vexui::Color(0,0,0);
+            static inline Color getColor(const std::string &color, bool f) {
+                if (color == "red") return vexui::Color(178,31,53, f);
+                else if (color == "redorange") return vexui::Color(216, 39, 53, f);
+                else if (color == "orange") return vexui::Color(255, 116, 53, f);
+                else if (color == "orangeyellow") return vexui::Color(255, 161, 53, f);
+                else if (color == "yellow") return vexui::Color(255, 240, 53, f);
+                else if (color == "darkgreen") return vexui::Color(0, 117, 58, f);
+                else if (color == "green") return vexui::Color(0, 158, 71, f);
+                else if (color == "lightgreen") return vexui::Color(22, 221, 53, f);
+                else if (color == "darkblue") return vexui::Color(0, 82, 165, f);
+                else if (color == "blue") return vexui::Color(0, 121, 252, f);
+                else if (color == "lightblue") return vexui::Color(0, 169, 252, f);
+                else if (color == "cyan") return vexui::Color(0, 255, 255, f);
+                else if (color == "violet") return vexui::Color(104, 30, 126, f);
+                else if (color == "purple") return vexui::Color(125, 60, 181, f);
+                else if (color == "lightpurple") return vexui::Color(189, 122, 246, f);
+                else if (color == "underwearcrust") return vexui::Color(169, 104, 64, f);
+                else if (color == "brown") return vexui::Color(183, 97, 39, f);
+                else if (color == "lightbrown") return vexui::Color(210, 138, 90, f);
+                else if (color == "darkbrown") return vexui::Color(95, 44, 10, f);
+                else if (color == "black") return vexui::Color(0, 0, 0, f);
+                else if (color == "white") return vexui::Color(255, 255, 255, f);
+                else if (color == "gold") return vexui::Color(160, 160, 60, f);
+                else if (color == "gray") return vexui::Color(160, 160, 160, f);
+                else if (color == "lightgray") return vexui::Color(211, 211, 211, f);
+                else if (color == "darkgray") return vexui::Color(105, 105, 105, f);
+                else return vexui::Color(0,0,0, f);
             }
     };
 
@@ -126,7 +128,7 @@ namespace vexui
     class Label : public UIElement {
         public:
             std::string text;
-            vexui::Color color{0, 0, 0};
+            vexui::Color color{255, 255, 255, true};
 
             Label(int x, int y, const std::string &text);
 
@@ -141,7 +143,7 @@ namespace vexui
     class Button : public UIElement {
         public:
             std::string text;
-            vexui::Color bdcolor{0, 0, 0}, txcolor{0, 0, 0}, bgcolor{140, 140, 140};
+            vexui::Color bdcolor{0, 0, 0, true}, txcolor{255, 255, 255, true}, bgcolor{140, 140, 140, false};
             bool renderBackground;
             bool renderBorder;
 
@@ -162,7 +164,7 @@ namespace vexui
 
         public:
             std::string text;
-            vexui::Color bdcolor{0, 0, 0}, txcolor{0, 0, 0}, bgcolor{160, 160, 160}, btcolor{0,0,0};
+            vexui::Color bdcolor{200, 200, 200, true}, txcolor{255, 255, 255, true}, bgcolor{160, 160, 160, false}, btcolor{50,50,50, true};
             bool renderBorder;
             bool isCollapsable;
             bool collapsed;
@@ -184,7 +186,7 @@ namespace vexui
     class TButton : public UIElement {
         public:
             std::string text;
-            vexui::Color bdcolor{0, 0, 0}, txcolor{0, 0, 0}, bgcolor{140, 140, 140}, oncolor{160,160,160}, ofcolor{0,0,0};
+            vexui::Color bdcolor{0, 0, 0, true}, txcolor{255, 255, 255, true}, bgcolor{140, 140, 140, false}, oncolor{160,160,160, false}, ofcolor{20,20,20, false};
             bool renderBackground;
             bool renderBorder;
             bool toggle;
@@ -205,7 +207,7 @@ namespace vexui
         public:
             bool renderBackground;
             bool renderBorder;
-            vexui::Color color{55,55,55}, bdcolor{0,0,0};
+            vexui::Color color{55,55,55, false}, bdcolor{20,20,20, false};
 
             Panel(int x, int y, int width, int height);
 
@@ -227,7 +229,7 @@ namespace vexui
             int x, y, width, height;
             float rangemax, rangemin, value;
             bool isint, renderBackground, renderBorder;
-            vexui::Color bgcolor{160,160,160}, bdcolor{0,0,0}, slcolor{105, 105, 105}, selcolor{0,0,0}, lncolor{0,0,0}, maxtxcolor{0,0,0}, mintxcolor{0,0,0}, valbxcolor{150,150,150}, valtxcolor{0,0,0};
+            vexui::Color bgcolor{160,160,160, false}, bdcolor{0,0,0, false}, slcolor{105, 105, 105, false}, selcolor{0,0,0,false}, lncolor{0,0,0, false}, maxtxcolor{255,255,255, true}, mintxcolor{255,255,255, true}, valbxcolor{150,150,150, true}, valtxcolor{255,255,255, true};
            
             vexui::Event onValueChange;
             // Constructor
@@ -265,7 +267,7 @@ namespace vexui
             float botLinelen = 20;
 
         public:
-            vexui::Color mpgcolor{192,192,192}, lncolor{81,81,81}, blcolor{25, 173, 207}, botcolor{150, 61, 39}, botheadingcolor{150, 132, 39};
+            vexui::Color mpgcolor{192,192,192, false}, lncolor{81,81,81, false}, blcolor{25, 173, 207, false}, botcolor{150, 61, 39, false}, botheadingcolor{150, 132, 39, false}, txcolor{255,255,255, true};
             OdometryUnits unit;
 
             OdometryMap(int x, int y, float* xref, float* yref, float* headingref, OdometryUnits uints);

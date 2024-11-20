@@ -1,25 +1,34 @@
 #include "UISystem.h"
+#include <sstream>
 #include "vex.h"
 #include "api/vexui.h"
+#include "Bot.h"
+
+std::string to_string_int_f(int x){
+  std::stringstream s;
+  s << x;
+  s << "  ";
+  return s.str();
+}
 
 
-bool UISystem::doRender = false;
+bool UISystem::doRender = true;
 
 /*The Vex Brain Sceen is 480 x 240*/
 
-vexui::Button UISystem::mainTabButton = vexui::Button(0,0,40,20, "Main");
-vexui::Button UISystem::odometryTabButton = vexui::Button(40,0,40,20, "Odometry");
-vexui::Button UISystem::consoleTabButton = vexui::Button(80,0,40,20, "Console");
+vexui::Button UISystem::mainTabButton = vexui::Button(0,0,100,40, "Main");
+vexui::Button UISystem::odometryTabButton = vexui::Button(100,0,100,40, "Odometry");
+vexui::Button UISystem::consoleTabButton = vexui::Button(200,0,100,40, "Console");
 
-vexui::Panel UISystem::mainPanel = vexui::Panel(0,20,480,220);
-vexui::Panel UISystem::odometryPanel = vexui::Panel(0,20,480,220);
-vexui::Panel UISystem::consolePanel = vexui::Panel(0,20,480,220);
+vexui::Panel UISystem::mainPanel = vexui::Panel(0,40,480,200);
+vexui::Panel UISystem::odometryPanel = vexui::Panel(0,40,480,200);
+vexui::Panel UISystem::consolePanel = vexui::Panel(0,40,480,200);
 
-vexui::Label UISystem::watermark = vexui::Label(120, 10, "GBS 38535B");
+vexui::Label UISystem::watermark = vexui::Label(0, 90, "GBS 38535B");
 
 vexui::Label UISystem::labm = vexui::Label(10,10, "Main Panel");
-vexui::Label UISystem::labo = vexui::Label(10,10, "Odometry Panel");
-vexui::Label UISystem::labc = vexui::Label(10,10, "Console Panel");
+vexui::Label UISystem::labo = vexui::Label(50,50, "Odometry Panel");
+vexui::Label UISystem::labc = vexui::Label(100,100, "Console Panel");
 
 void UISystem::mainTabButton_Press() {
     mainPanel.dorender = true;
@@ -58,18 +67,25 @@ void UISystem::toggleUI() {
 
 int UISystem::renderLoop() {
     while(true) {
-        UISystem::watermark.render();
-        //render Elements
-        /*
+        
+        V5_TouchStatus stats;
+        vexTouchDataGet(&stats);
+        std::stringstream stream;
+        //stream << "x: " << stats.lastXpos << ", y: " << stats.lastYpos << ", xv: " << mainTabButton.x << ", yv: " << mainTabButton.y << ", w: " << mainTabButton.width << ", h: " << mainTabButton.height << ", P: " << mainTabButton.isPress();
+        stream << mainPanel.dorender << " " << odometryPanel.dorender << " " << consolePanel.dorender << " ";
+        watermark.text = stream.str();
+        
         if(!doRender) continue;
-        UISystem::watermark.render();
+        //Bot::Brain.Screen.printAt(200,200, "ummm");
         UISystem::mainTabButton.render();
         UISystem::odometryTabButton.render();
         UISystem::consoleTabButton.render();
         UISystem::mainPanel.render();
         UISystem::odometryPanel.render();
         UISystem::consolePanel.render();
-        */
+        UISystem::watermark.render();
+        bool what = vexDisplayRender(1,1);
+        
 
         vex::this_thread::sleep_for(20);
     }

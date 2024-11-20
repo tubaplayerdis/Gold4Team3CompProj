@@ -17,17 +17,17 @@
 #include <functional>
 #include <algorithm>
 #include <cmath>
-#include "Bot.h"
 
 
-vexui::Color::Color(int r, int g, int b) {
+vexui::Color::Color(int r, int g, int b, bool foreground_only) {
     R = r;
     G = g;
     B = b;
+    Foreground = foreground_only;
 }
 
 void vexui::Color::set(const std::string &color) {
-    Color nc = getColor(color);
+    Color nc = getColor(color, Foreground);
     R = nc.R;
     G = nc.G;
     B = nc.B;
@@ -40,10 +40,16 @@ void vexui::Color::mset(int r, int g, int b) {
 }
 
 void vexui::Color::gset() {
+    uint32_t black = (0 << 16) | (0 << 8) | 0;
     uint32_t color_code = (R << 16) | (G << 8) | B;
     //Colors
-    vexDisplayForegroundColor(color_code);
-    vexDisplayBackgroundColor(color_code);
+    if(Foreground) {
+        vexDisplayBackgroundColor(black);
+        vexDisplayForegroundColor(color_code);
+    } else {
+        vexDisplayForegroundColor(color_code);
+        vexDisplayBackgroundColor(color_code);
+    }
 }
 
 vexui::Event::Event() {
@@ -81,7 +87,7 @@ bool vexui::UIElement::isPress() {
     V5_TouchStatus status;
     vexTouchDataGet(&status);
 
-    if(status.pressCount > 0 && ((status.lastXpos <= x && status.lastXpos >= x+width) && (status.lastYpos <= y && status.lastYpos >= y+height))) {
+    if(status.pressCount > 0 && ((status.lastXpos >= x && status.lastXpos <= x+width) && (status.lastYpos >= y && status.lastYpos <= y+height))) {
         pressEvent.InvokeListeners();
         lastPressX = status.lastXpos;
         lastPressY = status.lastYpos;
@@ -122,8 +128,7 @@ void vexui::Label::setText(const std::string &nt) { text = nt; width = getString
 
 std::string vexui::Label::getText() const { return text; }
 
-void vexui::Label::render() { 
-    Bot::Brain.Screen.clearScreen();
+void vexui::Label::render() {
     if(!dorender) return;
     color.gset();
     vexDisplayStringAt(x,y, text.c_str());
@@ -151,7 +156,7 @@ void vexui::Button::render() {
     bdcolor.gset();
     if(renderBorder) vexDisplayRectDraw(x, y, x+width, y+ height);
     txcolor.gset();
-    vexDisplayStringAt(x+3,y+(height/10),text.c_str());
+    vexDisplayStringAt(x+5,y+(height/5),text.c_str());
     resetColor();
 }
 
@@ -350,7 +355,7 @@ void vexui::Slider::render() {
 vexui::OdometryMap::OdometryMap(int x, int y, float* xref, float* yref, float* headingref, OdometryUnits uints) : UIElement() {
     this->x = x;
     this->y = y;
-    this->width = 200;
+    this->width = 199;
     this->height = 250;
     this->xref = xref;
     this->yref = yref;

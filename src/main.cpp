@@ -98,16 +98,13 @@ int main() {
   Bot::Controller.ButtonLeft.pressed(Notifications::notifBackward);
   Bot::Controller.ButtonRight.pressed(Notifications::notifForward);
 
+
   vex::task drivetrian(Drivetrain::ControllerLoop);
   //vex::task mainLoop(Bot::mainLoop);
   vex::task displayLoop(Bot::displayLoop);
   vex::task colorsensing(ColorDetection::visionTask);
   vex::task monitoring(Bot::monitorLoop);
   //vex::task aivisionLoop(Bot::aiLoop);
-  UISystem::setup();
-  vex::task gui(UISystem::renderLoop);
-
-
   //Bot::Brain.Screen.printAt(0, 150, "Systems Go!");
   
   // Set up callbacks for autonomous and driver control periods.
@@ -117,6 +114,9 @@ int main() {
 
   // Run the pre-autonomous function.
   pre_auton();
+
+  UISystem::setup();
+  UISystem::renderLoop();
 
   // Prevent main from exiting with an infinite loop.
   while (true) {
