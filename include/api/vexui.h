@@ -31,6 +31,11 @@ namespace vexui
         vexDisplayBackgroundColor(black);
     }
 
+    inline uint32_t rgbtocol(int r, int g, int b) {
+        uint32_t color = (r << 16) | (g << 8) | b;
+        return color;
+    }
+
     inline std::string to_string_float(float x){
         std::stringstream s;
         s << x;
@@ -123,15 +128,22 @@ namespace vexui
 
             virtual void setSize(int w, int h);
 
-            virtual void render();
+            virtual void render() = 0;
 
             
+    };
+
+    enum LabelSize {
+        SMALL = 0,
+        MEDIUM = 1,
+        LARGE = 2
     };
 
     class Label : public UIElement {
         public:
             std::string text;
-            vexui::Color color{255, 255, 255, true};
+            vexui::Color color{255, 255, 255, true}, bgcolor{0,0,0, false};
+            LabelSize txsize = LabelSize::MEDIUM;
 
             Label(int x, int y, const std::string &text);
 
@@ -162,7 +174,7 @@ namespace vexui
     class Dropdown : public UIElement
     {
         private:
-            std::vector<UIElement> items;
+            std::vector<UIElement*> items;
             const int buffer = 5;
 
         public:
@@ -176,7 +188,7 @@ namespace vexui
 
             void toggle();
 
-            void addElement(UIElement element);
+            void addElement(UIElement* element);
 
             void removeElement(int index);
 
@@ -205,7 +217,7 @@ namespace vexui
     
     class Panel : public UIElement {
         private:
-            std::vector<UIElement> items;
+            std::vector<UIElement*> items;
 
         public:
             bool renderBackground;
@@ -214,7 +226,7 @@ namespace vexui
 
             Panel(int x, int y, int width, int height);
 
-            void addElement(UIElement element);
+            void addElement(UIElement* element);
 
             void removeElement(int index);
 

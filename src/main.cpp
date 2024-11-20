@@ -116,7 +116,7 @@ int main() {
   pre_auton();
 
   UISystem::setup();
-  UISystem::renderLoop();
+  vex::task uiloop(UISystem::renderLoop);
 
   // Prevent main from exiting with an infinite loop.
   while (true) {

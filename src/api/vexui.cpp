@@ -118,10 +118,6 @@ void vexui::UIElement::setSize(int w, int h) {
     height = h;
 }
 
-void vexui::UIElement::render() {
-    vexDisplayStringAt(x,y, "Unimplemented!");
-}
-
 vexui::Label::Label(int x, int y, const std::string &text)  : vexui::UIElement() {
     this->x = x;
     this->y = y;
@@ -136,8 +132,21 @@ std::string vexui::Label::getText() const { return text; }
 void vexui::Label::render() {
     cpoi();
     if(!dorender) return;
+    bgcolor.gset();
     color.gset();
-    vexDisplayStringAt(x,y, text.c_str());
+    switch(txsize) {
+        case SMALL:
+            vexDisplaySmallStringAt(x,y, text.c_str());
+            break;
+        case MEDIUM:
+            vexDisplayStringAt(x,y, text.c_str());
+            break;
+        case LARGE:
+            vexDisplayBigStringAt(x,y, text.c_str());
+            break;
+        default:
+            vexDisplayStringAt(x,y, text.c_str());
+    }
     resetColor();
 }
 
@@ -163,7 +172,8 @@ void vexui::Button::render() {
     bdcolor.gset();
     if(renderBorder) vexDisplayRectDraw(x, y, x+width, y+ height);
     txcolor.gset();
-    vexDisplayStringAt(x+5,y+(height/5),text.c_str());
+    vexDisplayBackgroundColor(rgbtocol(bgcolor.R, bgcolor.G, bgcolor.B));
+    vexDisplayStringAt(x+5,y+(height/4),text.c_str());
     resetColor();
 }
 
@@ -174,14 +184,14 @@ vexui::Dropdown::Dropdown(int x, int y, int width, int height, const std::string
     this->height = height;
     this->renderBorder = true;
     this->isCollapsable = iscollapsable;
-    items = std::vector<UIElement>();
+    items = std::vector<UIElement*>();
 }
 
 void vexui::Dropdown::toggle() {
     collapsed = !collapsed;
 }
 
-void vexui::Dropdown::addElement(vexui::UIElement element) {
+void vexui::Dropdown::addElement(vexui::UIElement* element) {
     items.push_back(element);
 }
 
@@ -212,21 +222,21 @@ void vexui::Dropdown::render() {
             vexDisplayLineDraw(x+15,(y+height/1.5),x+10,y+(height/3));
             int space = 0;
             int enumeration = 0;
-            for(UIElement item : items) {
-                item.x = this->x+5;
+            for(UIElement* item : items) {
+                item->x = this->x+5;
                 int addto = 5;
                 for(int i = 0; i < enumeration; i++) {
-                    addto += items[i].height;
+                    addto += items[i]->height;
                     addto += buffer;
                 }
-                space += (item.height+buffer);
-                item.y = y-(height/2+addto+buffer);
+                space += (item->height+buffer);
+                item->y = y-(height/2+addto+buffer);
                 enumeration=enumeration+1;
             }
             bgcolor.gset();
             vexDisplayRectFill(x+1, y-space, x+width-1, space+1);
-            for(UIElement item : items) {
-                item.render();
+            for(UIElement* item : items) {
+                item->render();
             }
         }
     } else {
@@ -264,6 +274,7 @@ void vexui::TButton::render() {
     vexDisplayCircleFill(x+(height/2), y+(height/2), height/3);
 
     txcolor.gset();
+    vexDisplayBackgroundColor(rgbtocol(bgcolor.R, bgcolor.G, bgcolor.B));
     vexDisplayStringAt(x+height,y+(height/10),text.c_str());
     resetColor();
 }
@@ -275,12 +286,12 @@ vexui::Panel::Panel(int x, int y, int width, int height)  : vexui::UIElement() {
     this->height = height;
     this->renderBackground = true;
     this->renderBorder = true;
-    items = std::vector<UIElement>();
+    items = std::vector<UIElement*>();
 }
 
-void vexui::Panel::addElement(UIElement element) {
-    element.x = x+element.x;
-    element.y = y+element.y;
+void vexui::Panel::addElement(UIElement* element) {
+    element->x = x+element->x;
+    element->y = y+element->y;
     items.push_back(element);
 }
 
@@ -299,8 +310,9 @@ void vexui::Panel::render() {
     if(renderBackground) vexDisplayRectFill(x, y, x+width, y+width);
     bdcolor.gset();
     if(renderBorder) vexDisplayRectDraw(x, y, x+width, y+ height);
-    for(UIElement item : items) {
-        item.render();
+    resetColor();
+    for(UIElement* item : items) {
+        item->render();
     }
     resetColor();
 }
