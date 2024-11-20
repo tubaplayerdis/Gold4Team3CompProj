@@ -102,7 +102,7 @@ int main() {
   vex::task drivetrian(Drivetrain::ControllerLoop);
   //vex::task mainLoop(Bot::mainLoop);
   vex::task displayLoop(Bot::displayLoop);
-  vex::task colorsensing(ColorDetection::visionTask);
+  //vex::task colorsensing(ColorDetection::visionTask);
   vex::task monitoring(Bot::monitorLoop);
   //vex::task aivisionLoop(Bot::aiLoop);
   //Bot::Brain.Screen.printAt(0, 150, "Systems Go!");
@@ -120,6 +120,6 @@ int main() {
 
   // Prevent main from exiting with an infinite loop.
   while (true) {
-    wait(100, msec);
+    wait(101, msec);
   }
 }

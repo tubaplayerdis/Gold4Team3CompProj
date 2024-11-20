@@ -4,6 +4,7 @@
 #include "api/vexui.h"
 #include "Bot.h"
 
+
 std::string to_string_int_f(int x){
   std::stringstream s;
   s << x;
@@ -24,7 +25,7 @@ vexui::Panel UISystem::mainPanel = vexui::Panel(0,40,480,200);
 vexui::Panel UISystem::odometryPanel = vexui::Panel(0,40,480,200);
 vexui::Panel UISystem::consolePanel = vexui::Panel(0,40,480,200);
 
-vexui::Label UISystem::watermark = vexui::Label(0, 90, "GBS 38535B");
+vexui::Label UISystem::watermark = vexui::Label(315, 15, "GBS 38535B");
 
 vexui::Label UISystem::labm = vexui::Label(10,10, "Main Panel");
 vexui::Label UISystem::labo = vexui::Label(50,50, "Odometry Panel");
@@ -50,10 +51,10 @@ void UISystem::consoleTabButton_Press() {
 
 void UISystem::setup() {
     mainTabButton.pressEvent.addListener(UISystem::mainTabButton_Press);
-    odometryPanel.pressEvent.addListener(UISystem::odometryTabButton_Press);
+    odometryTabButton.pressEvent.addListener(UISystem::odometryTabButton_Press);
     consoleTabButton.pressEvent.addListener(UISystem::consoleTabButton_Press);
-    mainPanel.dorender = true;
-    odometryPanel.dorender = false;
+    mainPanel.dorender = false;
+    odometryPanel.dorender = true;
     consolePanel.dorender = false;
 
     mainPanel.addElement(labm);
@@ -67,13 +68,16 @@ void UISystem::toggleUI() {
 
 int UISystem::renderLoop() {
     while(true) {
+        vexDisplayErase();
         
+        /*
         V5_TouchStatus stats;
         vexTouchDataGet(&stats);
         std::stringstream stream;
-        //stream << "x: " << stats.lastXpos << ", y: " << stats.lastYpos << ", xv: " << mainTabButton.x << ", yv: " << mainTabButton.y << ", w: " << mainTabButton.width << ", h: " << mainTabButton.height << ", P: " << mainTabButton.isPress();
-        stream << mainPanel.dorender << " " << odometryPanel.dorender << " " << consolePanel.dorender << " ";
+        stream << "x: " << stats.lastXpos << ",y: " << stats.lastYpos << ",xv: " << odometryTabButton.x << ",yv: " << odometryTabButton.y << ",w: " << odometryTabButton.width << ",h: " << odometryTabButton.height << ",P: " << odometryTabButton.isPress();
         watermark.text = stream.str();
+        */
+        
         
         if(!doRender) continue;
         //Bot::Brain.Screen.printAt(200,200, "ummm");
@@ -84,7 +88,7 @@ int UISystem::renderLoop() {
         UISystem::odometryPanel.render();
         UISystem::consolePanel.render();
         UISystem::watermark.render();
-        bool what = vexDisplayRender(1,1);
+        vexDisplayRender(1,1);
         
 
         vex::this_thread::sleep_for(20);

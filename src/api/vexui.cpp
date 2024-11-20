@@ -81,16 +81,17 @@ vexui::UIElement::UIElement() {
     pressEvent = vexui::Event();
     lastPressX = -1;
     lastPressY = -1;
+    lastPressCount = -1;
 }
 
 bool vexui::UIElement::isPress() {
     V5_TouchStatus status;
     vexTouchDataGet(&status);
 
-    if(status.pressCount > 0 && ((status.lastXpos >= x && status.lastXpos <= x+width) && (status.lastYpos >= y && status.lastYpos <= y+height))) {
-        pressEvent.InvokeListeners();
+    if(status.pressCount > lastPressCount && ((status.lastXpos >= x && status.lastXpos <= x+width) && (status.lastYpos >= y && status.lastYpos <= y+height))) {
         lastPressX = status.lastXpos;
         lastPressY = status.lastYpos;
+        lastPressCount = status.pressCount;
         return true;
     }
     return false;
@@ -102,6 +103,10 @@ int vexui::UIElement::getLastPressX() {
 
 int vexui::UIElement::getLastPressY() {
     return lastPressY;
+}
+
+void vexui::UIElement::cpoi() {
+    if(isPress()) pressEvent.InvokeListeners();
 }
 
 std::pair<int, int> vexui::UIElement::getSize() {
@@ -129,6 +134,7 @@ void vexui::Label::setText(const std::string &nt) { text = nt; width = getString
 std::string vexui::Label::getText() const { return text; }
 
 void vexui::Label::render() {
+    cpoi();
     if(!dorender) return;
     color.gset();
     vexDisplayStringAt(x,y, text.c_str());
@@ -150,6 +156,7 @@ std::string vexui::Button::getText() const { return text; }
 void vexui::Button::setSize(int w, int h) { width = w; height = h; }
 
 void vexui::Button::render() {
+    cpoi();
     if(!dorender) return;
     bgcolor.gset();
     if(renderBackground) vexDisplayRectFill(x, y, x+width, y+height);
@@ -187,6 +194,7 @@ void vexui::Dropdown::removeAll() {
 }
 
 void vexui::Dropdown::render() {
+    cpoi();
     if(!dorender) return;
     if(isPress()) toggle();
 
@@ -245,6 +253,7 @@ void vexui::TButton::toggleToggle() { toggle = !toggle; }
 std::string vexui::TButton::getText() { return text; }
 
 void vexui::TButton::render() {
+    cpoi();
     if(!dorender) return;
     bgcolor.gset();
     if(renderBackground) vexDisplayRectFill(x, y, x+width, y+height);
@@ -284,6 +293,7 @@ void vexui::Panel::removeAll() {
 }
 
 void vexui::Panel::render() {
+    cpoi();
     if(!dorender) return;
     color.gset();
     if(renderBackground) vexDisplayRectFill(x, y, x+width, y+width);
@@ -320,6 +330,7 @@ void vexui::Slider::evalValue() {
 }
 
 void vexui::Slider::render() {
+    cpoi();
     if(!dorender) return;
     bgcolor.gset();
     if(renderBackground) vexDisplayRectFill(x, y, x+width, y+width);
@@ -434,6 +445,8 @@ vexui::OdometryPoint* vexui::OdometryMap::translateCoords() {
 } 
 
 void vexui::OdometryMap::render() {
+    cpoi();
+    if(!dorender) return;
     //Draw Map 200x200
     mpgcolor.gset();
     vexDisplayRectDraw(x,y,x+mapwidth,y+mapheight);

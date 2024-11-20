@@ -101,6 +101,7 @@ namespace vexui
         protected:
             int lastPressX;
             int lastPressY;
+            short lastPressCount;
         public:
             int x, y, width, height;
             bool dorender;
@@ -115,6 +116,8 @@ namespace vexui
             int getLastPressX();
 
             int getLastPressY();
+
+            void cpoi();
 
             virtual std::pair<int, int> getSize();
 
@@ -278,6 +281,3 @@ namespace vexui
     };
 
 }
-
-
-
