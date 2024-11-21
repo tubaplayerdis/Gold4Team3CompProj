@@ -1,17 +1,28 @@
 #include "vex.h"
 #include "api/vexui.h"
+#include <string>
 #include "Bot.h"
 #include "Odometry.h"
 #include "ColorDetection.h"
 #include "Drivetrain.h"
 #include "Notifications.h"
 
-
 class UISystem
 {
     private:
         static bool doRender;
     public:
+        //Starting Positions
+        static vexui::StartingPosition Blue_Left;
+        static vexui::StartingPosition Blue_Right;
+        static vexui::StartingPosition Red_Left;
+        static vexui::StartingPosition Red_Right;
+        static vexui::StartingPosition Center;
+
+        static std::vector<vexui::StartingPosition> positions;
+        static int SelectedPosition;
+
+
         //callbacks
         static void mainTabButton_Press();
         static void odometryTabButton_Press();
@@ -33,6 +44,10 @@ class UISystem
         //Odometry Panel Elements
         static vexui::Label labo;
         static vexui::OdometryMap odoMap;
+        static vexui::Label calibrationSelectLabel;
+        static vexui::Button calibrationPositionBackButton;
+        static vexui::Button calibrationPositionForwardButton;
+        static vexui::Label calibrationWarningLabel;
 
         //Console Panel Elements
         static vexui::Label labc;

@@ -8,6 +8,8 @@ class Odometry {
     public:
         static int setupAndStartOdometry();
 
+        static void setHeading(double heading);
+
         static double x;
         static double y;
         static double heading;

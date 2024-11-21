@@ -267,6 +267,12 @@ namespace vexui
         float y;
     } OdometryPoint;
 
+    typedef struct StartingPosition {
+        OdometryPoint pos;
+        float heading;
+        std::string name;
+    };
+
     inline int fti(float value) {
         return (int)(value >= 0.0f ? value + 0.5f : value - 0.5f);
     }
@@ -288,6 +294,12 @@ namespace vexui
             OdometryMap(int x, int y, double* xref, double* yref, double* headingref, OdometryUnits uints);
 
             OdometryPoint* translateCoords();
+
+            void setNewX(double x, OdometryUnits units);
+
+            void setNewY(double y, OdometryUnits units);
+
+            void setNewH(double h);
 
             void render() override;
     };

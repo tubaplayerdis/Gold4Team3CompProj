@@ -15,6 +15,13 @@ std::string to_string_int_f(int x){
 
 bool UISystem::doRender = true;
 
+vexui::StartingPosition UISystem::Blue_Left = {vexui::OdometryPoint{-100, -124}, 0, "Blue Left"};
+vexui::StartingPosition UISystem::Blue_Right = {vexui::OdometryPoint{100, -124}, 0, "Blue Right"};
+vexui::StartingPosition UISystem::Red_Left = {vexui::OdometryPoint{-100, 124}, 180, "Red Left"};
+vexui::StartingPosition UISystem::Red_Right = {vexui::OdometryPoint{100, 124}, 180, "Red Right"};
+vexui::StartingPosition UISystem::Center = {vexui::OdometryPoint{0, 0}, 0, "Center"};
+std::vector<vexui::StartingPosition> UISystem::positions = std::vector<vexui::StartingPosition>{UISystem::Blue_Left, UISystem::Blue_Right, UISystem::Red_Left, UISystem::Red_Right, UISystem::Center};
+int UISystem::SelectedPosition = 0;
 /*The Vex Brain Sceen is 480 x 240*/
 
 vexui::Button UISystem::mainTabButton = vexui::Button(0,0,100,40, "Main");
@@ -33,6 +40,10 @@ vexui::Label UISystem::labm = vexui::Label(10,10, "Main Panel");
 //Odometry Panel Elements
 vexui::Label UISystem::labo = vexui::Label(250,10, "Calibration");
 vexui::OdometryMap UISystem::odoMap = vexui::OdometryMap(5,5, &Odometry::x, &Odometry::y, &Odometry::heading, vexui::OdometryUnits::INCHES);
+vexui::Label UISystem::calibrationSelectLabel = vexui::Label(310, 60, "Select Position");
+vexui::Button UISystem::calibrationPositionBackButton = vexui::Button(245, 50, 40, 40, "<");
+vexui::Button UISystem::calibrationPositionForwardButton = vexui::Button(440, 50, 40, 40, ">");
+vexui::Label UISystem::calibrationWarningLabel = vexui::Label(205, 100, "Will Calibrate On Position Select*!");
 
 //Console Panel Elements
 vexui::Label UISystem::labc = vexui::Label(10,10, "Console Panel");
@@ -56,6 +67,26 @@ void UISystem::consoleTabButton_Press() {
     consolePanel.dorender = true;
 }
 
+void IncreaseSelectedPosisiton() {
+    UISystem::SelectedPosition++;
+    if(UISystem::SelectedPosition > UISystem::positions.size() -1 || UISystem::SelectedPosition < 0) UISystem::SelectedPosition = 0;
+    UISystem::calibrationSelectLabel.setText(UISystem::positions[UISystem::SelectedPosition].name);
+    UISystem::odoMap.setNewX(UISystem::positions[UISystem::SelectedPosition].pos.x, vexui::INCHES);
+    UISystem::odoMap.setNewY(UISystem::positions[UISystem::SelectedPosition].pos.y, vexui::INCHES);
+    Bot::Inertial.setHeading(UISystem::positions[UISystem::SelectedPosition].heading, vex::degrees);
+    UISystem::odoMap.setNewH(UISystem::positions[UISystem::SelectedPosition].heading);
+}
+
+void DecreaseSelectedPosisiton() {
+    UISystem::SelectedPosition--;
+    if(UISystem::SelectedPosition > UISystem::positions.size() -1 || UISystem::SelectedPosition < 0) UISystem::SelectedPosition = 0;
+    UISystem::calibrationSelectLabel.setText(UISystem::positions[UISystem::SelectedPosition].name);
+    UISystem::odoMap.setNewX(UISystem::positions[UISystem::SelectedPosition].pos.x, vexui::INCHES);
+    UISystem::odoMap.setNewY(UISystem::positions[UISystem::SelectedPosition].pos.y, vexui::INCHES);
+    Bot::Inertial.setHeading(UISystem::positions[UISystem::SelectedPosition].heading, vex::degrees);
+    UISystem::odoMap.setNewH(UISystem::positions[UISystem::SelectedPosition].heading);
+}
+
 void UISystem::setup() {
 
     vexDisplayFontNamedSet("mono12");
@@ -71,10 +102,30 @@ void UISystem::setup() {
     labo.bgcolor = odometryPanel.color;
     labc.bgcolor = consolePanel.color;
 
+    labo.txsize = vexui::LARGE;
+    calibrationSelectLabel.bgcolor = odometryPanel.color;
+    calibrationPositionBackButton.pressEvent.addListener(DecreaseSelectedPosisiton);
+    calibrationPositionForwardButton.pressEvent.addListener(IncreaseSelectedPosisiton);
+    calibrationWarningLabel.txsize = vexui::SMALL;
+    calibrationWarningLabel.bgcolor = odometryPanel.color;
+    calibrationWarningLabel.color.mset(153, 42, 28);
+
     mainPanel.addElement(&labm);
+    consolePanel.addElement(&labc);
+
+
     odometryPanel.addElement(&labo);
     odometryPanel.addElement(&odoMap);
-    consolePanel.addElement(&labc);
+    odometryPanel.addElement(&calibrationSelectLabel);
+    odometryPanel.addElement(&calibrationPositionBackButton);
+    odometryPanel.addElement(&calibrationPositionForwardButton);
+    odometryPanel.addElement(&calibrationWarningLabel);
+
+    UISystem::calibrationSelectLabel.setText(UISystem::positions[UISystem::SelectedPosition].name);
+    UISystem::odoMap.setNewX(UISystem::positions[UISystem::SelectedPosition].pos.x, vexui::INCHES);
+    UISystem::odoMap.setNewY(UISystem::positions[UISystem::SelectedPosition].pos.y, vexui::INCHES);
+    Bot::Inertial.setHeading(UISystem::positions[UISystem::SelectedPosition].heading, vex::degrees);
+    UISystem::odoMap.setNewH(UISystem::positions[UISystem::SelectedPosition].heading);
 }
 
 void UISystem::toggleUI() {
@@ -82,9 +133,6 @@ void UISystem::toggleUI() {
 }
 
 int UISystem::renderLoop() {
-
-    Odometry::x = 45;
-    Odometry::y = 99;
 
     while(true) {
         vexDisplayErase();
@@ -96,8 +144,7 @@ int UISystem::renderLoop() {
         stream << "x: " << stats.lastXpos << ",y: " << stats.lastYpos << ",xv: " << odometryTabButton.x << ",yv: " << odometryTabButton.y << ",w: " << odometryTabButton.width << ",h: " << odometryTabButton.height << ",P: " << odometryTabButton.isPress();
         watermark.text = stream.str();
         */
-        
-        
+
         if(!doRender) continue;
         //Bot::Brain.Screen.printAt(200,200, "ummm");
         UISystem::mainTabButton.render();

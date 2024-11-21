@@ -133,8 +133,8 @@ std::string vexui::Label::getText() const { return text; }
 void vexui::Label::render() {
     cpoi();
     if(!dorender) return;
-    bgcolor.gset();
     color.gset();
+    vexDisplayBackgroundColor(rgbtocol(bgcolor.R, bgcolor.G, bgcolor.B));
     switch(txsize) {
         case SMALL:
             vexDisplaySmallStringAt(x,y, text.c_str());
@@ -420,7 +420,7 @@ vexui::OdometryPoint* vexui::OdometryMap::translateCoords() {
     }
 
     float centerX = feetx * scaleX;
-    float centerY = feety * scaleY;
+    float centerY = feety * scaleY * -1;
 
 
     float angleRad = DEG_TO_RAD(*headingref);
@@ -461,6 +461,21 @@ vexui::OdometryPoint* vexui::OdometryMap::translateCoords() {
 
     return corners;
 } 
+
+void vexui::OdometryMap::setNewX(double x_, OdometryUnits units) {
+    *xref = x_;
+    unit = units;
+}
+
+void vexui::OdometryMap::setNewY(double y_, OdometryUnits units) {
+    *yref = y_;
+    unit = units;
+}
+            
+void vexui::OdometryMap::setNewH(double h_) {
+    *headingref = h_;
+}
+
 
 void vexui::OdometryMap::render() {
     cpoi();

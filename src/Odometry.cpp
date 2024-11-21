@@ -15,6 +15,10 @@ double Odometry::calculateDistanceToStake(double stakeX, double stakeY) {
     return sqrt(pow(stakeX - Odometry::x, 2) + pow(stakeY - Odometry::y, 2));
 }
 
+void Odometry::setHeading(double heading) {
+    Bot::Inertial.setHeading(heading, vex::degrees);
+}
+
 #define MIN(x,y) ((x) < (y) ? (x) : (y)) 
 
 // Drive to a specific position
