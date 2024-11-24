@@ -35,7 +35,7 @@ vexui::Panel UISystem::consolePanel = vexui::Panel(0,40,480,200);
 vexui::Label UISystem::watermark = vexui::Label(315, 15, "GBS 38535B");
 
 //Main Panel Elements
-vexui::Label UISystem::labm = vexui::Label(10,10, "Main Panel");
+vexui::Label UISystem::labm = vexui::Label(10,10, "AI Vision");
 
 //Odometry Panel Elements
 vexui::Label UISystem::labo = vexui::Label(250,10, "Calibration");
