@@ -22,6 +22,7 @@ vex::motor Bot::Arm = vex::motor(vex::PORT8, vex::ratio36_1, false);//High Torqu
 //vex::motor Bot::LiftR = vex::motor(vex::PORT10, vex::ratio18_1, true);//Low Power
 vex::digital_out Bot::MogoMech = vex::digital_out(Bot::Brain.ThreeWirePort.A);
 vex::digital_out Bot::Clutch = vex::digital_out(Bot::Brain.ThreeWirePort.B);
+vex::limit Bot::MogoLimitSwitch = vex::limit(Bot::Brain.ThreeWirePort.C);
 
 vex::inertial Bot::Inertial = vex::inertial(vex::PORT11);
 vex::rotation Bot::RotationForward = vex::rotation(vex::PORT12); //Forwards
@@ -37,6 +38,10 @@ vex::aivision Bot::AIVisionF(vex::PORT20, vex::aivision::ALL_TAGS, vex::aivision
 vex::motor_group Bot::LeftMotors = vex::motor_group(Bot::LeftA, Bot::LeftB, Bot::LeftC);
 vex::motor_group Bot::RightMotors = vex::motor_group(Bot::RightA, Bot::RightB, Bot::RightC);
 //vex::motor_group Bot::LiftMotors = vex::motor_group(Bot::LiftL, Bot::LiftR);
+
+int Bot::redRingNum = 0;
+int Bot::blueRingNum = 0;
+int Bot::mobileGoalNum = 0;
 
 //Define important stuff
 vex::controller Bot::Controller = vex::controller(vex::primary);
@@ -73,21 +78,6 @@ void Bot::updateDeviceList() {
         } 
     }
 
-}
-
-const char* Bot::getGameElementNameFromID(int32_t id) {
-    switch (id)
-    { 
-    case 0:
-        return "0";
-    case 1:
-        return "1";
-    case 2:
-        return "2";
-    
-    default:
-        return "-1";
-    }
 }
 
 void Bot::setup() {
@@ -292,12 +282,28 @@ int Bot::aiLoop() {
     while(true) {
         AIVisionF.takeSnapshot(vex::aivision::ALL_AIOBJS);
         //Brain.Screen.printAt(0,50, "AI Vision Count: %d", AIVisionF.objectCount);
+        int tempred = 0, tempblue = 0, tempmob = 0;
         for(int i = 0; i < AIVisionF.objectCount; i++) {
-            const char* str = strcat(strcat("Name: ", getGameElementNameFromID(Bot::AIVisionF.objects[i].id)),", X:%d, Y:%d");
+            int id = Bot::AIVisionF.objects[i].id;
+            switch (id)
+            {
+            case 0:
+                tempred++;
+                break;
+            case 1:
+                tempblue++;
+                break;
+            case 2:
+                tempmob++;
+                break;
+            }
             //Brain.Screen.printAt(0, 70+(20*i), str, AIVisionF.objects[i].centerX, AIVisionF.objects[i].centerY);
             //ID: %s, 
             //AIVisionF.objects[i].name
         }
+        Bot::redRingNum = tempred;
+        Bot::blueRingNum = tempred;
+        Bot::mobileGoalNum = tempred;
 
         vex::this_thread::sleep_for(50);
     }

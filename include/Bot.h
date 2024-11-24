@@ -16,6 +16,21 @@ enum gameElements {
   blueRing,
 };
 
+inline const char* getGameElementNameFromID(int32_t id) {
+    switch (id)
+    { 
+    case 0:
+        return "0";
+    case 1:
+        return "1";
+    case 2:
+        return "2";
+    
+    default:
+        return "-1";
+    }
+}
+
 class Bot {
     public:
         //Brain
@@ -41,6 +56,7 @@ class Bot {
         //static vex::motor_group LiftMotors;
         static vex::digital_out MogoMech;
         static vex::digital_out Clutch;
+        static vex::limit MogoLimitSwitch;
 
         //Gryos and stuff
         static vex::inertial Inertial;
@@ -58,9 +74,6 @@ class Bot {
         static int NumDevices;
         static std::vector<Device> DeviceList;
 
-        //helper
-        static const char* getGameElementNameFromID(int32_t id);
-
         //setup stuf
         static void setup();
         //Main Loop Function use at task
@@ -74,6 +87,12 @@ class Bot {
         static void checkInstall();
         static int displayLoop();
         static int monitorLoop();
+
+
+
+        static int redRingNum;
+        static int blueRingNum;
+        static int mobileGoalNum;
         static int aiLoop();
 
 };

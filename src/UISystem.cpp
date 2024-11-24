@@ -1,4 +1,5 @@
 #include "UISystem.h"
+#include <string>
 #include <sstream>
 #include "vex.h"
 #include "api/vexui.h"
@@ -36,6 +37,9 @@ vexui::Label UISystem::watermark = vexui::Label(315, 15, "GBS 38535B");
 
 //Main Panel Elements
 vexui::Label UISystem::labm = vexui::Label(10,10, "AI Vision");
+vexui::Label UISystem::redRingNumLabel = vexui::Label(10,30, "Red Ring#:");
+vexui::Label UISystem::blueRingNumLabel = vexui::Label(10,50, "Blue Ring#: ");
+vexui::Label UISystem::MobileGoalNumLabel = vexui::Label(10,70, "Moblie Goal#: ");
 
 //Odometry Panel Elements
 vexui::Label UISystem::labo = vexui::Label(250,10, "Calibration");
@@ -111,6 +115,12 @@ void UISystem::setup() {
     calibrationWarningLabel.color.mset(153, 42, 28);
 
     mainPanel.addElement(&labm);
+    mainPanel.addElement(&redRingNumLabel);
+    mainPanel.addElement(&blueRingNumLabel);
+    mainPanel.addElement(&MobileGoalNumLabel);
+
+
+
     consolePanel.addElement(&labc);
 
 
@@ -137,13 +147,9 @@ int UISystem::renderLoop() {
     while(true) {
         vexDisplayErase();
         
-        /*
-        V5_TouchStatus stats;
-        vexTouchDataGet(&stats);
-        std::stringstream stream;
-        stream << "x: " << stats.lastXpos << ",y: " << stats.lastYpos << ",xv: " << odometryTabButton.x << ",yv: " << odometryTabButton.y << ",w: " << odometryTabButton.width << ",h: " << odometryTabButton.height << ",P: " << odometryTabButton.isPress();
-        watermark.text = stream.str();
-        */
+        redRingNumLabel.setText("Red Rings: "+to_string_int_f(Bot::redRingNum));
+        redRingNumLabel.setText("Blue Rings: "+to_string_int_f(Bot::redRingNum));
+        redRingNumLabel.setText("Mobile Goals: "+to_string_int_f(Bot::redRingNum));
 
         if(!doRender) continue;
         //Bot::Brain.Screen.printAt(200,200, "ummm");
