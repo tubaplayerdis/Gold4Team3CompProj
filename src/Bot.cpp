@@ -16,7 +16,7 @@ vex::motor Bot::RightB = vex::motor(vex::PORT5, vex::ratio6_1, false);//High Spe
 vex::motor Bot::RightC = vex::motor(vex::PORT6, vex::ratio6_1, true);//High Speed
 
 
-vex::motor Bot::Intake = vex::motor(vex::PORT7, vex::ratio18_1, true);//Low Power
+vex::motor Bot::Intake = vex::motor(vex::PORT7, vex::ratio18_1, false);//Regular
 vex::motor Bot::Arm = vex::motor(vex::PORT8, vex::ratio36_1, false);//High Torque
 //vex::motor Bot::LiftL = vex::motor(vex::PORT9, vex::ratio18_1, true);//Low Power
 //vex::motor Bot::LiftR = vex::motor(vex::PORT10, vex::ratio18_1, true);//Low Power
