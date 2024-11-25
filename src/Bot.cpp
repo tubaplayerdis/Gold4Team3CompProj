@@ -81,12 +81,12 @@ void Bot::updateDeviceList() {
 }
 
 void Bot::setup() {
-    LeftA.setBrake(vex::hold);
-    RightA.setBrake(vex::hold);
-    LeftB.setBrake(vex::hold);
-    RightB.setBrake(vex::hold);
-    LeftC.setBrake(vex::hold);
-    RightC.setBrake(vex::hold);
+    LeftA.setBrake(vex::brake);
+    RightA.setBrake(vex::brake);
+    LeftB.setBrake(vex::brake);
+    RightB.setBrake(vex::brake);
+    LeftC.setBrake(vex::brake);
+    RightC.setBrake(vex::brake);
 
     MogoMech.set(false);
     Clutch.set(true);
@@ -201,7 +201,7 @@ int Bot::displayLoop() {
             CONTROLLER
         */
         Bot::Controller.Screen.setCursor(1,1);
-        Bot::Controller.Screen.print("X:%.2f, Y:%.2f", Odometry::x, Odometry::y);
+        Bot::Controller.Screen.print("X:%.2f, Y:%.2f, H:%.2f", Odometry::x, Odometry::y, Odometry::heading);
         Bot::Controller.Screen.setCursor(3,1);
         switch (Bot::Aliance)
         {

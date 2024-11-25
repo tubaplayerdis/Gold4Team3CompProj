@@ -171,6 +171,5 @@ int Odometry::setupAndStartOdometry() {
     Bot::Drivetrain.setTurnVelocity(100.0, vex::percent);
     vex::task updateLoop(odometry);
     vex::task driveLoop(driveToNearestWallStake);
-    vex::task displayLoop(displayCoordinates);
     return 0;
 }
