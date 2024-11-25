@@ -1,5 +1,6 @@
 #include "UISystem.h"
 #include <string>
+#include <cmath>
 #include <sstream>
 #include "vex.h"
 #include "api/vexui.h"
@@ -10,6 +11,13 @@ std::string to_string_int_f(int x){
   std::stringstream s;
   s << x;
   s << "  ";
+  return s.str();
+}
+
+std::string to_string_double_f(double x){
+  x = round(x);
+  std::stringstream s;
+  s << x;
   return s.str();
 }
 
@@ -37,6 +45,7 @@ vexui::Label UISystem::watermark = vexui::Label(315, 15, "GBS 38535B");
 
 //Main Panel Elements
 vexui::Label UISystem::labm = vexui::Label(10,10, "AI Vision");
+vexui::Label UISystem::motorTempLabel = vexui::Label(10, 100, "Temps:");
 vexui::Label UISystem::redRingNumLabel = vexui::Label(10,30, "Red Ring#:");
 vexui::Label UISystem::blueRingNumLabel = vexui::Label(10,50, "Blue Ring#: ");
 vexui::Label UISystem::MobileGoalNumLabel = vexui::Label(10,70, "Moblie Goal#: ");
@@ -107,6 +116,7 @@ void UISystem::setup() {
     labc.bgcolor = consolePanel.color;
 
     labo.txsize = vexui::LARGE;
+    motorTempLabel.txsize = vexui::SMALL;
     calibrationSelectLabel.bgcolor = odometryPanel.color;
     calibrationPositionBackButton.pressEvent.addListener(DecreaseSelectedPosisiton);
     calibrationPositionForwardButton.pressEvent.addListener(IncreaseSelectedPosisiton);
@@ -118,6 +128,7 @@ void UISystem::setup() {
     mainPanel.addElement(&redRingNumLabel);
     mainPanel.addElement(&blueRingNumLabel);
     mainPanel.addElement(&MobileGoalNumLabel);
+    mainPanel.addElement(&motorTempLabel);
 
 
 
@@ -150,6 +161,8 @@ int UISystem::renderLoop() {
         redRingNumLabel.setText("Red Rings: "+to_string_int_f(Bot::redRingNum));
         redRingNumLabel.setText("Blue Rings: "+to_string_int_f(Bot::redRingNum));
         redRingNumLabel.setText("Mobile Goals: "+to_string_int_f(Bot::redRingNum));
+
+        motorTempLabel.setText("L1 "+to_string_double_f(Bot::LeftA.temperature())+" L2 "+to_string_double_f(Bot::LeftB.temperature())+" L3 "+to_string_double_f(Bot::LeftC.temperature())+" R1 "+to_string_double_f(Bot::RightA.temperature())+" R2 "+to_string_double_f(Bot::RightB.temperature())+" R3 "+to_string_double_f(Bot::RightC.temperature()));
 
         if(!doRender) continue;
         //Bot::Brain.Screen.printAt(200,200, "ummm");
