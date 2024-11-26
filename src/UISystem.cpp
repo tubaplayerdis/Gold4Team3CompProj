@@ -29,6 +29,7 @@ vexui::StartingPosition UISystem::Blue_Right = {vexui::OdometryPoint{100, -124},
 vexui::StartingPosition UISystem::Red_Left = {vexui::OdometryPoint{-100, 124}, 180, "Red Left"};
 vexui::StartingPosition UISystem::Red_Right = {vexui::OdometryPoint{100, 124}, 180, "Red Right"};
 vexui::StartingPosition UISystem::Center = {vexui::OdometryPoint{0, 0}, 0, "Center"};
+bool UISystem::showStartingGoals = true;
 std::vector<vexui::StartingPosition> UISystem::positions = std::vector<vexui::StartingPosition>{UISystem::Blue_Left, UISystem::Blue_Right, UISystem::Red_Left, UISystem::Red_Right, UISystem::Center};
 int UISystem::SelectedPosition = 0;
 /*The Vex Brain Sceen is 480 x 240*/
@@ -147,6 +148,10 @@ void UISystem::setup() {
     UISystem::odoMap.setNewY(UISystem::positions[UISystem::SelectedPosition].pos.y, vexui::INCHES);
     Bot::Inertial.setHeading(UISystem::positions[UISystem::SelectedPosition].heading, vex::degrees);
     UISystem::odoMap.setNewH(UISystem::positions[UISystem::SelectedPosition].heading);
+    UISystem::odoMap.elements.push_back(vexui::OdometryGameElement{(int)Odometry::startMobileNN.x, (int)Odometry::startMobileNN.y, Odometry::startMobileNN.objtype, UISystem::showStartingGoals});
+    UISystem::odoMap.elements.push_back(vexui::OdometryGameElement{(int)Odometry::startMobileNP.x, (int)Odometry::startMobileNP.y, Odometry::startMobileNP.objtype, UISystem::showStartingGoals});
+    UISystem::odoMap.elements.push_back(vexui::OdometryGameElement{(int)Odometry::startMobilePN.x, (int)Odometry::startMobilePN.y, Odometry::startMobilePN.objtype, UISystem::showStartingGoals});
+    UISystem::odoMap.elements.push_back(vexui::OdometryGameElement{(int)Odometry::startMobilePP.x, (int)Odometry::startMobilePP.y, Odometry::startMobilePP.objtype, UISystem::showStartingGoals});
 }
 
 void UISystem::toggleUI() {

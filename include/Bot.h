@@ -11,7 +11,7 @@ enum aliance {
     Red = 2
 };
 
-struct gameElementPosition 
+typedef struct gameElementPosition 
 {
     gameElementPosition(double x_, double y_, vexui::gameElements objtype_) {
         x = x_;

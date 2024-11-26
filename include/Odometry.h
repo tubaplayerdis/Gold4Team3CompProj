@@ -18,9 +18,10 @@ class Odometry {
         //Functions
         static void updateOdometry();
         static double calculateDistanceToStake(double stakeX, double stakeY);
-        static void driveToPosition(double targetX, double targetY);
-        static void rotateToAngle(double targetAngle);
-        static int driveToNearestWallStake();
+        static void driveToPosition(double targetX, double targetY, bool override);
+        static void rotateToAngle(double targetAngle, bool override);
+        static int driveToNearestWallStake(bool override);
+        static int wrapperwallstake();
         static int odometry();
 
         //Consts

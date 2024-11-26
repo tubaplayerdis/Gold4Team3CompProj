@@ -9,10 +9,10 @@ double Odometry::y = 0.0;   // Y position in inches (left/rsight)
 double Odometry::heading = 0.0; // spin in degress?
 
 
-gameElementPosition Odometry::startMobilePP = { 32, 32, vexui::gameElements::mobileGoal};
-gameElementPosition Odometry::startMobileNP = { -32, 32, vexui::gameElements::mobileGoal};
-gameElementPosition Odometry::startMobileNN = { -32, -32, vexui::gameElements::mobileGoal};
-gameElementPosition Odometry::startMobilePN = { 32, -32, vexui::gameElements::mobileGoal};
+gameElementPosition Odometry::startMobilePP = { 48, 48, vexui::gameElements::mobileGoal};
+gameElementPosition Odometry::startMobileNP = { -48, 48, vexui::gameElements::mobileGoal};
+gameElementPosition Odometry::startMobileNN = { -48, -48, vexui::gameElements::mobileGoal};
+gameElementPosition Odometry::startMobilePN = { 48, -48, vexui::gameElements::mobileGoal};
 
 vex::controller::button Odometry::MotorRunKey = Bot::Controller.ButtonX;
 
@@ -28,12 +28,12 @@ void Odometry::setHeading(double heading) {
 #define MIN(x,y) ((x) < (y) ? (x) : (y)) 
 
 // Drive to a specific position
-void Odometry::driveToPosition(double targetX, double targetY) {
+void Odometry::driveToPosition(double targetX, double targetY, bool override) {
     double distance_to_target;
     double angle_to_target;
     bool dostop = false;
     while (true) {
-        if(!Odometry::MotorRunKey.pressing()) {
+        if(!Odometry::MotorRunKey.pressing() && !override) {
             if(dostop) {
                 Bot::LeftMotors.stop();
                 Bot::RightMotors.stop();
@@ -66,10 +66,10 @@ void Odometry::driveToPosition(double targetX, double targetY) {
 }
 
 // Rotate to specified angle using inertial sensor
-void Odometry::rotateToAngle(double targetAngle) {
+void Odometry::rotateToAngle(double targetAngle, bool override) {
     bool dostop = false;
     while (fabs(Odometry::heading - targetAngle) > 1.0) {
-        if(!Odometry::MotorRunKey.pressing()) {
+        if(!Odometry::MotorRunKey.pressing() && !override) {
             if(dostop) {
                 Bot::LeftMotors.stop();
                 Bot::RightMotors.stop();
@@ -91,7 +91,7 @@ void Odometry::rotateToAngle(double targetAngle) {
 }
 
 // Drive to the nearest wall stake and align perpendicular
-int Odometry::driveToNearestWallStake() {
+int Odometry::driveToNearestWallStake(bool override) {
     while (true)
     {
         double distanceToStake1 = Odometry::calculateDistanceToStake(Odometry::startMobileNN.x, Odometry::startMobileNN.y);
@@ -124,12 +124,17 @@ int Odometry::driveToNearestWallStake() {
         }
 
         // Drive to the target position
-        driveToPosition(targetX, targetY);
+        driveToPosition(targetX, targetY, override);
 
         // Rotate to face perpendicular
-        rotateToAngle(perpendicularAngle);   
+        rotateToAngle(perpendicularAngle, override);   
     }
     return 0;
+}
+
+int Odometry::wrapperwallstake() {
+    driveToNearestWallStake(false);
+    return 1;
 }
 
 
@@ -188,6 +193,6 @@ int Odometry::setupAndStartOdometry() {
     Bot::Drivetrain.setDriveVelocity(100.0, vex::percent);
     Bot::Drivetrain.setTurnVelocity(100.0, vex::percent);
     vex::task updateLoop(odometry);
-    vex::task driveLoop(driveToNearestWallStake);
+    vex::task driveLoop(wrapperwallstake);
     return 0;
 }

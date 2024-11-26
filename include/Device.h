@@ -3,7 +3,7 @@
 #include "vex.h"
 #include <string>
 
-struct DeviceInstall {
+typedef struct DeviceInstall {
     std::string Name;
     bool isInstalled;
 };

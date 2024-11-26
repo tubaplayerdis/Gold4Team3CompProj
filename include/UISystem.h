@@ -19,6 +19,8 @@ class UISystem
         static vexui::StartingPosition Red_Right;
         static vexui::StartingPosition Center;
 
+        static bool showStartingGoals;
+
         static std::vector<vexui::StartingPosition> positions;
         static int SelectedPosition;
 
