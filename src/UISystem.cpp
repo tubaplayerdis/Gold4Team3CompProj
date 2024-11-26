@@ -24,10 +24,10 @@ std::string to_string_double_f(double x){
 
 bool UISystem::doRender = true;
 
-vexui::StartingPosition UISystem::Blue_Left = {vexui::OdometryPoint{-100, -124}, 0, "Blue Left"};
-vexui::StartingPosition UISystem::Blue_Right = {vexui::OdometryPoint{100, -124}, 0, "Blue Right"};
-vexui::StartingPosition UISystem::Red_Left = {vexui::OdometryPoint{-100, 124}, 180, "Red Left"};
-vexui::StartingPosition UISystem::Red_Right = {vexui::OdometryPoint{100, 124}, 180, "Red Right"};
+vexui::StartingPosition UISystem::Blue_Left = {vexui::OdometryPoint{-48, -60}, 0, "Blue Left"};
+vexui::StartingPosition UISystem::Blue_Right = {vexui::OdometryPoint{48, -60}, 0, "Blue Right"};
+vexui::StartingPosition UISystem::Red_Left = {vexui::OdometryPoint{-48, 124}, 180, "Red Left"};
+vexui::StartingPosition UISystem::Red_Right = {vexui::OdometryPoint{48, 124}, 180, "Red Right"};
 vexui::StartingPosition UISystem::Center = {vexui::OdometryPoint{0, 0}, 0, "Center"};
 bool UISystem::showStartingGoals = true;
 std::vector<vexui::StartingPosition> UISystem::positions = std::vector<vexui::StartingPosition>{UISystem::Blue_Left, UISystem::Blue_Right, UISystem::Red_Left, UISystem::Red_Right, UISystem::Center};

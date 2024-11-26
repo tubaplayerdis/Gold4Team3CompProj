@@ -392,8 +392,8 @@ vexui::OdometryMap::OdometryMap(int x, int y, double* xref, double* yref, double
 vexui::OdometryPoint* vexui::OdometryMap::translateCoords() {
     vexui::OdometryPoint* corners = (vexui::OdometryPoint*)malloc(6 * sizeof(vexui::OdometryPoint));
 
-    const float scaleX = 150.0f / 24.0f;
-    const float scaleY = 150.0f / 24.0f;
+    const float scaleX = 150.0f / 12.0f;
+    const float scaleY = 150.0f / 12.0f;
 
     float feetx = 0.0f, feety = 0.0f;
     switch (unit)
@@ -530,19 +530,19 @@ void vexui::OdometryMap::render() {
             case mobileGoal:
                 vexDisplayBackgroundColor(rgbtocol(252, 186, 3));
                 vexDisplayForegroundColor(rgbtocol(252, 186, 3));
-                vexDisplayRectFill(x+70+obj.x, y+70+obj.y, 10, 10);
+                vexDisplayRectFill(x+70+(obj.x*(150/144)), y+70+(obj.y*(150/144)), x+70+(obj.x*(150/144))+10, y+70+(obj.y*(150/144))+10);
                 break;
 
             case redRing:
                 vexDisplayBackgroundColor(rgbtocol(16, 6, 207));
                 vexDisplayForegroundColor(rgbtocol(16, 6, 207));
-                vexDisplayRectFill(x+70+obj.x, y+70+obj.y, 10, 10);
+                vexDisplayRectFill(x+70+(obj.x*(150/144)), y+70+(obj.y*(150/144)), x+70+(obj.x*(150/144))+10, y+70+(obj.y*(150/144))+10);
                 break;
 
             case blueRing:
                 vexDisplayBackgroundColor(rgbtocol(252, 186, 3));
                 vexDisplayForegroundColor(rgbtocol(252, 186, 3));
-                vexDisplayRectFill(x+70+obj.x, y+70+obj.y, 10, 10);
+                vexDisplayRectFill(x+70+(obj.x*(150/144)), y+70+(obj.y*(150/144)), x+70+(obj.x*(150/144))+10, y+70+(obj.y*(150/144))+10);
                 break;
         
         }

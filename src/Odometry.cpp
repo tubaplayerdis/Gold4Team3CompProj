@@ -9,10 +9,10 @@ double Odometry::y = 0.0;   // Y position in inches (left/rsight)
 double Odometry::heading = 0.0; // spin in degress?
 
 
-gameElementPosition Odometry::startMobilePP = { 48, 48, vexui::gameElements::mobileGoal};
-gameElementPosition Odometry::startMobileNP = { -48, 48, vexui::gameElements::mobileGoal};
-gameElementPosition Odometry::startMobileNN = { -48, -48, vexui::gameElements::mobileGoal};
-gameElementPosition Odometry::startMobilePN = { 48, -48, vexui::gameElements::mobileGoal};
+gameElementPosition Odometry::startMobilePP = { 24, 24, vexui::gameElements::mobileGoal};
+gameElementPosition Odometry::startMobileNP = { -24, 24, vexui::gameElements::mobileGoal};
+gameElementPosition Odometry::startMobileNN = { -24, -24, vexui::gameElements::mobileGoal};
+gameElementPosition Odometry::startMobilePN = { 24, -24, vexui::gameElements::mobileGoal};
 
 vex::controller::button Odometry::MotorRunKey = Bot::Controller.ButtonX;
 
