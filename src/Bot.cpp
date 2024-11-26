@@ -32,7 +32,8 @@ aliance Bot::Aliance = aliance::Nuetral;
 
 // AI Vision Color Descriptions
 // AI Vision Code Descriptions
-vex::aivision Bot::AIVisionF(vex::PORT20, vex::aivision::ALL_TAGS, vex::aivision::ALL_AIOBJS);
+vex::aivision Bot::AIVisionF = vex::aivision(vex::PORT20, vex::aivision::ALL_TAGS, vex::aivision::ALL_AIOBJS);
+vex::distance Bot::VisionDistanceF = vex::distance(vex::PORT19);
 
 //Define Motor Groups
 vex::motor_group Bot::LeftMotors = vex::motor_group(Bot::LeftA, Bot::LeftB, Bot::LeftC);
@@ -130,6 +131,11 @@ int Bot::mainLoop() {
             Arm.spin(vex::forward);
         } else {
             Arm.stop();
+        }
+
+        //Clear notifications
+        if(Controller.ButtonLeft.pressing() && Controller.ButtonRight.pressing()) {
+            Notifications::NotificationList.empty();
         }
 
         vex::wait(20, vex::msec);
@@ -270,6 +276,9 @@ int Bot::monitorLoop() {
         if(!Arm.installed()) Notifications::addNotification("Arm DISCONNECT");
         if(!RotationForward.installed()) Notifications::addNotification("RotationF DISCONNECT");
         if(!RotationLateral.installed()) Notifications::addNotification("RotationL DISCONNECT");
+
+        if(Brain.Battery.capacity() < 30) Notifications::addNotification("Battery 30 WARN");
+        if(Brain.Battery.capacity() < 10) Notifications::addNotification("Battery 10 REPLACE");
 
 
         vex::this_thread::sleep_for(1000);

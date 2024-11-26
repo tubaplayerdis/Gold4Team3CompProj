@@ -148,6 +148,9 @@ void UISystem::setup() {
     UISystem::odoMap.setNewY(UISystem::positions[UISystem::SelectedPosition].pos.y, vexui::INCHES);
     Bot::Inertial.setHeading(UISystem::positions[UISystem::SelectedPosition].heading, vex::degrees);
     UISystem::odoMap.setNewH(UISystem::positions[UISystem::SelectedPosition].heading);
+
+
+
     UISystem::odoMap.elements.push_back(vexui::OdometryGameElement{(int)Odometry::startMobileNN.x, (int)Odometry::startMobileNN.y, Odometry::startMobileNN.objtype, UISystem::showStartingGoals});
     UISystem::odoMap.elements.push_back(vexui::OdometryGameElement{(int)Odometry::startMobileNP.x, (int)Odometry::startMobileNP.y, Odometry::startMobileNP.objtype, UISystem::showStartingGoals});
     UISystem::odoMap.elements.push_back(vexui::OdometryGameElement{(int)Odometry::startMobilePN.x, (int)Odometry::startMobilePN.y, Odometry::startMobilePN.objtype, UISystem::showStartingGoals});
@@ -164,8 +167,8 @@ int UISystem::renderLoop() {
         vexDisplayErase();
         
         redRingNumLabel.setText("Red Rings: "+to_string_int_f(Bot::redRingNum));
-        redRingNumLabel.setText("Blue Rings: "+to_string_int_f(Bot::redRingNum));
-        redRingNumLabel.setText("Mobile Goals: "+to_string_int_f(Bot::redRingNum));
+        blueRingNumLabel.setText("Blue Rings: "+to_string_int_f(Bot::redRingNum));
+        MobileGoalNumLabel.setText("Mobile Goals: "+to_string_int_f(Bot::redRingNum));
 
         motorTempLabel.setText("L1 "+to_string_double_f(Bot::LeftA.temperature())+" L2 "+to_string_double_f(Bot::LeftB.temperature())+" L3 "+to_string_double_f(Bot::LeftC.temperature())+" R1 "+to_string_double_f(Bot::RightA.temperature())+" R2 "+to_string_double_f(Bot::RightB.temperature())+" R3 "+to_string_double_f(Bot::RightC.temperature()));
 

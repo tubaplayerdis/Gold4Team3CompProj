@@ -49,7 +49,6 @@ void Odometry::driveToPosition(double targetX, double targetY, bool override) {
         if (distance_to_target < 1) { // Tolerance in mm (1 inch)
             Bot::LeftMotors.stop();
             Bot::RightMotors.stop();
-            Bot::Brain.Screen.printAt(130, 130, "Drove To WallStake!");
             break;
         }
 
@@ -59,7 +58,6 @@ void Odometry::driveToPosition(double targetX, double targetY, bool override) {
         Bot::LeftMotors.spin(vex::forward, forwardSpeed + turnSpeed, vex::pct);
         Bot::RightMotors.spin(vex::forward, forwardSpeed - turnSpeed, vex::pct);
 
-        Bot::Brain.Screen.printAt(130, 130, "Driving To WallStake");
         dostop = true;
         vex::this_thread::sleep_for(20);
     }
