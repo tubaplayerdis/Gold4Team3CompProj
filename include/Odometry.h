@@ -15,7 +15,6 @@ class Odometry {
         static double heading;
         static vex::controller::button MotorRunKey;
 
-    private:
         //Functions
         static void updateOdometry();
         static double calculateDistanceToStake(double stakeX, double stakeY);
@@ -31,6 +30,11 @@ class Odometry {
         static const double tallWallStake1Y = -35.0;     // Y position of the first wall stake
         static const double tallWallStake2X = 50.0;  // X position of the second wall stake
         static const double tallWallStake2Y = 50.0;     // Y position of the second wall stake
+        static gameElementPosition startMobilePP;
+        static gameElementPosition startMobileNP;
+        static gameElementPosition startMobileNN;
+        static gameElementPosition startMobilePN;
+
         static constexpr double approach_distance = 152.4; // Distance to stop in front of wall stake, 6 inches converted to mm
 
 };

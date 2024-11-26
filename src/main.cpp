@@ -50,6 +50,9 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
+  Odometry::driveToNearestWallStake();
+  Bot::MogoMech.set(true);
+  Bot::Intake.setVelocity(100, vex::percent);
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................

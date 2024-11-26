@@ -24,6 +24,12 @@
 
 namespace vexui
 {   
+    enum gameElements {
+        mobileGoal,
+        redRing,
+        blueRing,
+    };
+
     inline void resetColor() {
         uint32_t white = (255 << 16) | (255 << 8) | 255;
         uint32_t black = (0 << 16) | (0 << 8) | 0;
@@ -287,6 +293,8 @@ namespace vexui
             int mapwidth = 150;
             float botLinelen = 20;
 
+            
+
         public:
             vexui::Color mpgcolor{192,192,192, false}, lncolor{81,81,81, false}, blcolor{25, 173, 207, false}, botcolor{150, 61, 39, false}, botheadingcolor{150, 132, 39, false}, txcolor{255,255,255, true}, txbgcolor{55,55,55, false};
             OdometryUnits unit;
@@ -300,6 +308,14 @@ namespace vexui
             void setNewY(double y, OdometryUnits units);
 
             void setNewH(double h);
+
+            void render() override;
+    };
+
+    class GameElement : public UIElement {
+            gameElements objtype;
+        public:
+            GameElement(int x, int y, gameElements element);
 
             void render() override;
     };

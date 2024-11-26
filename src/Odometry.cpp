@@ -8,6 +8,12 @@ double Odometry::x = 0.0;   // X position in inches (forward/backward)
 double Odometry::y = 0.0;   // Y position in inches (left/rsight)
 double Odometry::heading = 0.0; // spin in degress?
 
+
+gameElementPosition Odometry::startMobilePP = { 32, 32, vexui::gameElements::mobileGoal};
+gameElementPosition Odometry::startMobileNP = { -32, 32, vexui::gameElements::mobileGoal};
+gameElementPosition Odometry::startMobileNN = { -32, -32, vexui::gameElements::mobileGoal};
+gameElementPosition Odometry::startMobilePN = { 32, -32, vexui::gameElements::mobileGoal};
+
 vex::controller::button Odometry::MotorRunKey = Bot::Controller.ButtonX;
 
 // Calculate distance between robot and a wall stake
@@ -40,7 +46,7 @@ void Odometry::driveToPosition(double targetX, double targetY) {
 
         //Bot::Brain.Screen.printAt(0, 50, "Distance to Target: %f", distance_to_target);
 
-        if (distance_to_target < 25.4) { // Tolerance in mm (1 inch)
+        if (distance_to_target < 1) { // Tolerance in mm (1 inch)
             Bot::LeftMotors.stop();
             Bot::RightMotors.stop();
             Bot::Brain.Screen.printAt(130, 130, "Drove To WallStake!");
@@ -88,21 +94,33 @@ void Odometry::rotateToAngle(double targetAngle) {
 int Odometry::driveToNearestWallStake() {
     while (true)
     {
-        double distanceToStake1 = Odometry::calculateDistanceToStake(Odometry::tallWallStake1X, Odometry::tallWallStake1Y);
-        double distanceToStake2 = Odometry::calculateDistanceToStake(Odometry::tallWallStake2X, Odometry::tallWallStake2Y);
+        double distanceToStake1 = Odometry::calculateDistanceToStake(Odometry::startMobileNN.x, Odometry::startMobileNN.y);
+        double distanceToStake2 = Odometry::calculateDistanceToStake(Odometry::startMobileNP.x, Odometry::startMobileNP.y);
+        double distanceToStake3 = Odometry::calculateDistanceToStake(Odometry::startMobilePP.x, Odometry::startMobilePP.y);
+        double distanceToStake4 = Odometry::calculateDistanceToStake(Odometry::startMobilePN.x, Odometry::startMobilePN.y);
 
         //Bot::Brain.Screen.printAt(0, 70, "Calculated Distance Of Stakes");
 
+        double target = std::min<double>( { distanceToStake1, distanceToStake2, distanceToStake3, distanceToStake4 } );
+
         double targetX, targetY, perpendicularAngle;
 
-        if (distanceToStake1 < distanceToStake2) {
-            targetX = Odometry::tallWallStake1X + Odometry::approach_distance;
-            targetY = Odometry::tallWallStake1Y;
-            perpendicularAngle = 90.0;  // Align perpendicular to stake at (-1750, 0)
-        } else {
-            targetX = Odometry::tallWallStake2X - Odometry::approach_distance;
-            targetY = Odometry::tallWallStake2Y;
-            perpendicularAngle = 270.0; // Align perpendicular to stake at (1750, 0)
+        if (target == distanceToStake1) {
+            targetX = Odometry::startMobileNN.x;
+            targetY = Odometry::startMobileNN.y;
+            perpendicularAngle = heading;  // Align perpendicular to stake at (-1750, 0)
+        } else if (target == distanceToStake2) {
+            targetX = Odometry::startMobileNN.x;
+            targetY = Odometry::startMobileNN.y;
+            perpendicularAngle = heading; // Align perpendicular to stake at (1750, 0)
+        } else if (target == distanceToStake3) {
+            targetX = Odometry::startMobileNN.x;
+            targetY = Odometry::startMobileNN.y;
+            perpendicularAngle = heading; // Align perpendicular to stake at (1750, 0)
+        } else if (target == distanceToStake4) {
+            targetX = Odometry::startMobileNN.x;
+            targetY = Odometry::startMobileNN.y;
+            perpendicularAngle = heading; // Align perpendicular to stake at (1750, 0)
         }
 
         // Drive to the target position

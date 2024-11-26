@@ -1,5 +1,6 @@
 #pragma once
 #include "vex.h"
+#include "api/vexui.h"
 #include "Device.h"
 #include <vector>
 #include <sstream>
@@ -10,11 +11,19 @@ enum aliance {
     Red = 2
 };
 
-enum gameElements {
-  mobileGoal,
-  redRing,
-  blueRing,
+struct gameElementPosition 
+{
+    gameElementPosition(double x_, double y_, vexui::gameElements objtype_) {
+        x = x_;
+        y = y_;
+        objtype = objtype_;
+    }
+
+    double x;
+    double y;
+    vexui::gameElements objtype;
 };
+
 
 inline const char* getGameElementNameFromID(int32_t id) {
     switch (id)

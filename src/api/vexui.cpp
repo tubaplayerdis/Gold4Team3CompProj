@@ -541,4 +541,38 @@ void vexui::OdometryMap::render() {
     resetColor();
 }
 
+vexui::GameElement::GameElement(int x_, int y_, gameElements objtype_) : UIElement() {
+    x = x_;
+    y = y_;
+    width = 10;
+    height = 10;
+}
+
+void vexui::GameElement::render() {
+    if(!dorender) return;
+    switch (objtype)
+    {
+        case mobileGoal:
+            vexDisplayBackgroundColor(rgbtocol(252, 186, 3));
+            vexDisplayForegroundColor(rgbtocol(252, 186, 3));
+            vexDisplayRectFill(x-5, y-5, 10, 10);
+            break;
+
+        case redRing:
+            vexDisplayBackgroundColor(rgbtocol(16, 6, 207));
+            vexDisplayForegroundColor(rgbtocol(16, 6, 207));
+            vexDisplayRectFill(x-5, y-5, 10, 10);
+            break;
+
+        case blueRing:
+            vexDisplayBackgroundColor(rgbtocol(252, 186, 3));
+            vexDisplayForegroundColor(rgbtocol(252, 186, 3));
+            vexDisplayRectFill(x-5, y-5, 10, 10);
+            break;
+    
+    }
+    vexDisplayBackgroundColor(rgbtocol(0,0,0));
+    vexDisplayForegroundColor(rgbtocol(0,0,0));
+}
+
     
