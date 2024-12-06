@@ -71,4 +71,5 @@ Diagnostics Panel Stuff
 2 - Reset Buttons for things like inertial sensors
 3 - Motor Speeds
 4 - Ai vision sensor info
+5 - Diconnected Electroncis
 */

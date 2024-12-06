@@ -20,6 +20,17 @@ using namespace vex;
 // A global instance of competition
 competition Competition;
 
+
+void cycleStartingPosistions() {
+  UISystem::SelectedPosition++;
+  if(UISystem::SelectedPosition > UISystem::positions.size() -1 || UISystem::SelectedPosition < 0) UISystem::SelectedPosition = 0;
+  UISystem::calibrationSelectLabel.setText(UISystem::positions[UISystem::SelectedPosition].name);
+  UISystem::odoMap.setNewX(UISystem::positions[UISystem::SelectedPosition].pos.x, vexui::INCHES);
+  UISystem::odoMap.setNewY(UISystem::positions[UISystem::SelectedPosition].pos.y, vexui::INCHES);
+  Bot::Inertial.setHeading(UISystem::positions[UISystem::SelectedPosition].heading, vex::degrees);
+  UISystem::odoMap.setNewH(UISystem::positions[UISystem::SelectedPosition].heading);
+}
+
 // define your global instances of motors and other devices here
 
 /*---------------------------------------------------------------------------*/
@@ -35,6 +46,9 @@ competition Competition;
 void pre_auton(void) {
   Bot::updateDeviceList();
   Bot::setup();
+  Bot::Drivetrain.setDriveVelocity(100, vex::percent);
+  Bot::Drivetrain.setTurnVelocity(100, vex::percent);
+  Bot::Drivetrain.setStopping(vex::hold);
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
@@ -50,7 +64,6 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
-  Odometry::driveToNearestWallStake(true);
   Bot::MogoMech.set(true);
   Bot::Intake.setVelocity(100, vex::percent);
   // ..........................................................................
@@ -93,8 +106,8 @@ int main() {
   Odometry::setupAndStartOdometry();
   Bot::Aliance = aliance::Nuetral;
 
-  Bot::Controller.ButtonY.pressed(Bot::switchAlliance);
-  Bot::Controller.ButtonL1.pressed(ColorDetection::toggleEnabled);
+  Bot::Controller.ButtonY.pressed(cycleStartingPosistions);
+  //Bot::Controller.ButtonL1.pressed(ColorDetection::toggleEnabled);
   Bot::Controller.ButtonA.pressed(Bot::toggleMogo);
   Bot::Controller.ButtonB.pressed(Bot::toggleClutch);
 

@@ -11,6 +11,13 @@ enum aliance {
     Red = 2
 };
 
+enum autonSelect {
+    Red_Left = 0,
+    Red_Right = 1,
+    Blue_Left = 2,
+    Blue_Right = 3
+};
+
 typedef struct gameElementPosition 
 {
     gameElementPosition(double x_, double y_, vexui::gameElements objtype_) {
@@ -47,7 +54,7 @@ class Bot {
 
         //Drivetrain Elements
         static vex::controller Controller;
-        static vex::drivetrain Drivetrain;
+        static vex::smartdrive Drivetrain;
         static vex::motor LeftA;
         static vex::motor LeftB;
         static vex::motor LeftC;
@@ -58,15 +65,16 @@ class Bot {
         static vex::motor_group RightMotors;
 
         //Misc
-        static vex::motor Intake;
+        static vex::motor IntakeA;
         static vex::motor IntakeB;
+        static vex::motor_group Intake;
         static vex::motor Arm;
         //static vex::motor LiftL;
         //static vex::motor LiftR;
         //static vex::motor_group LiftMotors;
         static vex::digital_out MogoMech;
         static vex::digital_out Clutch;
-        static vex::limit MogoLimitSwitch;
+        static vex::bumper MogoBumper;
 
         //Gryos and stuff
         static vex::inertial Inertial;
@@ -108,5 +116,7 @@ class Bot {
         static int blueRingNum;
         static int mobileGoalNum;
         static int aiLoop();
+        
+        static void iterateStartingPosistion();
 
 };

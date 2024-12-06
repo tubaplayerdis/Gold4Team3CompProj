@@ -3,6 +3,7 @@
 #include "Odometry.h"
 #include "ColorDetection.h"
 #include "Notifications.h"
+#include "UISystem.h"
 
 //Define Brain
 vex::brain Bot::Brain = vex::brain();
@@ -16,14 +17,15 @@ vex::motor Bot::RightB = vex::motor(vex::PORT5, vex::ratio6_1, false);//High Spe
 vex::motor Bot::RightC = vex::motor(vex::PORT6, vex::ratio6_1, true);//High Speed
 
 
-vex::motor Bot::Intake = vex::motor(vex::PORT7, vex::ratio6_1, false);//High Speed
+vex::motor Bot::IntakeA = vex::motor(vex::PORT7, vex::ratio6_1, false);//High Speed
 vex::motor Bot::IntakeB = vex::motor(vex::PORT8, vex::ratio6_1, true);//High Speed
+vex::motor_group Bot::Intake = vex::motor_group(IntakeA, IntakeB);
 vex::motor Bot::Arm = vex::motor(vex::PORT9, vex::ratio36_1, false);//High Torque
 //vex::motor Bot::LiftL = vex::motor(vex::PORT9, vex::ratio18_1, true);//Low Power
 //vex::motor Bot::LiftR = vex::motor(vex::PORT10, vex::ratio18_1, true);//Low Power
 vex::digital_out Bot::MogoMech = vex::digital_out(Bot::Brain.ThreeWirePort.A);
 vex::digital_out Bot::Clutch = vex::digital_out(Bot::Brain.ThreeWirePort.B);
-vex::limit Bot::MogoLimitSwitch = vex::limit(Bot::Brain.ThreeWirePort.C);
+vex::bumper Bot::MogoBumper = vex::bumper(Bot::Brain.ThreeWirePort.C);
 
 vex::inertial Bot::Inertial = vex::inertial(vex::PORT11);
 vex::rotation Bot::RotationForward = vex::rotation(vex::PORT12); //Forwards
@@ -47,7 +49,7 @@ int Bot::mobileGoalNum = 0;
 
 //Define important stuff
 vex::controller Bot::Controller = vex::controller(vex::primary);
-vex::drivetrain Bot::Drivetrain = vex::drivetrain(Bot::LeftMotors, Bot::RightMotors, 4.0, 14.25, 11.0, vex::inches, 1);
+vex::smartdrive Bot::Drivetrain = vex::smartdrive(Bot::LeftMotors, Bot::RightMotors, Bot::Inertial,260, 430, 430, vex::mm, 0.6);
 
 //hidden api
 std::vector<Device> Bot::DeviceList = std::vector<Device>();
@@ -201,7 +203,7 @@ void Bot::releaseClutch() {
 //use this eventually? no!
 void Bot::checkInstall() {
     Bot::Brain.Screen.printAt(0, 30, "Arm: %d", Bot::Arm.installed());
-    Bot::Brain.Screen.printAt(0, 50, "Intake: %d", Bot::Intake.installed());
+    Bot::Brain.Screen.printAt(0, 50, "Intake: %d", Bot::IntakeA.installed());
     Bot::Brain.Screen.printAt(0, 70, "LeftA: %d", Bot::LeftA.installed());
     Bot::Brain.Screen.printAt(0, 90, "LeftB: %d", Bot::LeftB.installed());
     Bot::Brain.Screen.printAt(0, 110, "LeftC: %d", Bot::LeftC.installed());
@@ -221,18 +223,21 @@ int Bot::displayLoop() {
             CONTROLLER
         */
         Bot::Controller.Screen.setCursor(1,1);
-        Bot::Controller.Screen.print("X:%.2f, Y:%.2f, H:%.2f", Odometry::x, Odometry::y, Odometry::heading);
+        Bot::Controller.Screen.print("X:%.1f,Y:%.1f,H:%.1f", Odometry::x, Odometry::y, Odometry::heading);
         Bot::Controller.Screen.setCursor(3,1);
-        switch (Bot::Aliance)
+        switch (UISystem::SelectedPosition)
         {
-            case aliance::Nuetral:
-                Bot::Controller.Screen.print("NO ALIANCE   CS:%01d", ColorDetection::isEnabled);
+            case 0:
+                Bot::Controller.Screen.print("BLUE LEFT    ");
                 break;
-            case aliance::Blue:
-                Bot::Controller.Screen.print("BLUE ALIANCE CS:%01d", ColorDetection::isEnabled);
+            case 1:
+                Bot::Controller.Screen.print("BLUE RIGHT   ");
                 break;
-            case aliance::Red:
-                Bot::Controller.Screen.print("RED ALIANCE  CS:%01d", ColorDetection::isEnabled);
+            case 2:
+                Bot::Controller.Screen.print("RED LEFT     ");
+                break;
+            case 3:
+                Bot::Controller.Screen.print("RED RIGHT    ");
                 break;
         
         }
@@ -287,8 +292,8 @@ int Bot::monitorLoop() {
         if(!RightA.installed()) Notifications::addNotification("RightA DISCONNECT");
         if(!RightB.installed()) Notifications::addNotification("RightB DISCONNECT");
         if(!RightC.installed()) Notifications::addNotification("RightC DISCONNECT");
-        if(!Intake.installed()) Notifications::addNotification("IntakeA DISCONNECT");
-        if(!Intake.installed()) Notifications::addNotification("IntakeB DISCONNECT");
+        if(!IntakeA.installed()) Notifications::addNotification("IntakeA DISCONNECT");
+        if(!IntakeB.installed()) Notifications::addNotification("IntakeB DISCONNECT");
         if(!Arm.installed()) Notifications::addNotification("Arm DISCONNECT");
         if(!RotationForward.installed()) Notifications::addNotification("RotationF DISCONNECT");
         if(!RotationLateral.installed()) Notifications::addNotification("RotationL DISCONNECT");
