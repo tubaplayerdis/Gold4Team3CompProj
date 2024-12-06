@@ -530,19 +530,19 @@ void vexui::OdometryMap::render() {
             case mobileGoal:
                 vexDisplayBackgroundColor(rgbtocol(252, 186, 3));
                 vexDisplayForegroundColor(rgbtocol(252, 186, 3));
-                vexDisplayRectFill(x+70+(obj.x*(150/144)), y+70+(obj.y*(150/144)), x+70+(obj.x*(150/144))+10, y+70+(obj.y*(150/144))+10);
+                vexDisplayRectFill(x+70+(obj.x*(150/144)), y+70+(obj.y*(150/144)), x+70+(obj.x*(150/144))+5, y+70+(obj.y*(150/144))+5);
                 break;
 
             case redRing:
                 vexDisplayBackgroundColor(rgbtocol(16, 6, 207));
                 vexDisplayForegroundColor(rgbtocol(16, 6, 207));
-                vexDisplayRectFill(x+70+(obj.x*(150/144)), y+70+(obj.y*(150/144)), x+70+(obj.x*(150/144))+10, y+70+(obj.y*(150/144))+10);
+                vexDisplayRectFill(x+70+(obj.x*(150/144)), y+70+(obj.y*(150/144)), x+70+(obj.x*(150/144))+5, y+70+(obj.y*(150/144))+5);
                 break;
 
             case blueRing:
                 vexDisplayBackgroundColor(rgbtocol(252, 186, 3));
                 vexDisplayForegroundColor(rgbtocol(252, 186, 3));
-                vexDisplayRectFill(x+70+(obj.x*(150/144)), y+70+(obj.y*(150/144)), x+70+(obj.x*(150/144))+10, y+70+(obj.y*(150/144))+10);
+                vexDisplayRectFill(x+70+(obj.x*(150/144)), y+70+(obj.y*(150/144)), x+70+(obj.x*(150/144))+5, y+70+(obj.y*(150/144))+5);
                 break;
         
         }
