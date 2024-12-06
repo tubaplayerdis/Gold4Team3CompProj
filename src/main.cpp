@@ -95,8 +95,8 @@ int main() {
 
   Bot::Controller.ButtonY.pressed(Bot::switchAlliance);
   Bot::Controller.ButtonL1.pressed(ColorDetection::toggleEnabled);
-  Bot::Controller.ButtonA.pressed(Bot::clampMobileGoal);
-  Bot::Controller.ButtonB.pressed(Bot::releaseMobileGoal);
+  Bot::Controller.ButtonA.pressed(Bot::toggleMogo);
+  Bot::Controller.ButtonB.pressed(Bot::toggleClutch);
 
   Bot::Controller.ButtonLeft.pressed(Notifications::notifBackward);
   Bot::Controller.ButtonRight.pressed(Notifications::notifForward);

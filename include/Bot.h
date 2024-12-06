@@ -59,6 +59,7 @@ class Bot {
 
         //Misc
         static vex::motor Intake;
+        static vex::motor IntakeB;
         static vex::motor Arm;
         //static vex::motor LiftL;
         //static vex::motor LiftR;
@@ -89,6 +90,9 @@ class Bot {
         //Main Loop Function use at task
         static int mainLoop();
         //"tasks"
+        static bool ClutchToggle, MogoToggle;
+        static void toggleClutch();
+        static void toggleMogo();
         static void switchAlliance();
         static void clampMobileGoal();
         static void releaseMobileGoal();

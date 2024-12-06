@@ -36,11 +36,11 @@ int UISystem::SelectedPosition = 0;
 
 vexui::Button UISystem::mainTabButton = vexui::Button(0,0,100,40, "Main");
 vexui::Button UISystem::odometryTabButton = vexui::Button(100,0,100,40, "Odometry");
-vexui::Button UISystem::consoleTabButton = vexui::Button(200,0,100,40, "Console");
+vexui::Button UISystem::diagnosticsTabButton = vexui::Button(200,0,100,40, "Diagnostics");
 
 vexui::Panel UISystem::mainPanel = vexui::Panel(0,40,480,200);
 vexui::Panel UISystem::odometryPanel = vexui::Panel(0,40,480,200);
-vexui::Panel UISystem::consolePanel = vexui::Panel(0,40,480,200);
+vexui::Panel UISystem::diagnosticsPanel = vexui::Panel(0,40,480,200);
 
 vexui::Label UISystem::watermark = vexui::Label(315, 15, "GBS 38535B");
 
@@ -66,19 +66,19 @@ vexui::Label UISystem::labc = vexui::Label(10,10, "Console Panel");
 void UISystem::mainTabButton_Press() {
     mainPanel.dorender = true;
     odometryPanel.dorender = false;
-    consolePanel.dorender = false;
+    diagnosticsPanel.dorender = false;
 }
 
 void UISystem::odometryTabButton_Press() {
     mainPanel.dorender = false;
     odometryPanel.dorender = true;
-    consolePanel.dorender = false;
+    diagnosticsPanel.dorender = false;
 }
 
-void UISystem::consoleTabButton_Press() {
+void UISystem::diagnosticsTabButton_Press() {
     mainPanel.dorender = false;
     odometryPanel.dorender = false;
-    consolePanel.dorender = true;
+    diagnosticsPanel.dorender = true;
 }
 
 void IncreaseSelectedPosisiton() {
@@ -107,14 +107,14 @@ void UISystem::setup() {
 
     mainTabButton.pressEvent.addListener(UISystem::mainTabButton_Press);
     odometryTabButton.pressEvent.addListener(UISystem::odometryTabButton_Press);
-    consoleTabButton.pressEvent.addListener(UISystem::consoleTabButton_Press);
+    diagnosticsTabButton.pressEvent.addListener(UISystem::diagnosticsTabButton_Press);
     mainPanel.dorender = false;
     odometryPanel.dorender = true;
-    consolePanel.dorender = false;
+    diagnosticsPanel.dorender = false;
 
     labm.bgcolor = mainPanel.color;
     labo.bgcolor = odometryPanel.color;
-    labc.bgcolor = consolePanel.color;
+    labc.bgcolor = diagnosticsPanel.color;
 
     labo.txsize = vexui::LARGE;
     motorTempLabel.txsize = vexui::SMALL;
@@ -133,7 +133,7 @@ void UISystem::setup() {
 
 
 
-    consolePanel.addElement(&labc);
+    diagnosticsPanel.addElement(&labc);
 
 
     odometryPanel.addElement(&labo);
@@ -176,10 +176,10 @@ int UISystem::renderLoop() {
         //Bot::Brain.Screen.printAt(200,200, "ummm");
         UISystem::mainTabButton.render();
         UISystem::odometryTabButton.render();
-        UISystem::consoleTabButton.render();
+        UISystem::diagnosticsTabButton.render();
         UISystem::mainPanel.render();
         UISystem::odometryPanel.render();
-        UISystem::consolePanel.render();
+        UISystem::diagnosticsPanel.render();
         UISystem::watermark.render();
         vexDisplayRender(1,1);
         

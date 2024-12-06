@@ -28,15 +28,15 @@ class UISystem
         //callbacks
         static void mainTabButton_Press();
         static void odometryTabButton_Press();
-        static void consoleTabButton_Press();
+        static void diagnosticsTabButton_Press();
         //UI Elements
         static vexui::Button mainTabButton;
         static vexui::Button odometryTabButton;
-        static vexui::Button consoleTabButton;
+        static vexui::Button diagnosticsTabButton;
 
         static vexui::Panel mainPanel;
         static vexui::Panel odometryPanel;
-        static vexui::Panel consolePanel;
+        static vexui::Panel diagnosticsPanel;
 
         static vexui::Label watermark;
 
@@ -64,3 +64,11 @@ class UISystem
         static void toggleUI();
 };
 
+
+/*
+Diagnostics Panel Stuff
+1 - Motor Temp
+2 - Reset Buttons for things like inertial sensors
+3 - Motor Speeds
+4 - Ai vision sensor info
+*/

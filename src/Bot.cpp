@@ -16,8 +16,9 @@ vex::motor Bot::RightB = vex::motor(vex::PORT5, vex::ratio6_1, false);//High Spe
 vex::motor Bot::RightC = vex::motor(vex::PORT6, vex::ratio6_1, true);//High Speed
 
 
-vex::motor Bot::Intake = vex::motor(vex::PORT7, vex::ratio18_1, false);//Regular
-vex::motor Bot::Arm = vex::motor(vex::PORT8, vex::ratio36_1, false);//High Torque
+vex::motor Bot::Intake = vex::motor(vex::PORT7, vex::ratio6_1, false);//High Speed
+vex::motor Bot::IntakeB = vex::motor(vex::PORT8, vex::ratio6_1, true);//High Speed
+vex::motor Bot::Arm = vex::motor(vex::PORT9, vex::ratio36_1, false);//High Torque
 //vex::motor Bot::LiftL = vex::motor(vex::PORT9, vex::ratio18_1, true);//Low Power
 //vex::motor Bot::LiftR = vex::motor(vex::PORT10, vex::ratio18_1, true);//Low Power
 vex::digital_out Bot::MogoMech = vex::digital_out(Bot::Brain.ThreeWirePort.A);
@@ -51,6 +52,9 @@ vex::drivetrain Bot::Drivetrain = vex::drivetrain(Bot::LeftMotors, Bot::RightMot
 //hidden api
 std::vector<Device> Bot::DeviceList = std::vector<Device>();
 int Bot::NumDevices = 0;
+
+bool Bot::ClutchToggle = false;
+bool Bot::MogoToggle = true;
 
 //Realisticly dont use this. I dont like it.
 void Bot::controllerNotification(std::string notif) {
@@ -90,7 +94,7 @@ void Bot::setup() {
     RightC.setBrake(vex::brake);
 
     MogoMech.set(false);
-    Clutch.set(true);
+    Clutch.set(false);
 
     //int voltagelimold = vexDeviceMotorVoltageLimitGet(Device::getInternalDevicePointer(MGPM));
     //vexDeviceMotorVoltageLimitSet(Device::getInternalDevicePointer(MGPM), 15);
@@ -146,6 +150,16 @@ int Bot::mainLoop() {
     controllerNotification("Main Loop Aborted!");
     Brain.Screen.setPenColor(vex::color::white);
     return 1; //Return error as this should not happen.
+}
+
+void Bot::toggleClutch() {
+    ClutchToggle = !ClutchToggle;
+    Clutch.set(ClutchToggle);
+}
+
+void Bot::toggleMogo() {
+    MogoToggle = !MogoToggle;
+    MogoMech.set(MogoToggle);
 }
 
 void Bot::switchAlliance() {
@@ -263,7 +277,8 @@ int Bot::monitorLoop() {
         if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightA TEMP");
         if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightB TEMP");
         if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightC TEMP");
-        if(Intake.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("Intake TEMP");
+        if(Intake.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("IntakeA TEMP");
+        if(IntakeB.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("IntakeB TEMP");
         if(Arm.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("Arm TEMP");
 
         if(!LeftA.installed()) Notifications::addNotification("LeftA DISCONNECT");
@@ -272,7 +287,8 @@ int Bot::monitorLoop() {
         if(!RightA.installed()) Notifications::addNotification("RightA DISCONNECT");
         if(!RightB.installed()) Notifications::addNotification("RightB DISCONNECT");
         if(!RightC.installed()) Notifications::addNotification("RightC DISCONNECT");
-        if(!Intake.installed()) Notifications::addNotification("Intake DISCONNECT");
+        if(!Intake.installed()) Notifications::addNotification("IntakeA DISCONNECT");
+        if(!Intake.installed()) Notifications::addNotification("IntakeB DISCONNECT");
         if(!Arm.installed()) Notifications::addNotification("Arm DISCONNECT");
         if(!RotationForward.installed()) Notifications::addNotification("RotationF DISCONNECT");
         if(!RotationLateral.installed()) Notifications::addNotification("RotationL DISCONNECT");
