@@ -48,7 +48,9 @@ void pre_auton(void) {
   Bot::setup();
   Bot::Drivetrain.setDriveVelocity(100, vex::percent);
   Bot::Drivetrain.setTurnVelocity(100, vex::percent);
-  Bot::Drivetrain.setStopping(vex::hold);
+  Bot::Drivetrain.setStopping(vex::coast);
+  
+  
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
@@ -64,8 +66,11 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
+  Bot::Drivetrain.setDriveVelocity(30, vex::percent);
+  Bot::Drivetrain.driveFor(800, vex::mm, true);
   Bot::MogoMech.set(true);
-  Bot::Intake.setVelocity(100, vex::percent);
+  Bot::Intake.setVelocity(-600, vex::rpm);
+  Bot::Intake.spinFor(5, vex::seconds);
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................

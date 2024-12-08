@@ -47,9 +47,14 @@ int Bot::redRingNum = 0;
 int Bot::blueRingNum = 0;
 int Bot::mobileGoalNum = 0;
 
+bool Bot::IgnoreMain = false;
+bool Bot::IgnoreDisplay = false;
+bool Bot::IgnoreMonitor = false;
+bool Bot::IgnoreVision = false;
+
 //Define important stuff
 vex::controller Bot::Controller = vex::controller(vex::primary);
-vex::smartdrive Bot::Drivetrain = vex::smartdrive(Bot::LeftMotors, Bot::RightMotors, Bot::Inertial,260, 430, 430, vex::mm, 0.6);
+vex::smartdrive Bot::Drivetrain = vex::smartdrive(Bot::LeftMotors, Bot::RightMotors, Bot::Inertial,260, 393, 317, vex::mm, 0.6);
 
 //hidden api
 std::vector<Device> Bot::DeviceList = std::vector<Device>();
@@ -88,12 +93,12 @@ void Bot::updateDeviceList() {
 }
 
 void Bot::setup() {
-    LeftA.setBrake(vex::brake);
-    RightA.setBrake(vex::brake);
-    LeftB.setBrake(vex::brake);
-    RightB.setBrake(vex::brake);
-    LeftC.setBrake(vex::brake);
-    RightC.setBrake(vex::brake);
+    LeftA.setBrake(vex::brakeType::coast);
+    RightA.setBrake(vex::brakeType::coast);
+    LeftB.setBrake(vex::brakeType::coast);
+    RightB.setBrake(vex::brakeType::coast);
+    LeftC.setBrake(vex::brakeType::coast);
+    RightC.setBrake(vex::brakeType::coast);
 
     MogoMech.set(false);
     Clutch.set(false);
@@ -111,19 +116,21 @@ int Bot::mainLoop() {
     setup();
     updateDeviceList(); //If not done already.
     //Brain.Screen.printAt(100,100, "Main Loop started");
+    vex::competition Comp;
     while (true)
     {
-        //Abort Loop
-        //if(Controller.ButtonDown.pressing()) break;
+        //Allow Auton Full Control Of Bot
+        if(IgnoreMain) continue;
+        if(Comp.isAutonomous()) continue;
 
         if(Controller.ButtonL2.pressing() && Controller.ButtonR2.pressing()) {
             Intake.setVelocity(0, vex::rpm);
             Intake.stop();
         } else if (Controller.ButtonL2.pressing()) {
-            Intake.setVelocity(200, vex::rpm);
+            Intake.setVelocity(600, vex::rpm);
             Intake.spin(vex::forward);
         } else if (Controller.ButtonR2.pressing()) {
-            Intake.setVelocity(200, vex::rpm);
+            Intake.setVelocity(600, vex::rpm);
             Intake.spin(vex::reverse);
         } else {
             Intake.setVelocity(0, vex::rpm);
@@ -219,6 +226,7 @@ void Bot::checkInstall() {
 int Bot::displayLoop() {
     Bot::Controller.Screen.clearScreen();
     while (true) {
+        if(IgnoreDisplay) continue;
         /*
             CONTROLLER
         */
@@ -276,6 +284,9 @@ int Bot::displayLoop() {
 
 int Bot::monitorLoop() {
     while (true) {
+
+        if(IgnoreMonitor) continue;
+
         if(LeftA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LeftA TEMP");
         if(LeftB.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LeftB TEMP");
         if(LeftC.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LeftC TEMP");
@@ -310,6 +321,9 @@ int Bot::monitorLoop() {
 
 int Bot::aiLoop() {
     while(true) {
+
+        if(IgnoreVision) continue;
+
         AIVisionF.takeSnapshot(vex::aivision::ALL_AIOBJS);
         //Brain.Screen.printAt(0,50, "AI Vision Count: %d", AIVisionF.objectCount);
         int tempred = 0, tempblue = 0, tempmob = 0;

@@ -292,17 +292,18 @@ namespace vexui
 
     class OdometryMap : public UIElement {
         private:
-            double* xref;
-            double* yref;
-            double* headingref;
 
             int mapheight = 150;
             int mapwidth = 150;
             float botLinelen = 20;
 
-
-
+            
         public:
+            double* xref;
+            double* yref;
+            double* headingref;
+
+
             vexui::Color mpgcolor{192,192,192, false}, lncolor{81,81,81, false}, blcolor{25, 173, 207, false}, botcolor{150, 61, 39, false}, botheadingcolor{150, 132, 39, false}, txcolor{255,255,255, true}, txbgcolor{55,55,55, false};
             OdometryUnits unit;
             std::vector<OdometryGameElement> elements = std::vector<OdometryGameElement>();

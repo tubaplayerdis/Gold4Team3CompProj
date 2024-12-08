@@ -6,9 +6,12 @@ bool Drivetrain::RemoteControlCodeEnabled = true;
 bool Drivetrain::DrivetrainLNeedsToBeStopped = true;
 bool Drivetrain::DrivetrainRNeedsToBeStopped = true;
 
+bool Drivetrain::Ignore = false;
+
 int Drivetrain::ControllerLoop() {
+    Bot::Drivetrain.setDriveVelocity(100, vex::percent);
     while(true) {
-      //if(Bot::Controller.ButtonUp.pressing()) break;
+      if(Ignore) continue;
 
       if(RemoteControlCodeEnabled) {
         

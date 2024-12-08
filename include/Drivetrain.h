@@ -10,6 +10,8 @@ class Drivetrain {
     static bool DrivetrainLNeedsToBeStopped;
     static bool DrivetrainRNeedsToBeStopped;
 
+    static bool Ignore;
+
     // define a task that will handle monitoring inputs from bot::Controller
     static int ControllerLoop();
 

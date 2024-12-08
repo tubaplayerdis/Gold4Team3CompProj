@@ -85,6 +85,15 @@ class Bot {
         static vex::distance VisionDistanceF;
         static vex::aivision AIVisionF;
 
+        //"Game Posistioning System"
+        static vex::gps GpsF;
+        static vex::gps GpsL;
+        static vex::gps GpsR;
+        static vex::gps GpsB;
+
+        static vex::vision VisionFront;
+        static vex::vision VisionRear;
+
         //Controller Stuff
         static void controllerNotification(std::string notif);
 
@@ -92,6 +101,12 @@ class Bot {
         static void updateDeviceList();
         static int NumDevices;
         static std::vector<Device> DeviceList;
+
+        //bools for loops
+        static bool IgnoreMain;
+        static bool IgnoreDisplay;
+        static bool IgnoreMonitor;
+        static bool IgnoreVision;
 
         //setup stuf
         static void setup();
