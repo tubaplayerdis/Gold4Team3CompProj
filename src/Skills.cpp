@@ -7,6 +7,7 @@
 bool Skills::isActive = false;
 vex::task Skills::skillsTask = vex::task(Skills::_skillsFunc);
 int Skills::skillsPositionSelect = 0;
+std::vector<SkillsTask> Skills::Tasks = std::vector<SkillsTask>();
 
 double Skills::x = -1;
 double Skills::y = -1;
@@ -20,9 +21,7 @@ double qualityCheck(vex::gps g) {
 
 double calcAverages(int w) {
     if(Bot::GpsF.quality() < 95 && Bot::GpsL.quality() && Bot::GpsR.quality() && Bot::GpsB.quality()) {
-        Bot::Controller.Screen.setCursor(0,2);
-        Bot::Controller.Screen.clearLine(2);
-        Bot::Controller.Screen.print("DEFAULT ODOM!");
+        Notifications::addNotification("DEFAULT ODOM!");        
         //Doomsday Scenario
         switch(w) {
             case 0:
@@ -51,16 +50,19 @@ int Skills::_skillsFunc() {
     while(!isActive) {
         vex::this_thread::sleep_for(100);
     }
-    SkillsStartingPosition start = Skills::StartingPosistions[Skills::skillsPositionSelect];
 
 
     if(!Bot::GpsF.installed() || !Bot::GpsL.installed() || !Bot::GpsR.installed() || !Bot::GpsB.installed()) return 1;
+
+
 
     while(true) {
         x = calcAverages(0);
         y = calcAverages(1);
         h = calcAverages(2);
-
+        //Odometry::x = x;
+        //Odometry::y = y;
+        //Odometry::heading = h;
 
 
 
@@ -80,9 +82,9 @@ void Skills::deactiveSkills() {
 
 void Skills::runSkills(int p) {
     //Stop Controller Input and Notification System For Now.
-    Bot::IgnoreMain = true;
-    Bot::IgnoreDisplay = true;
-    Bot::IgnoreVision = true;
+    //Bot::IgnoreMain = true;
+   // Bot::IgnoreDisplay = true;
+   // Bot::IgnoreVision = true;
 
     //Change UI odo map on bot to recieve information from gps sensors
     UISystem::odoMap.elements.clear();
@@ -90,17 +92,10 @@ void Skills::runSkills(int p) {
     UISystem::odoMap.yref = &y;
     UISystem::odoMap.headingref = &h;
 
-    Bot::Controller.Screen.clearScreen();
-    Bot::Controller.Screen.setCursor(1,1);
-    Bot::Controller.Screen.print("CALIB GPSF");
-    Bot::GpsF.calibrate();
-    Bot::Controller.Screen.print("CALIB GPSL");
-    Bot::GpsL.calibrate();
-    Bot::Controller.Screen.print("CALIB GPSR");
-    Bot::GpsR.calibrate();
-    Bot::Controller.Screen.print("CALIB GPSB");
-    Bot::GpsB.calibrate();
 
-    isActive == true;
+
+    isActive = true;
+
+    Bot::IgnoreDisplay = false;
 }
 

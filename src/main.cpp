@@ -14,6 +14,7 @@
 #include "Drivetrain.h"
 #include "Notifications.h"
 #include "UISystem.h"
+#include "Skills.h"
 
 using namespace vex;
 
@@ -103,16 +104,16 @@ void usercontrol(void) {
   }
 }
 
-
 //
 // Main will set up the competition functions and callbacks.
 //
 int main() {
+  Skills::runSkills(1);
   Odometry::setupAndStartOdometry();
   Bot::Aliance = aliance::Nuetral;
 
   Bot::Controller.ButtonY.pressed(cycleStartingPosistions);
-  //Bot::Controller.ButtonL1.pressed(ColorDetection::toggleEnabled);
+  Bot::Controller.ButtonL1.pressed(Bot::swapFeedPos);
   Bot::Controller.ButtonA.pressed(Bot::toggleMogo);
   Bot::Controller.ButtonB.pressed(Bot::toggleClutch);
 

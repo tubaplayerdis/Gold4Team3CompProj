@@ -155,14 +155,6 @@ void Odometry::updateOdometry() {
 }
 
 int Odometry::odometry() {
-    Bot::Inertial.calibrate();
-    while(Bot::Inertial.isCalibrating()) {
-        if(!Bot::Inertial.installed()) break;
-        Bot::Controller.Screen.setCursor(2,1);
-        Bot::Controller.Screen.print("Calib Intert!");
-        vex::this_thread::sleep_for(20);
-    }
-    //Bot::Controller.Screen.print("              ");
     while (true) {
         Odometry::updateOdometry();
         vex::this_thread::sleep_for(10);  // Update rate in milliseconds

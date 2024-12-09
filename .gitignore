@@ -1,5 +1,6 @@
 /bin
 /build
 /vex
+/include/json
 compile_commands.json
 makefile

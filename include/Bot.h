@@ -82,7 +82,6 @@ class Bot {
         static vex::rotation RotationLateral; //Lateral
         static vex::optical ColorSensor;
         static aliance Aliance;
-        static vex::distance VisionDistanceF;
         static vex::aivision AIVisionF;
 
         //"Game Posistioning System"
@@ -91,8 +90,9 @@ class Bot {
         static vex::gps GpsR;
         static vex::gps GpsB;
 
-        static vex::vision VisionFront;
-        static vex::vision VisionRear;
+
+        static bool feedGps;
+        static void swapFeedPos();
 
         //Controller Stuff
         static void controllerNotification(std::string notif);
