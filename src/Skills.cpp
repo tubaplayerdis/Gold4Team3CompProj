@@ -13,6 +13,40 @@ double Skills::y = -1;
 double Skills::h = -1;
 
 
+double qualityCheck(vex::gps g) {
+    if(g.quality() < 95) return 0.0;
+    return 1.0;
+}
+
+double calcAverages(int w) {
+    if(Bot::GpsF.quality() < 95 && Bot::GpsL.quality() && Bot::GpsR.quality() && Bot::GpsB.quality()) {
+        Bot::Controller.Screen.setCursor(0,2);
+        Bot::Controller.Screen.clearLine(2);
+        Bot::Controller.Screen.print("DEFAULT ODOM!");
+        //Doomsday Scenario
+        switch(w) {
+            case 0:
+                return Odometry::x * 25.4;
+            case 1:
+                return Odometry::y * 25.4;
+            case 2:
+                return Odometry::heading;
+            default:
+                return -1;
+    }
+    }
+    switch(w) {
+        case 0:
+            return ((Bot::GpsF.xPosition() * qualityCheck(Bot::GpsF)) *  + (Bot::GpsL.xPosition() * qualityCheck(Bot::GpsL)) + (Bot::GpsR.xPosition() * qualityCheck(Bot::GpsR)) + (Bot::GpsB.xPosition() * qualityCheck(Bot::GpsB)))/(qualityCheck(Bot::GpsF) + qualityCheck(Bot::GpsL) + qualityCheck(Bot::GpsR) + qualityCheck(Bot::GpsB));
+        case 1:
+            return ((Bot::GpsF.yPosition() * qualityCheck(Bot::GpsF)) *  + (Bot::GpsL.yPosition() * qualityCheck(Bot::GpsL)) + (Bot::GpsR.yPosition() * qualityCheck(Bot::GpsR)) + (Bot::GpsB.yPosition() * qualityCheck(Bot::GpsB)))/(qualityCheck(Bot::GpsF) + qualityCheck(Bot::GpsL) + qualityCheck(Bot::GpsR) + qualityCheck(Bot::GpsB));
+        case 2:
+            return ((Bot::GpsF.heading() * qualityCheck(Bot::GpsF)) *  + (Bot::GpsL.heading() * qualityCheck(Bot::GpsL)) + (Bot::GpsR.heading() * qualityCheck(Bot::GpsR)) + (Bot::GpsB.heading() * qualityCheck(Bot::GpsB)))/(qualityCheck(Bot::GpsF) + qualityCheck(Bot::GpsL) + qualityCheck(Bot::GpsR) + qualityCheck(Bot::GpsB));
+        default:
+         return -1;
+    }
+}
+
 int Skills::_skillsFunc() {
     while(!isActive) {
         vex::this_thread::sleep_for(100);
@@ -23,9 +57,9 @@ int Skills::_skillsFunc() {
     if(!Bot::GpsF.installed() || !Bot::GpsL.installed() || !Bot::GpsR.installed() || !Bot::GpsB.installed()) return 1;
 
     while(true) {
-        x = (Bot::GpsF.xPosition() + Bot::GpsL.xPosition() + Bot::GpsR.xPosition() + Bot::GpsB.xPosition())/4;
-        y = (Bot::GpsF.yPosition() + Bot::GpsL.yPosition() + Bot::GpsR.yPosition() + Bot::GpsB.yPosition())/4;
-        h = (Bot::GpsF.heading() + Bot::GpsL.heading() + Bot::GpsR.heading() + Bot::GpsB.heading())/4;
+        x = calcAverages(0);
+        y = calcAverages(1);
+        h = calcAverages(2);
 
 
 
@@ -55,6 +89,17 @@ void Skills::runSkills(int p) {
     UISystem::odoMap.xref = &x;
     UISystem::odoMap.yref = &y;
     UISystem::odoMap.headingref = &h;
+
+    Bot::Controller.Screen.clearScreen();
+    Bot::Controller.Screen.setCursor(1,1);
+    Bot::Controller.Screen.print("CALIB GPSF");
+    Bot::GpsF.calibrate();
+    Bot::Controller.Screen.print("CALIB GPSL");
+    Bot::GpsL.calibrate();
+    Bot::Controller.Screen.print("CALIB GPSR");
+    Bot::GpsR.calibrate();
+    Bot::Controller.Screen.print("CALIB GPSB");
+    Bot::GpsB.calibrate();
 
     isActive == true;
 }
