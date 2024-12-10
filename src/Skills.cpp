@@ -127,7 +127,31 @@ std::vector<SkillsTask> getTasksFromFileData() {
     std::string errbuffer;
 
     json11::Json data = json11::Json::parse(content, errbuffer);
-    
+    if(data["tasks"].is_array()) {
+        json11::Json::array main = data["tasks"].array_items();
+        for(int i = 0; i < main.size(); i++) {
+            if(main[i].is_object()) {
+                json11::Json::object obj = main[i].object_items();
+                
+                SkillsTask task = {};
+                task.name = obj["name"].string_value();
+
+                if(obj["stype"].string_value() == "Driving") {
+
+                } else if (obj["stype"].string_value() == "Segmenting") {
+
+                } else if (obj["stype"].string_value() == "Turning") {
+                    
+                } else if (obj["stype"].string_value() == "Mogo") {
+                    
+                } else if (obj["stype"].string_value() == "Arm") {
+                    
+                } else if (obj["stype"].string_value() == "Endgame") {
+                    
+                }
+            }
+        }
+    }
 
 }
 

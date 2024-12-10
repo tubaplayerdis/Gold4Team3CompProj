@@ -12,7 +12,7 @@ enum SkillsTaskType {
 
 
 struct SkillsTask {
-    const char name[17];
+    std::string name;
     SkillsTaskType stype = SkillsTaskType::Driving;
 
     //ALL VALUES OF DISTANCE ARE MM, ALL VALUES OF TURNING ARE DEGREES.
