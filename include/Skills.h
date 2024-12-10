@@ -42,9 +42,22 @@ struct SkillsTask {
 
 class SkillsEngine {
     public:
-        static int onTaskIndex;
+        static void init(std::vector<SkillsTask> _tasks);
+
+        //Main Functions
+        static void execute();
+        static void pause();
+        static void restart();
+
+        //Helpers
         static void addTask(SkillsTask task);
+        static int currentTaskIndex();
         static SkillsTask currentTask();
+    private:
+        static std::vector<SkillsTask> tasks;
+        static int onTaskIndex;
+        static int _worker();
+        static vex::task executor;
 };
 
 class Skills {
@@ -53,7 +66,6 @@ class Skills {
         static vex::task skillsTask;
         static int _skillsFunc();
     public:
-        static std::vector<SkillsTask> Tasks;
         static bool isActive;
         static double x,y,h;
 

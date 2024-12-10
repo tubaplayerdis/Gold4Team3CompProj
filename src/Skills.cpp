@@ -4,10 +4,71 @@
 #include "Bot.h"
 #include "UISystem.h"
 
+void SkillsEngine::init(std::vector<SkillsTask> _tasks) {
+    tasks = _tasks;
+    onTaskIndex = 0;
+    executor = vex::task(_worker);
+    executor.suspend();
+}
+
+void SkillsEngine::execute() {
+    executor.resume();
+}
+
+void SkillsEngine::pause() {
+    executor.suspend();
+}
+
+void SkillsEngine::restart() {
+    executor.suspend();
+    for(SkillsTask obj : tasks)
+    {
+        obj.isComplete = false;
+    }
+    executor.resume();
+}
+
+void SkillsEngine::addTask(SkillsTask task) {
+    tasks.push_back(task);
+}
+
+int SkillsEngine::currentTaskIndex() {
+    return onTaskIndex;
+}
+
+SkillsTask SkillsEngine::currentTask() {
+    return tasks[onTaskIndex];
+}
+
+int SkillsEngine::_worker() {
+    while(true) {
+        for(int i = 0; i < tasks.size(); i++) {
+            onTaskIndex = i;
+            //Actual Processing
+
+
+
+
+        }
+        bool allComplete = true;
+        for(SkillsTask obj : tasks)
+        {
+            if(obj.isComplete == false) {
+                allComplete = false;
+            }
+        }
+        if(allComplete) {
+            Bot::controllerNotification("SKILLS COMPLETE");
+            break;
+        }
+    }
+}
+
+
+
 bool Skills::isActive = false;
 vex::task Skills::skillsTask = vex::task(Skills::_skillsFunc);
 int Skills::skillsPositionSelect = 0;
-std::vector<SkillsTask> Skills::Tasks = std::vector<SkillsTask>();
 
 double Skills::x = -1;
 double Skills::y = -1;
