@@ -7,7 +7,7 @@ enum SkillsTaskType {
     Turning = 2,
     Mogo = 3,
     Arm = 4,
-    EngGame = 5
+    EndGame = 5
 };
 
 
@@ -38,8 +38,8 @@ struct SkillsTask {
     //If Actuating Arm
     double turnArmTo = -1;
 
-    //Actuate Endgame
-    double spinMotorsDegrees;
+    //Actuate Endgame. To Use It Drive Forward OR BackWard
+    bool togglePTUTo;
 
     bool isComplete = false;
 };

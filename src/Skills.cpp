@@ -136,17 +136,36 @@ std::vector<SkillsTask> getTasksFromFileData() {
                 SkillsTask task = {};
                 task.name = obj["name"].string_value();
 
-                if(obj["stype"].string_value() == "Driving") {
+                if(obj["stype"].string_value() == "Driving" || obj["stype"].string_value() == "drv") {
+                    task.stype = Driving;
+                    task.tp = obj["tp"].int_value();
+                    task.vp = obj["vp"].int_value();
+                    task.destx = obj["destx"].number_value();
+                    task.desty = obj["desty"].number_value();
+                    task.desth = obj["desth"].number_value();
 
-                } else if (obj["stype"].string_value() == "Segmenting") {
+                } else if (obj["stype"].string_value() == "Segmenting" || obj["stype"].string_value() == "seg") {
+                    task.stype = Segmenting;
+                    task.vp = obj["vp"].int_value();
+                    task.segAmount = obj["segDist"].number_value();
 
-                } else if (obj["stype"].string_value() == "Turning") {
-                    
-                } else if (obj["stype"].string_value() == "Mogo") {
-                    
-                } else if (obj["stype"].string_value() == "Arm") {
-                    
-                } else if (obj["stype"].string_value() == "Endgame") {
+                } else if (obj["stype"].string_value() == "Turning" || obj["stype"].string_value() == "tur") {
+                    task.stype = Turning;
+                    task.tp = obj["tp"].int_value();
+                    task.turnBy = obj["turnBy"].number_value();
+
+                } else if (obj["stype"].string_value() == "Mogo" || obj["stype"].string_value() == "mog") {
+                    task.stype = Mogo;
+                    task.toggleMogoTo = obj["setTo"].bool_value();
+
+
+                } else if (obj["stype"].string_value() == "Arm" || obj["stype"].string_value() == "arm") {
+                    task.stype = Arm;
+                    task.turnArmTo = obj["armTo"].number_value();
+
+                } else if (obj["stype"].string_value() == "Endgame" || obj["stype"].string_value() == "end") {
+                    task.stype = EndGame;
+                    task.togglePTUTo = obj["setPTUTo"].bool_value();
                     
                 }
             }

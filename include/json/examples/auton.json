@@ -12,14 +12,19 @@
         {
             "name": "Drive Forward",
             "stype": "Segmenting",
-            "segAmount": 90,
+            "segDist": 90,
             "vp": 100
         },
         {
             "name": "Turn 90 Degrees",
             "stype": "Turning",
-            "desth": 90,
+            "turnBy": 90,
             "tp": 100
+        },
+        {
+            "name": "Set mogo true",
+            "stype": "Mogo",
+            "setTo": true
         }
     ]
     
