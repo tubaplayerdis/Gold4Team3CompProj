@@ -17,6 +17,10 @@ struct SkillsTask {
 
     //ALL VALUES OF DISTANCE ARE MM, ALL VALUES OF TURNING ARE DEGREES.
 
+    //For Driving, Segmenting and Turning
+    int tp = 100;
+    int vp = 100;
+
     //If Driving.
     double destx = -1;
     double desty = -1;
@@ -61,10 +65,6 @@ class SkillsEngine {
 };
 
 class Skills {
-    private:
-        static int skillsPositionSelect;
-        static vex::task skillsTask;
-        static int _skillsFunc();
     public:
         static bool isActive;
         static double x,y,h;

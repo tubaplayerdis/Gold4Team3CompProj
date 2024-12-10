@@ -1,8 +1,12 @@
+#include <iostream>
+#include <fstream>
+#include <string>
 #include "Skills.h"
 #include "vex.h"
 #include "Odometry.h"
 #include "Bot.h"
 #include "UISystem.h"
+#include "json/json11.hpp"
 
 void SkillsEngine::init(std::vector<SkillsTask> _tasks) {
     tasks = _tasks;
@@ -44,7 +48,10 @@ int SkillsEngine::_worker() {
     while(true) {
         for(int i = 0; i < tasks.size(); i++) {
             onTaskIndex = i;
-            //Actual Processing
+            Skills::x = calcAverages(0);
+            Skills::y = calcAverages(1);
+            Skills::h = calcAverages(2);
+            //Actual Processings
 
 
 
@@ -67,8 +74,6 @@ int SkillsEngine::_worker() {
 
 
 bool Skills::isActive = false;
-vex::task Skills::skillsTask = vex::task(Skills::_skillsFunc);
-int Skills::skillsPositionSelect = 0;
 
 double Skills::x = -1;
 double Skills::y = -1;
@@ -107,29 +112,22 @@ double calcAverages(int w) {
     }
 }
 
-int Skills::_skillsFunc() {
-    while(!isActive) {
-        vex::this_thread::sleep_for(100);
+std::vector<SkillsTask> getTasksFromFileData() {
+    std::ifstream inputFile("tasks.json"); // Open the file
+
+    if (!inputFile.is_open()) {
+        std::cerr << "Error opening file!" << std::endl;
+        return std::vector<SkillsTask>{SkillsTask{"Error"}};
     }
 
+    std::ostringstream buffer;
+    buffer << inputFile.rdbuf();
+    std::string content = buffer.str();
 
-    if(!Bot::GpsF.installed() || !Bot::GpsL.installed() || !Bot::GpsR.installed() || !Bot::GpsB.installed()) return 1;
+    std::string errbuffer;
 
-
-
-    while(true) {
-        x = calcAverages(0);
-        y = calcAverages(1);
-        h = calcAverages(2);
-        //Odometry::x = x;
-        //Odometry::y = y;
-        //Odometry::heading = h;
-
-
-
-
-
-    }
+    json11::Json data = json11::Json::parse(content, errbuffer);
+    
 
 }
 
@@ -153,10 +151,17 @@ void Skills::runSkills(int p) {
     UISystem::odoMap.yref = &y;
     UISystem::odoMap.headingref = &h;
 
+    if(!Bot::GpsF.installed() || !Bot::GpsL.installed() || !Bot::GpsR.installed() || !Bot::GpsB.installed()) {
+        Notifications::addNotification("GPS MISSING");
+        return;
+    }
 
+    if(Bot::Brain.SDcard.isInserted() && Bot::Brain.SDcard.exists("tasks.json")) {
+        SkillsEngine::init(getTasksFromFileData());
+    } else {
+        Notifications::addNotification("NO SD CARD");
+        return;
+    }
 
-    isActive = true;
-
-    Bot::IgnoreDisplay = false;
 }
 

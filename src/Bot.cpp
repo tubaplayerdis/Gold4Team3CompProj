@@ -265,7 +265,7 @@ int Bot::displayLoop() {
         }
         Bot::Controller.Screen.setCursor(3,1);
         if(Skills::isSkillsActive()) {
-            Bot::Controller.Screen.print("%02d %s", Bot::feedGps);
+            Bot::Controller.Screen.print("%02d %s", SkillsEngine::currentTaskIndex(), SkillsEngine::currentTask().name);
         } else {
             switch (UISystem::SelectedPosition)
             {

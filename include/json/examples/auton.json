@@ -5,17 +5,21 @@
             "stype": "Driving",
             "destx": 200,
             "desty": 200,
-            "desth": 30
+            "desth": 30,
+            "tp": 100,
+            "vp": 100
         },
         {
             "name": "Drive Forward",
             "stype": "Segmenting",
-            "segAmount": 90
+            "segAmount": 90,
+            "vp": 100
         },
         {
             "name": "Turn 90 Degrees",
             "stype": "Turning",
-            "desth": 90
+            "desth": 90,
+            "tp": 100
         }
     ]
     
