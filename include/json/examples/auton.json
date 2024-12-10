@@ -1,0 +1,22 @@
+{
+    "tasks": [
+        {
+            "name": "Drive To 200, 200",
+            "stype": "Driving",
+            "destx": 200,
+            "desty": 200,
+            "desth": 30
+        },
+        {
+            "name": "Drive Forward",
+            "stype": "Segmenting",
+            "segAmount": 90
+        },
+        {
+            "name": "Turn 90 Degrees",
+            "stype": "Turning",
+            "desth": 90
+        }
+    ]
+    
+}
