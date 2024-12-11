@@ -165,7 +165,7 @@ std::vector<SkillsTask> getTasksFromFileData() {
 
                 } else if (obj["stype"].string_value() == "Endgame" || obj["stype"].string_value() == "end") {
                     task.stype = EndGame;
-                    task.togglePTUTo = obj["setPTUTo"].bool_value();
+                    task.togglePTUTo = obj["endTo"].bool_value();
                     
                 }
             }
