@@ -44,6 +44,31 @@ SkillsTask SkillsEngine::currentTask() {
     return tasks[onTaskIndex];
 }
 
+void interpretSkill(SkillsTask task) {
+    switch (task.stype)
+    {
+        case Driving:
+            
+
+
+
+            break;
+        case Segmenting:
+            break;
+        case Turning:
+            break;
+        case Mogo:
+            break;
+        case Arm:
+            break;
+        case EndGame:
+            break;
+    default:
+        break;
+    }
+
+}
+
 int SkillsEngine::_worker() {
     while(true) {
         for(int i = 0; i < tasks.size(); i++) {
@@ -53,7 +78,7 @@ int SkillsEngine::_worker() {
             Skills::h = calcAverages(2);
             //Actual Processings
 
-
+            interpretSkill(tasks[i]);
 
 
         }
@@ -168,6 +193,8 @@ std::vector<SkillsTask> getTasksFromFileData() {
                     task.togglePTUTo = obj["setPTUTo"].bool_value();
                     
                 }
+
+                SkillsEngine::addTask(task);
             }
         }
     }
