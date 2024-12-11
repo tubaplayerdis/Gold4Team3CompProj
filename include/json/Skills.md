@@ -1,6 +1,6 @@
 # STJS (Skills Task JSON System) Documentation
 
-Created By: Aaron Wilk - https://github.com/tubaplayerdis, 38535B
+Created By: Aaron Wilk - https://github.com/tubaplayerdis, Vex Team 38535B
 
 ## Overview
 
