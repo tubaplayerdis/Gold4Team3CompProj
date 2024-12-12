@@ -48,20 +48,26 @@ void interpretSkill(SkillsTask task) {
     switch (task.stype)
     {
         case Driving:
-            
-
-
-
+            /*
+            Do IMPL
+            */
             break;
         case Segmenting:
+            Bot::Drivetrain.driveFor(task.segAmount, vex::mm, true);
             break;
         case Turning:
+            Bot::Drivetrain.turnFor(task.turnBy, vex::degrees, true);
             break;
         case Mogo:
+            Bot::MogoMech.set(task.toggleMogoTo);
             break;
         case Arm:
+            /*
+            Do IMPL
+            */
             break;
         case EndGame:
+            Bot::Clutch.set(task.togglePTUTo);
             break;
     default:
         break;
