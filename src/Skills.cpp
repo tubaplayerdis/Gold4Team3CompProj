@@ -133,11 +133,11 @@ double calcAverages(int w) {
     }
     switch(w) {
         case 0:
-            return ((Bot::GpsF.xPosition() * qualityCheck(Bot::GpsF)) *  + (Bot::GpsL.xPosition() * qualityCheck(Bot::GpsL)) + (Bot::GpsR.xPosition() * qualityCheck(Bot::GpsR)) + (Bot::GpsB.xPosition() * qualityCheck(Bot::GpsB)))/(qualityCheck(Bot::GpsF) + qualityCheck(Bot::GpsL) + qualityCheck(Bot::GpsR) + qualityCheck(Bot::GpsB));
+            return ((Bot::GpsF.xPosition() * qualityCheck(Bot::GpsF)) + (Bot::GpsL.xPosition() * qualityCheck(Bot::GpsL)) + (Bot::GpsR.xPosition() * qualityCheck(Bot::GpsR)) + (Bot::GpsB.xPosition() * qualityCheck(Bot::GpsB)))/(qualityCheck(Bot::GpsF) + qualityCheck(Bot::GpsL) + qualityCheck(Bot::GpsR) + qualityCheck(Bot::GpsB));
         case 1:
-            return ((Bot::GpsF.yPosition() * qualityCheck(Bot::GpsF)) *  + (Bot::GpsL.yPosition() * qualityCheck(Bot::GpsL)) + (Bot::GpsR.yPosition() * qualityCheck(Bot::GpsR)) + (Bot::GpsB.yPosition() * qualityCheck(Bot::GpsB)))/(qualityCheck(Bot::GpsF) + qualityCheck(Bot::GpsL) + qualityCheck(Bot::GpsR) + qualityCheck(Bot::GpsB));
+            return ((Bot::GpsF.yPosition() * qualityCheck(Bot::GpsF)) + (Bot::GpsL.yPosition() * qualityCheck(Bot::GpsL)) + (Bot::GpsR.yPosition() * qualityCheck(Bot::GpsR)) + (Bot::GpsB.yPosition() * qualityCheck(Bot::GpsB)))/(qualityCheck(Bot::GpsF) + qualityCheck(Bot::GpsL) + qualityCheck(Bot::GpsR) + qualityCheck(Bot::GpsB));
         case 2:
-            return ((Bot::GpsF.heading() * qualityCheck(Bot::GpsF)) *  + (Bot::GpsL.heading() * qualityCheck(Bot::GpsL)) + (Bot::GpsR.heading() * qualityCheck(Bot::GpsR)) + (Bot::GpsB.heading() * qualityCheck(Bot::GpsB)))/(qualityCheck(Bot::GpsF) + qualityCheck(Bot::GpsL) + qualityCheck(Bot::GpsR) + qualityCheck(Bot::GpsB));
+            return ((Bot::GpsF.heading() * qualityCheck(Bot::GpsF)) + (Bot::GpsL.heading() * qualityCheck(Bot::GpsL)) + (Bot::GpsR.heading() * qualityCheck(Bot::GpsR)) + (Bot::GpsB.heading() * qualityCheck(Bot::GpsB)))/(qualityCheck(Bot::GpsF) + qualityCheck(Bot::GpsL) + qualityCheck(Bot::GpsR) + qualityCheck(Bot::GpsB));
         default:
          return -1;
     }
