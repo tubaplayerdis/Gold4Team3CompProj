@@ -112,12 +112,12 @@ double Skills::h = -1;
 
 
 double qualityCheck(vex::gps g) {
-    if(g.quality() < 95) return 0.0;
+    if(g.quality() < 90) return 0.0;
     return 1.0;
 }
 
 double calcAverages(int w) {
-    if(Bot::GpsF.quality() < 95 && Bot::GpsL.quality() && Bot::GpsR.quality() && Bot::GpsB.quality()) {
+    if(Bot::GpsF.quality() < 90 && Bot::GpsL.quality() < 90 && Bot::GpsR.quality() < 90 && Bot::GpsB.quality() < 90) {
         Notifications::addNotification("DEFAULT ODOM!");        
         //Doomsday Scenario
         switch(w) {
@@ -129,7 +129,11 @@ double calcAverages(int w) {
                 return Odometry::heading;
             default:
                 return -1;
-    }
+        }
+    } else {
+        for(int i = 0; i < Notifications::NotificationList.size(); i++) {
+            if(Notifications::NotificationList[i] == "DEFAULT ODOM!") Notifications::NotificationList.erase(Notifications::NotificationList.begin() + i);
+        }
     }
     switch(w) {
         case 0:
@@ -147,7 +151,7 @@ std::vector<SkillsTask> getTasksFromFileData() {
     std::ifstream inputFile("tasks.json"); // Open the file
 
     if (!inputFile.is_open()) {
-        std::cerr << "Error opening file!" << std::endl;
+        Notifications::addNotification("JSON FILE ERROR");
         return std::vector<SkillsTask>{SkillsTask{"Error"}};
     }
 

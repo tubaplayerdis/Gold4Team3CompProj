@@ -38,10 +38,10 @@ aliance Bot::Aliance = aliance::Nuetral;
 // AI Vision Code Descriptions
 vex::aivision Bot::AIVisionF = vex::aivision(vex::PORT20, vex::aivision::ALL_TAGS, vex::aivision::ALL_AIOBJS);
 
-vex::gps Bot::GpsF = vex::gps(vex::PORT16, -5.75, 13, vex::inches, 0);
-vex::gps Bot::GpsL = vex::gps(vex::PORT17, -8.5, 5.25, vex::inches, -90);
-vex::gps Bot::GpsR = vex::gps(vex::PORT18, 8.75, 5.25, vex::inches, 90);
-vex::gps Bot::GpsB = vex::gps(vex::PORT19, 7.5, 4.2, vex::inches, 180);
+vex::gps Bot::GpsF = vex::gps(vex::PORT16, -16, 16, vex::inches, 0);
+vex::gps Bot::GpsL = vex::gps(vex::PORT17, -16, -15, vex::inches, -90);
+vex::gps Bot::GpsR = vex::gps(vex::PORT18, 16, -15, vex::inches, 90);
+vex::gps Bot::GpsB = vex::gps(vex::PORT19, 17, -17, vex::inches, 180);
 
 bool Bot::feedGps = false;
 
