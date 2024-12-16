@@ -119,12 +119,11 @@ void Bot::setup() {
     if(Bot::GpsR.installed()) Bot::GpsR.calibrate();
     if(Bot::GpsB.installed()) Bot::GpsB.calibrate();
     Bot::Inertial.calibrate();
-    IgnoreDisplay = true;
-    IgnoreMain = true;
     Bot::Controller.Screen.clearScreen();
     Bot::Controller.Screen.setCursor(1,2);
     while(Bot::GpsF.isCalibrating() || Bot::GpsL.isCalibrating() || Bot::GpsR.isCalibrating() || Bot::GpsB.isCalibrating() || Bot::Inertial.isCalibrating()) {
         Bot::Controller.Screen.print("CALIBRATION");
+        if(Bot::Controller.ButtonA.pressing()) break;
         vex::this_thread::sleep_for(30);
     }
     IgnoreDisplay = false;
@@ -265,21 +264,21 @@ int Bot::displayLoop() {
         }
         Bot::Controller.Screen.setCursor(3,1);
         if(Skills::isSkillsActive()) {
-            Bot::Controller.Screen.print("%02d %s", SkillsEngine::currentTaskIndex(), SkillsEngine::currentTask().name);
+            Bot::Controller.Screen.print("%02d %s", SkillsEngine::currentTaskIndex(), SkillsEngine::currentTask().name.c_str());
         } else {
             switch (UISystem::SelectedPosition)
             {
                 case 0:
-                    Bot::Controller.Screen.print("BLUE LEFT  GPS%d", Bot::feedGps);
+                    Bot::Controller.Screen.print("BLUE LEFT       GPS%d  ", Bot::feedGps);
                     break;
                 case 1:
-                    Bot::Controller.Screen.print("BLUE RIGHT GPS%d", Bot::feedGps);
+                    Bot::Controller.Screen.print("BLUE RIGHT      GPS%d  ", Bot::feedGps);
                     break;
                 case 2:
-                    Bot::Controller.Screen.print("RED LEFT   GPS%d", Bot::feedGps);
+                    Bot::Controller.Screen.print("RED LEFT        GPS%d  ", Bot::feedGps);
                     break;
                 case 3:
-                    Bot::Controller.Screen.print("RED RIGHT  GPS%d", Bot::feedGps);
+                    Bot::Controller.Screen.print("RED RIGHT       GPS%d  ", Bot::feedGps);
                     break;
             
             }

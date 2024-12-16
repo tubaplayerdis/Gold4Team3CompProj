@@ -98,6 +98,13 @@
 		"typeinfo": "cpp",
 		"mutex": "cpp",
 		"system_error": "cpp",
-		"thread": "cpp"
+		"thread": "cpp",
+		"cstddef": "cpp",
+		"cstring": "cpp",
+		"forward_list": "cpp",
+		"string_view": "cpp",
+		"iomanip": "cpp",
+		"iostream": "cpp",
+		"valarray": "cpp"
 	}
 }

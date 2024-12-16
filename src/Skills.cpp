@@ -8,6 +8,42 @@
 #include "UISystem.h"
 #include "json/json11.hpp"
 
+double qualityCheck(vex::gps g) {
+    if(g.quality() < 95) return 0.0;
+    return 1.0;
+}
+
+double calcAverages(int w) {
+    if(Bot::GpsF.quality() < 95 && Bot::GpsL.quality() && Bot::GpsR.quality() && Bot::GpsB.quality()) {
+        Notifications::addNotification("DEFAULT ODOM!");        
+        //Doomsday Scenario
+        switch(w) {
+            case 0:
+                return Odometry::x * 25.4;
+            case 1:
+                return Odometry::y * 25.4;
+            case 2:
+                return Odometry::heading;
+            default:
+                return -1;
+    }
+    }
+    switch(w) {
+        case 0:
+            return ((Bot::GpsF.xPosition() * qualityCheck(Bot::GpsF)) + (Bot::GpsL.xPosition() * qualityCheck(Bot::GpsL)) + (Bot::GpsR.xPosition() * qualityCheck(Bot::GpsR)) + (Bot::GpsB.xPosition() * qualityCheck(Bot::GpsB)))/(qualityCheck(Bot::GpsF) + qualityCheck(Bot::GpsL) + qualityCheck(Bot::GpsR) + qualityCheck(Bot::GpsB));
+        case 1:
+            return ((Bot::GpsF.yPosition() * qualityCheck(Bot::GpsF)) + (Bot::GpsL.yPosition() * qualityCheck(Bot::GpsL)) + (Bot::GpsR.yPosition() * qualityCheck(Bot::GpsR)) + (Bot::GpsB.yPosition() * qualityCheck(Bot::GpsB)))/(qualityCheck(Bot::GpsF) + qualityCheck(Bot::GpsL) + qualityCheck(Bot::GpsR) + qualityCheck(Bot::GpsB));
+        case 2:
+            return ((Bot::GpsF.heading() * qualityCheck(Bot::GpsF)) + (Bot::GpsL.heading() * qualityCheck(Bot::GpsL)) + (Bot::GpsR.heading() * qualityCheck(Bot::GpsR)) + (Bot::GpsB.heading() * qualityCheck(Bot::GpsB)))/(qualityCheck(Bot::GpsF) + qualityCheck(Bot::GpsL) + qualityCheck(Bot::GpsR) + qualityCheck(Bot::GpsB));
+        default:
+         return -1;
+    }
+}
+
+int SkillsEngine::onTaskIndex = 0;
+vex::task SkillsEngine::executor = vex::task(SkillsEngine::_worker);
+std::vector<SkillsTask> SkillsEngine::tasks = std::vector<SkillsTask>();
+
 void SkillsEngine::init(std::vector<SkillsTask> _tasks) {
     tasks = _tasks;
     onTaskIndex = 0;
@@ -45,6 +81,7 @@ SkillsTask SkillsEngine::currentTask() {
 }
 
 void interpretSkill(SkillsTask task) {
+    if(SkillsEngine::tasks.size() == 0) return;
     switch (task.stype)
     {
         case Driving:
@@ -69,8 +106,8 @@ void interpretSkill(SkillsTask task) {
         case EndGame:
             Bot::Clutch.set(task.togglePTUTo);
             break;
-    default:
-        break;
+        default:
+            break;
     }
 
 }
@@ -82,6 +119,8 @@ int SkillsEngine::_worker() {
             Skills::x = calcAverages(0);
             Skills::y = calcAverages(1);
             Skills::h = calcAverages(2);
+            Skills::ix = Skills::x/25.4;
+            Skills::iy = Skills::y/25.4;
             //Actual Processings
 
             interpretSkill(tasks[i]);
@@ -100,6 +139,7 @@ int SkillsEngine::_worker() {
             break;
         }
     }
+    return 1;
 }
 
 
@@ -110,38 +150,8 @@ double Skills::x = -1;
 double Skills::y = -1;
 double Skills::h = -1;
 
-
-double qualityCheck(vex::gps g) {
-    if(g.quality() < 95) return 0.0;
-    return 1.0;
-}
-
-double calcAverages(int w) {
-    if(Bot::GpsF.quality() < 95 && Bot::GpsL.quality() && Bot::GpsR.quality() && Bot::GpsB.quality()) {
-        Notifications::addNotification("DEFAULT ODOM!");        
-        //Doomsday Scenario
-        switch(w) {
-            case 0:
-                return Odometry::x * 25.4;
-            case 1:
-                return Odometry::y * 25.4;
-            case 2:
-                return Odometry::heading;
-            default:
-                return -1;
-    }
-    }
-    switch(w) {
-        case 0:
-            return ((Bot::GpsF.xPosition() * qualityCheck(Bot::GpsF)) + (Bot::GpsL.xPosition() * qualityCheck(Bot::GpsL)) + (Bot::GpsR.xPosition() * qualityCheck(Bot::GpsR)) + (Bot::GpsB.xPosition() * qualityCheck(Bot::GpsB)))/(qualityCheck(Bot::GpsF) + qualityCheck(Bot::GpsL) + qualityCheck(Bot::GpsR) + qualityCheck(Bot::GpsB));
-        case 1:
-            return ((Bot::GpsF.yPosition() * qualityCheck(Bot::GpsF)) + (Bot::GpsL.yPosition() * qualityCheck(Bot::GpsL)) + (Bot::GpsR.yPosition() * qualityCheck(Bot::GpsR)) + (Bot::GpsB.yPosition() * qualityCheck(Bot::GpsB)))/(qualityCheck(Bot::GpsF) + qualityCheck(Bot::GpsL) + qualityCheck(Bot::GpsR) + qualityCheck(Bot::GpsB));
-        case 2:
-            return ((Bot::GpsF.heading() * qualityCheck(Bot::GpsF)) + (Bot::GpsL.heading() * qualityCheck(Bot::GpsL)) + (Bot::GpsR.heading() * qualityCheck(Bot::GpsR)) + (Bot::GpsB.heading() * qualityCheck(Bot::GpsB)))/(qualityCheck(Bot::GpsF) + qualityCheck(Bot::GpsL) + qualityCheck(Bot::GpsR) + qualityCheck(Bot::GpsB));
-        default:
-         return -1;
-    }
-}
+double Skills::ix = -1;
+double Skills::iy = -1;
 
 std::vector<SkillsTask> getTasksFromFileData() {
     std::ifstream inputFile("tasks.json"); // Open the file
@@ -158,6 +168,7 @@ std::vector<SkillsTask> getTasksFromFileData() {
     std::string errbuffer;
 
     json11::Json data = json11::Json::parse(content, errbuffer);
+    std::vector<SkillsTask> tasks = std::vector<SkillsTask>();
     if(data["tasks"].is_array()) {
         json11::Json::array main = data["tasks"].array_items();
         for(int i = 0; i < main.size(); i++) {
@@ -200,10 +211,12 @@ std::vector<SkillsTask> getTasksFromFileData() {
                     
                 }
 
-                SkillsEngine::addTask(task);
+                tasks.push_back(task);
             }
         }
     }
+
+    return tasks;
 
 }
 
@@ -223,8 +236,8 @@ void Skills::runSkills(int p) {
 
     //Change UI odo map on bot to recieve information from gps sensors
     UISystem::odoMap.elements.clear();
-    UISystem::odoMap.xref = &x;
-    UISystem::odoMap.yref = &y;
+    UISystem::odoMap.xref = &ix;
+    UISystem::odoMap.yref = &iy;
     UISystem::odoMap.headingref = &h;
 
     if(!Bot::GpsF.installed() || !Bot::GpsL.installed() || !Bot::GpsR.installed() || !Bot::GpsB.installed()) {
