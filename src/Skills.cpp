@@ -153,11 +153,47 @@ double Skills::h = -1;
 double Skills::ix = -1;
 double Skills::iy = -1;
 
+double qualityCheck(vex::gps g) {
+    if(g.quality() < 90) return 0.0;
+    return 1.0;
+}
+
+double calcAverages(int w) {
+    if(Bot::GpsF.quality() < 90 && Bot::GpsL.quality() < 90 && Bot::GpsR.quality() < 90 && Bot::GpsB.quality() < 90) {
+        Notifications::addNotification("DEFAULT ODOM!");        
+        //Doomsday Scenario
+        switch(w) {
+            case 0:
+                return Odometry::x * 25.4;
+            case 1:
+                return Odometry::y * 25.4;
+            case 2:
+                return Odometry::heading;
+            default:
+                return -1;
+        }
+    } else {
+        for(int i = 0; i < Notifications::NotificationList.size(); i++) {
+            if(Notifications::NotificationList[i] == "DEFAULT ODOM!") Notifications::NotificationList.erase(Notifications::NotificationList.begin() + i);
+        }
+    }
+    switch(w) {
+        case 0:
+            return ((Bot::GpsF.xPosition() * qualityCheck(Bot::GpsF)) + (Bot::GpsL.xPosition() * qualityCheck(Bot::GpsL)) + (Bot::GpsR.xPosition() * qualityCheck(Bot::GpsR)) + (Bot::GpsB.xPosition() * qualityCheck(Bot::GpsB)))/(qualityCheck(Bot::GpsF) + qualityCheck(Bot::GpsL) + qualityCheck(Bot::GpsR) + qualityCheck(Bot::GpsB));
+        case 1:
+            return ((Bot::GpsF.yPosition() * qualityCheck(Bot::GpsF)) + (Bot::GpsL.yPosition() * qualityCheck(Bot::GpsL)) + (Bot::GpsR.yPosition() * qualityCheck(Bot::GpsR)) + (Bot::GpsB.yPosition() * qualityCheck(Bot::GpsB)))/(qualityCheck(Bot::GpsF) + qualityCheck(Bot::GpsL) + qualityCheck(Bot::GpsR) + qualityCheck(Bot::GpsB));
+        case 2:
+            return ((Bot::GpsF.heading() * qualityCheck(Bot::GpsF)) + (Bot::GpsL.heading() * qualityCheck(Bot::GpsL)) + (Bot::GpsR.heading() * qualityCheck(Bot::GpsR)) + (Bot::GpsB.heading() * qualityCheck(Bot::GpsB)))/(qualityCheck(Bot::GpsF) + qualityCheck(Bot::GpsL) + qualityCheck(Bot::GpsR) + qualityCheck(Bot::GpsB));
+        default:
+         return -1;
+    }
+}
+
 std::vector<SkillsTask> getTasksFromFileData() {
     std::ifstream inputFile("tasks.json"); // Open the file
 
     if (!inputFile.is_open()) {
-        std::cerr << "Error opening file!" << std::endl;
+        Notifications::addNotification("JSON FILE ERROR");
         return std::vector<SkillsTask>{SkillsTask{"Error"}};
     }
 
