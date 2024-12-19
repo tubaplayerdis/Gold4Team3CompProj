@@ -18,6 +18,13 @@ enum autonSelect {
     Blue_Right = 3
 };
 
+enum BlinkTypes {
+    Off = 0,
+    Solid = 1,
+    Single = 2,
+    Double = 3
+};
+
 typedef struct gameElementPosition 
 {
     gameElementPosition(double x_, double y_, vexui::gameElements objtype_) {
@@ -90,6 +97,14 @@ class Bot {
         static vex::gps GpsR;
         static vex::gps GpsB;
 
+        //Led Array
+        static vex::led ModeLED;
+        static vex::led ControllerInputLED;
+        static vex::led NotificationLED;
+        static vex::led WarningLED;
+        static vex::led CriticalErrorCodeLED;
+        static vex::led CriticalErrorLED;
+
 
         static bool feedGps;
         static void swapFeedPos();
@@ -122,6 +137,7 @@ class Bot {
         static void pushClutch();
         static void releaseClutch();
         static void checkInstall();
+        static int blinkerLoop();
         static int displayLoop();
         static int monitorLoop();
 

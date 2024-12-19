@@ -45,6 +45,16 @@ vex::gps Bot::GpsB = vex::gps(vex::PORT19, 17, -17, vex::inches, 180);
 
 bool Bot::feedGps = false;
 
+//Led Array
+vex::led Bot::ModeLED = vex::led(Bot::Brain.ThreeWirePort.C);
+vex::led Bot::ControllerInputLED = vex::led(Bot::Brain.ThreeWirePort.D);
+vex::led Bot::NotificationLED = vex::led(Bot::Brain.ThreeWirePort.E);
+vex::led Bot::WarningLED = vex::led(Bot::Brain.ThreeWirePort.F);
+vex::led Bot::CriticalErrorCodeLED = vex::led(Bot::Brain.ThreeWirePort.G);
+vex::led Bot::CriticalErrorLED = vex::led(Bot::Brain.ThreeWirePort.H);
+BlinkTypes ModeType = BlinkTypes::Solid;
+BlinkTypes CriticalErrorType = BlinkTypes::Solid;
+
 //Define Motor Groups
 vex::motor_group Bot::LeftMotors = vex::motor_group(Bot::LeftA, Bot::LeftB, Bot::LeftC);
 vex::motor_group Bot::RightMotors = vex::motor_group(Bot::RightA, Bot::RightB, Bot::RightC);
@@ -149,6 +159,12 @@ int Bot::mainLoop() {
         if(IgnoreMain) continue;
         if(Comp.isAutonomous()) continue;
 
+        if(Controller.Axis1.value() != 0 || Controller.Axis2.value() || Controller.Axis3.value() != 0 || Controller.Axis4.value() || Controller.ButtonA.pressing() || Controller.ButtonB.pressing() || Controller.ButtonX.pressing() || Controller.ButtonY.pressing() || Controller.ButtonUp.pressing() || Controller.ButtonDown.pressing() || Controller.ButtonLeft.pressing() || Controller.ButtonRight.pressing() || Controller.ButtonL1.pressing() || Controller.ButtonL2.pressing() || Controller.ButtonR1.pressing() || Controller.ButtonR2.pressing()) {
+            ControllerInputLED.on();
+        } else {
+            ControllerInputLED.off();
+        }
+
         if(Controller.ButtonL2.pressing() && Controller.ButtonR2.pressing()) {
             Intake.setVelocity(0, vex::rpm);
             Intake.stop();
@@ -249,10 +265,79 @@ void Bot::checkInstall() {
     Bot::Brain.Screen.printAt(0, 250, "ColorSensor: %d", Bot::ColorSensor.installed());
 }
 
+int Bot::blinkerLoop() {
+    while(true) {
+        switch (ModeType)
+        {
+            case Off:
+                Bot::ModeLED.off();
+                break;
+
+            case Solid:
+                Bot::ModeLED.on();
+                break;
+
+            case Single:
+                Bot::ModeLED.off();
+                vex::this_thread::sleep_for(300);
+                Bot::ModeLED.on();
+                vex::this_thread::sleep_for(300);
+                break;
+
+            case Double:
+                Bot::ModeLED.off();
+                vex::this_thread::sleep_for(100);
+                Bot::ModeLED.on();
+                vex::this_thread::sleep_for(100);
+                break;
+
+            default:
+                break;
+        }
+        switch (CriticalErrorType)
+        {
+            case Off:
+                Bot::CriticalErrorLED.off();
+                break;
+
+            case Solid:
+                Bot::CriticalErrorLED.on();
+                break;
+
+            case Single:
+                Bot::CriticalErrorLED.off();
+                vex::this_thread::sleep_for(300);
+                Bot::CriticalErrorLED.on();
+                vex::this_thread::sleep_for(300);
+                break;
+
+            case Double:
+                Bot::CriticalErrorLED.off();
+                vex::this_thread::sleep_for(100);
+                Bot::CriticalErrorLED.on();
+                vex::this_thread::sleep_for(100);
+                break;
+
+            default:
+                break;
+        }
+        vex::this_thread::sleep_for(50);
+    }
+    return 0;
+}
+
 int Bot::displayLoop() {
     Bot::Controller.Screen.clearScreen();
+    vex::competition comp;
     while (true) {
         if(IgnoreDisplay) continue;
+        /*
+            LED
+        */
+        if(comp.isDriverControl()) ModeType = BlinkTypes::Solid;
+        if(comp.isAutonomous()) ModeType = BlinkTypes::Single;
+        if(comp.isAutonomous() && Skills::isSkillsActive()) ModeType = BlinkTypes::Double;
+
         /*
             CONTROLLER
         */
