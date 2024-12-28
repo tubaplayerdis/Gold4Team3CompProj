@@ -213,6 +213,9 @@ std::vector<SkillsTask> getTasksFromFileData() {
                     task.stype = EndGame;
                     task.togglePTUTo = obj["endTo"].bool_value();
                     
+                } else {
+                    task.stype = Error;
+                    task.name = "Error: " + obj["name"].string_value();
                 }
 
                 tasks.push_back(task);
@@ -229,10 +232,15 @@ bool Skills::isSkillsActive() {
 }
 
 void Skills::deactiveSkills() {
-
+    //Do not use
 }
 
 void Skills::runSkills(int p) {
+    vex::competition Comp;
+    if(!Comp.isAutonomous()) {
+        Notifications::addNotification("DRIVER");
+        return;
+    }
     //Stop Controller Input and Notification System For Now.
     //Bot::IgnoreMain = true;
    // Bot::IgnoreDisplay = true;

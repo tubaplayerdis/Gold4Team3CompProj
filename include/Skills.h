@@ -7,7 +7,8 @@ enum SkillsTaskType {
     Turning = 2,
     Mogo = 3,
     Arm = 4,
-    EndGame = 5
+    EndGame = 5,
+    Error = 6
 };
 
 
