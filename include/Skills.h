@@ -7,7 +7,8 @@ enum SkillsTaskType {
     Turning = 2,
     Mogo = 3,
     Arm = 4,
-    EndGame = 5
+    EndGame = 5,
+    Error = 6
 };
 
 
@@ -57,8 +58,9 @@ class SkillsEngine {
         static void addTask(SkillsTask task);
         static int currentTaskIndex();
         static SkillsTask currentTask();
-    private:
+
         static std::vector<SkillsTask> tasks;
+    private:
         static int onTaskIndex;
         static int _worker();
         static vex::task executor;
@@ -68,6 +70,7 @@ class Skills {
     public:
         static bool isActive;
         static double x,y,h;
+        static double ix,iy;
 
         static bool isSkillsActive();
         static void deactiveSkills();

@@ -162,9 +162,9 @@ undefined vexTaskResumeWithId(void *callback, int ID);
 
 void        vexTaskRegister( char *name );
 void        vexTaskRegisterPersistant(char *name, bool p );
-bool      vexTaskIsRegistered( Thread *tp );
-bool      vexTaskPersistentGet( Thread *tp );
-void        vexTaskPersistsentSet( Thread *tp, bool p );
+//bool      vexTaskIsRegistered( Thread *tp );
+//bool      vexTaskPersistentGet( Thread *tp );
+//void        vexTaskPersistsentSet( Thread *tp, bool p );
 
 /**
  * @brief Has an unknown purpose.
