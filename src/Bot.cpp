@@ -180,9 +180,9 @@ int Bot::mainLoop() {
         }
 
         if(Controller.ButtonUp.pressing()) {
-            Arm.setVelocity(30, vex::rpm);
+            Arm.setVelocity(100, vex::rpm);
         } else if (Controller.ButtonDown.pressing()) {
-            Arm.setVelocity(30, vex::rpm);
+            Arm.setVelocity(100, vex::rpm);
             Arm.spin(vex::forward);
         } else {
             Arm.stop();
