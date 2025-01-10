@@ -119,6 +119,19 @@ void vexui::UIElement::setSize(int w, int h) {
     height = h;
 }
 
+vexui::Rectangle::Rectangle(int _x, int _y, int _w, int _h) : vexui::UIElement() {
+    this->x = _x;
+    this->y = _y;
+    this->width = _w;
+    this->height = _h;
+}
+
+void vexui::Rectangle::render() {
+    color.gset();
+    vexDisplayRectFill(x, y, x+width, y+height);
+    resetColor();
+}
+
 vexui::Label::Label(int x, int y, const std::string &text)  : vexui::UIElement() {
     this->x = x;
     this->y = y;

@@ -57,6 +57,7 @@ class UISystem
 
         //Console Panel Elements
         static vexui::Label labc;
+        static vexui::Dropdown diagDropdown;
 
         //Functions and list
         static void setup();

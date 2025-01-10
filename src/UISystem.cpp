@@ -60,7 +60,8 @@ vexui::Button UISystem::calibrationPositionForwardButton = vexui::Button(440, 50
 vexui::Label UISystem::calibrationWarningLabel = vexui::Label(205, 100, "Will Calibrate On Position Select*!");
 
 //Console Panel Elements
-vexui::Label UISystem::labc = vexui::Label(10,10, "Console Panel");
+vexui::Label UISystem::labc = vexui::Label(10,10, "Diagnostics Panel");
+vexui::Dropdown UISystem::diagDropdown = vexui::Dropdown(5,25, 50, 20, "System Info", true);
  
 
 void UISystem::mainTabButton_Press() {
@@ -134,6 +135,7 @@ void UISystem::setup() {
 
 
     diagnosticsPanel.addElement(&labc);
+    diagnosticsPanel.addElement(&diagDropdown);
 
 
     odometryPanel.addElement(&labo);

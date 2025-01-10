@@ -139,6 +139,17 @@ namespace vexui
             
     };
 
+    
+    class Rectangle : public UIElement {
+        public:
+            vexui::Color color{255,255,255, false};
+
+            Rectangle(int x, int y, int w, int h);
+
+            void render() override;
+    };
+    
+
     enum LabelSize {
         SMALL = 0,
         MEDIUM = 1,
