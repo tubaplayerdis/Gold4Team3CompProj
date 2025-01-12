@@ -119,16 +119,22 @@ void vexui::UIElement::setSize(int w, int h) {
     height = h;
 }
 
-vexui::Rectangle::Rectangle(int _x, int _y, int _w, int _h) : vexui::UIElement() {
+vexui::Rectangle::Rectangle(int _x, int _y, int _x2, int _y2) : vexui::UIElement() {
     this->x = _x;
     this->y = _y;
-    this->width = _w;
-    this->height = _h;
+    //Use width and height variables to store x2 and y2
+    this->width = _x2;
+    this->height = _y2;
 }
 
 void vexui::Rectangle::render() {
     color.gset();
-    vexDisplayRectFill(x, y, x+width, y+height);
+    vexDisplayRectFill(x, y, width, height);
+    if(showText) {
+        txcolor.gset();
+        vexDisplayBackgroundColor(rgbtocol(color.R, color.G, color.B));
+        vexDisplayStringAt((x+width)/2,(y+height)/4,text.c_str());
+    }
     resetColor();
 }
 

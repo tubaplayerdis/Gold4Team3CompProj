@@ -5,6 +5,8 @@
 #include "vex.h"
 #include "api/vexui.h"
 #include "Bot.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 
 std::string to_string_int_f(int x){
@@ -59,9 +61,18 @@ vexui::Button UISystem::calibrationPositionBackButton = vexui::Button(245, 50, 4
 vexui::Button UISystem::calibrationPositionForwardButton = vexui::Button(440, 50, 40, 40, ">");
 vexui::Label UISystem::calibrationWarningLabel = vexui::Label(205, 100, "Will Calibrate On Position Select*!");
 
+vexui::Panel UISystem::motorTempVisualPanel = vexui::Panel(50,10, 250, 110);
+vexui::Rectangle UISystem::LeftATempRec = vexui::Rectangle(60,0,50,110);
+vexui::Rectangle UISystem::LeftBTempRec = vexui::Rectangle(55,20,105,70);
+vexui::Rectangle UISystem::LeftCTempRec = vexui::Rectangle(0,0,50,50);
+vexui::Rectangle UISystem::RightATempRec = vexui::Rectangle(200,60,250,110);
+vexui::Rectangle UISystem::RightBTempRec = vexui::Rectangle(145,20,195,70);
+vexui::Rectangle UISystem::RightCTempRec = vexui::Rectangle(200,0,250,50);
+
 //Console Panel Elements
 vexui::Label UISystem::labc = vexui::Label(10,10, "Diagnostics Panel");
 vexui::Dropdown UISystem::diagDropdown = vexui::Dropdown(5,25, 50, 20, "System Info", true);
+vexui::Label UISystem::memFreeLabel = vexui::Label(0,0," ");
  
 
 void UISystem::mainTabButton_Press() {
@@ -133,9 +144,20 @@ void UISystem::setup() {
     mainPanel.addElement(&motorTempLabel);
 
 
+    motorTempVisualPanel.addElement(&LeftATempRec);
+    motorTempVisualPanel.addElement(&LeftBTempRec);
+    motorTempVisualPanel.addElement(&LeftCTempRec);
+    motorTempVisualPanel.addElement(&RightATempRec);
+    motorTempVisualPanel.addElement(&RightBTempRec);
+    motorTempVisualPanel.addElement(&RightCTempRec);
+    motorTempVisualPanel.color = diagnosticsPanel.color;
 
+    memFreeLabel.bgcolor = diagDropdown.bgcolor;
+    memFreeLabel.color.mset(255,255,255);
+    diagDropdown.addElement(&memFreeLabel);
     diagnosticsPanel.addElement(&labc);
     diagnosticsPanel.addElement(&diagDropdown);
+    diagnosticsPanel.addElement(&motorTempVisualPanel);
 
 
     odometryPanel.addElement(&labo);
@@ -163,6 +185,30 @@ void UISystem::toggleUI() {
     doRender = !doRender;
 }
 
+double lerp(double a, double b, double t) {
+    return a + t * (b - a);
+}
+
+vexui::Color calculateColorFromTemperature(double temperature) {
+    double minTemp = 30;
+    double maxTemp = 140;
+
+    double t = (temperature - minTemp) / (maxTemp - minTemp);
+
+    if (temperature < minTemp) temperature = minTemp;
+    if (temperature > maxTemp) temperature = maxTemp;
+
+    std::array<double, 3> colorStart = {173, 216, 230}; // Baby blue (RGB)
+    std::array<double, 3> colorEnd = {255, 0, 0};       // Red (RGB)
+
+    // Interpolate RGB values
+    int r = static_cast<int>(std::round(lerp(colorStart[0], colorEnd[0], t)));
+    int g = static_cast<int>(std::round(lerp(colorStart[1], colorEnd[1], t)));
+    int b = static_cast<int>(std::round(lerp(colorStart[2], colorEnd[2], t)));
+
+    return vexui::Color(r,g,b,false);
+}
+
 int UISystem::renderLoop() {
 
     while(true) {
@@ -171,8 +217,36 @@ int UISystem::renderLoop() {
         redRingNumLabel.setText("Red Rings: "+to_string_int_f(Bot::redRingNum));
         blueRingNumLabel.setText("Blue Rings: "+to_string_int_f(Bot::redRingNum));
         MobileGoalNumLabel.setText("Mobile Goals: "+to_string_int_f(Bot::redRingNum));
+        
 
-        motorTempLabel.setText("L1 "+to_string_double_f(Bot::LeftA.temperature())+" L2 "+to_string_double_f(Bot::LeftB.temperature())+" L3 "+to_string_double_f(Bot::LeftC.temperature())+" R1 "+to_string_double_f(Bot::RightA.temperature())+" R2 "+to_string_double_f(Bot::RightB.temperature())+" R3 "+to_string_double_f(Bot::RightC.temperature()));
+        if(diagnosticsPanel.dorender) {
+            LeftATempRec.text = "LA: " + to_string_double_f(Bot::LeftA.temperature());
+            LeftBTempRec.text = "LB: " + to_string_double_f(Bot::LeftB.temperature());
+            LeftCTempRec.text = "LC: " + to_string_double_f(Bot::LeftC.temperature());
+            RightATempRec.text = "RA: " + to_string_double_f(Bot::RightA.temperature());
+            RightBTempRec.text = "RB: " + to_string_double_f(Bot::RightB.temperature());
+            RightCTempRec.text = "RC: " + to_string_double_f(Bot::RightC.temperature());
+            LeftATempRec.color = calculateColorFromTemperature(Bot::LeftA.temperature());
+            LeftBTempRec.color = calculateColorFromTemperature(Bot::LeftB.temperature());
+            LeftCTempRec.color = calculateColorFromTemperature(Bot::LeftC.temperature());
+            RightATempRec.color = calculateColorFromTemperature(Bot::RightA.temperature());
+            RightBTempRec.color = calculateColorFromTemperature(Bot::RightB.temperature());
+            RightCTempRec.color = calculateColorFromTemperature(Bot::RightC.temperature());
+
+
+            FILE *fp = popen("free -m", "r");
+            if (fp == NULL) {
+                perror("popen");
+                return 1;
+            }
+
+            char buffer[256];
+            while (fgets(buffer, sizeof(buffer), fp)) {
+                memFreeLabel.text = buffer;
+            }
+            pclose(fp);
+
+        }
 
         if(!doRender) continue;
         //Bot::Brain.Screen.printAt(200,200, "ummm");
