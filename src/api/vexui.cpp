@@ -135,6 +135,11 @@ void vexui::Rectangle::render() {
         vexDisplayBackgroundColor(rgbtocol(color.R, color.G, color.B));
         vexDisplayStringAt((x+width)/2,(y+height)/4,text.c_str());
     }
+    if(hasBorder) {
+        vexDisplayBackgroundColor(rgbtocol(0, 0, 0));
+        vexDisplayForegroundColor(rgbtocol(0, 0, 0));
+        vexDisplayRectDraw(x, y, width, height);
+    }
     resetColor();
 }
 

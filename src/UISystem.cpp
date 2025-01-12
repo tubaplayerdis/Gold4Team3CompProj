@@ -152,6 +152,26 @@ void UISystem::setup() {
     motorTempVisualPanel.addElement(&RightCTempRec);
     motorTempVisualPanel.color = diagnosticsPanel.color;
 
+    LeftATempRec.showText = true;
+    LeftATempRec.hasBorder = true;
+
+    LeftBTempRec.showText = true;
+    LeftBTempRec.hasBorder = true;
+
+    LeftCTempRec.showText = true;
+    LeftCTempRec.hasBorder = true;
+
+    RightATempRec.showText = true;
+    RightATempRec.hasBorder = true;
+
+    RightBTempRec.showText = true;
+    RightBTempRec.hasBorder = true;
+
+    RightCTempRec.showText = true;
+    RightCTempRec.hasBorder = true;
+
+
+
     memFreeLabel.bgcolor = diagDropdown.bgcolor;
     memFreeLabel.color.mset(255,255,255);
     diagDropdown.addElement(&memFreeLabel);
