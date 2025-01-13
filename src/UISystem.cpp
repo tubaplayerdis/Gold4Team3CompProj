@@ -5,8 +5,10 @@
 #include "vex.h"
 #include "api/vexui.h"
 #include "Bot.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdlib>
+#include <cstdio>
+#include <sys/resource.h>
+#include <errno.h>
 
 
 std::string to_string_int_f(int x){
@@ -252,19 +254,7 @@ int UISystem::renderLoop() {
             RightATempRec.color = calculateColorFromTemperature(Bot::RightA.temperature());
             RightBTempRec.color = calculateColorFromTemperature(Bot::RightB.temperature());
             RightCTempRec.color = calculateColorFromTemperature(Bot::RightC.temperature());
-
-
-            FILE *fp = popen("free -m", "r");
-            if (fp == NULL) {
-                perror("popen");
-                return 1;
-            }
-
-            char buffer[256];
-            while (fgets(buffer, sizeof(buffer), fp)) {
-                memFreeLabel.text = buffer;
-            }
-            pclose(fp);
+            
 
         }
 

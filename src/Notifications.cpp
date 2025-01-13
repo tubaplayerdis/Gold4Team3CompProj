@@ -1,6 +1,7 @@
 #include "Notifications.h"
 #include "vector"
 #include "string"
+#include "Bot.h"
 
 std::vector<std::string> Notifications::NotificationList = std::vector<std::string>();
 int Notifications::notifIndex = 0;
@@ -15,6 +16,7 @@ void Notifications::addNotification(std::string notif) {
     NotificationList.push_back(notif);
     notifIndex = NotificationList.size()-1;
     isNotifying = false;
+    Bot::Controller.rumble("-");
 }
 
 //Dont use
