@@ -297,7 +297,7 @@ void vexui::DropdownS::toggle() {
 }
 
 void vexui::DropdownS::addString(std::string what) {
-    
+    items.push_back(what);
 }
 
 void vexui::DropdownS::removeElement(int index) {
@@ -320,15 +320,21 @@ void vexui::DropdownS::render() {
     vexDisplayBackgroundColor(rgbtocol(bgcolor.R, bgcolor.G, bgcolor.B));
     vexDisplaySmallStringAt(x+30,y+10,text.c_str());
 
+    //String spacing
+    int sS = 11;
+
     if(!collapsed) {
         btcolor.gset();
         vexDisplayLineDraw(x+5,y+(height/1.5),x+10,y+(height/3));
         vexDisplayLineDraw(x+15,(y+height/1.5),x+10,y+(height/3));
         if(items.size() > 0) {
             bgcolor.gset();
-            vexDisplayRectFill(x+1, y+items.size()*10, x+width-1, items.size()*10+1);
+
+            vexDisplayRectFill(x+1, y+height, x+width-1, y+height+(items.size()*sS)+1);
             for(int i = 0; i < items.size(); i++) {
-                vexDisplaySmallStringAt(x+5, y+height+(i*10), items[i].c_str());
+                txcolor.gset();
+                vexDisplayBackgroundColor(rgbtocol(bgcolor.R, bgcolor.G, bgcolor.B));
+                vexDisplaySmallStringAt(x+5, y+height+(i*sS), items[i].c_str());
             }
         }
     } else {

@@ -63,13 +63,15 @@ vexui::Button UISystem::calibrationPositionBackButton = vexui::Button(245, 50, 4
 vexui::Button UISystem::calibrationPositionForwardButton = vexui::Button(440, 50, 40, 40, ">");
 vexui::Label UISystem::calibrationWarningLabel = vexui::Label(205, 100, "Will Calibrate On Position Select*!");
 
-vexui::Panel UISystem::motorTempVisualPanel = vexui::Panel(200,10, 250, 110);
+vexui::Panel UISystem::motorTempVisualPanel = vexui::Panel(220,5, 250, 140);
 vexui::Rectangle UISystem::LeftATempRec = vexui::Rectangle(0,60,50,110);
 vexui::Rectangle UISystem::LeftBTempRec = vexui::Rectangle(55,20,105,70);
 vexui::Rectangle UISystem::LeftCTempRec = vexui::Rectangle(0,0,50,50);
 vexui::Rectangle UISystem::RightATempRec = vexui::Rectangle(200,60,250,110);
 vexui::Rectangle UISystem::RightBTempRec = vexui::Rectangle(145,20,195,70);
 vexui::Rectangle UISystem::RightCTempRec = vexui::Rectangle(200,0,250,50);
+vexui::Rectangle UISystem::ArmTempRec = vexui::Rectangle(55,90,105,140);
+vexui::Rectangle UISystem::IntakeTempRec = vexui::Rectangle(145,90,195,140);
 
 //Console Panel Elements
 vexui::Label UISystem::labc = vexui::Label(10,10, "Diagnostics Panel");
@@ -158,6 +160,8 @@ void UISystem::setup() {
     motorTempVisualPanel.addElement(&RightATempRec);
     motorTempVisualPanel.addElement(&RightBTempRec);
     motorTempVisualPanel.addElement(&RightCTempRec);
+    motorTempVisualPanel.addElement(&ArmTempRec);
+    motorTempVisualPanel.addElement(&IntakeTempRec);
     motorTempVisualPanel.color = diagnosticsPanel.color;
 
     LeftATempRec.showText = true;
@@ -189,6 +193,16 @@ void UISystem::setup() {
     RightCTempRec.hasBorder = true;
     RightCTempRec.width = motorTempVisualPanel.x + RightCTempRec.width;
     RightCTempRec.height = motorTempVisualPanel.y + RightCTempRec.height;
+
+    ArmTempRec.showText = true;
+    ArmTempRec.hasBorder = true;
+    ArmTempRec.width = motorTempVisualPanel.x + ArmTempRec.width;
+    ArmTempRec.height = motorTempVisualPanel.y + ArmTempRec.height;
+
+    IntakeTempRec.showText = true;
+    IntakeTempRec.hasBorder = true;
+    IntakeTempRec.width = motorTempVisualPanel.x + IntakeTempRec.width;
+    IntakeTempRec.height = motorTempVisualPanel.y + IntakeTempRec.height;
 
 
 
@@ -275,12 +289,18 @@ int UISystem::renderLoop() {
                 RightBTempRec.extext = to_string_double_f(129);
                 RightCTempRec.text = "RC";
                 RightCTempRec.extext = to_string_double_f(129);
+                ArmTempRec.text = "ARM";
+                ArmTempRec.extext = to_string_double_f(129);
+                IntakeTempRec.text = "INTK";
+                IntakeTempRec.extext = to_string_double_f(129);
                 LeftATempRec.color = calculateColorFromTemperature(129);
                 LeftBTempRec.color = calculateColorFromTemperature(129);
                 LeftCTempRec.color = calculateColorFromTemperature(129);
                 RightATempRec.color = calculateColorFromTemperature(129);
                 RightBTempRec.color = calculateColorFromTemperature(129);
                 RightCTempRec.color = calculateColorFromTemperature(129);
+                ArmTempRec.color = calculateColorFromTemperature(129);
+                IntakeTempRec.color = calculateColorFromTemperature(129);
             } else {
                 LeftATempRec.text = "LA";
                 LeftATempRec.extext = to_string_double_f(Bot::LeftA.temperature());
@@ -294,12 +314,18 @@ int UISystem::renderLoop() {
                 RightBTempRec.extext = to_string_double_f(Bot::RightA.temperature());
                 RightCTempRec.text = "RC";
                 RightCTempRec.extext = to_string_double_f(Bot::RightC.temperature());
+                ArmTempRec.text = "ARM";
+                ArmTempRec.extext = to_string_double_f(Bot::Arm.temperature());
+                IntakeTempRec.text = "INTK";
+                IntakeTempRec.extext = to_string_double_f(Bot::Intake.temperature());
                 LeftATempRec.color = calculateColorFromTemperature(Bot::LeftA.temperature());
                 LeftBTempRec.color = calculateColorFromTemperature(Bot::LeftB.temperature());
                 LeftCTempRec.color = calculateColorFromTemperature(Bot::LeftC.temperature());
                 RightATempRec.color = calculateColorFromTemperature(Bot::RightA.temperature());
                 RightBTempRec.color = calculateColorFromTemperature(Bot::RightB.temperature());
                 RightCTempRec.color = calculateColorFromTemperature(Bot::RightC.temperature());
+                ArmTempRec.color = calculateColorFromTemperature(Bot::Arm.temperature());
+                IntakeTempRec.color = calculateColorFromTemperature(Bot::Intake.temperature());
             }
 
             
