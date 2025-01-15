@@ -56,7 +56,17 @@ class UISystem
         static vexui::Label calibrationWarningLabel;
 
         //Console Panel Elements
+        static vexui::Panel motorTempVisualPanel;
+        static vexui::Rectangle LeftATempRec;
+        static vexui::Rectangle LeftBTempRec;
+        static vexui::Rectangle LeftCTempRec;
+        static vexui::Rectangle RightATempRec;
+        static vexui::Rectangle RightBTempRec;
+        static vexui::Rectangle RightCTempRec;
+
         static vexui::Label labc;
+        static vexui::Dropdown diagDropdown;
+        static vexui::Label memFreeLabel;
 
         //Functions and list
         static void setup();

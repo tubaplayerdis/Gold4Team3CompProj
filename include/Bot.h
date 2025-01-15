@@ -72,9 +72,7 @@ class Bot {
         static vex::motor_group RightMotors;
 
         //Misc
-        static vex::motor IntakeA;
-        static vex::motor IntakeB;
-        static vex::motor_group Intake;
+        static vex::motor Intake;
         static vex::motor Arm;
         //static vex::motor LiftL;
         //static vex::motor LiftR;

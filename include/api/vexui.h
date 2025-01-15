@@ -139,6 +139,20 @@ namespace vexui
             
     };
 
+    
+    class Rectangle : public UIElement {
+        public:
+            std::string text = " ";
+            bool showText = false;
+            bool hasBorder = false;
+            vexui::Color color{255,255,255, false}, txcolor{0,0,0,true};
+
+            Rectangle(int x, int y, int x2, int y2);
+
+            void render() override;
+    };
+    
+
     enum LabelSize {
         SMALL = 0,
         MEDIUM = 1,

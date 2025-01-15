@@ -18,9 +18,7 @@ vex::motor Bot::RightB = vex::motor(vex::PORT5, vex::ratio6_1, false);//High Spe
 vex::motor Bot::RightC = vex::motor(vex::PORT6, vex::ratio6_1, true);//High Speed
 
 
-vex::motor Bot::IntakeA = vex::motor(vex::PORT7, vex::ratio6_1, false);//High Speed
-vex::motor Bot::IntakeB = vex::motor(vex::PORT8, vex::ratio6_1, true);//High Speed
-vex::motor_group Bot::Intake = vex::motor_group(IntakeA, IntakeB);
+vex::motor Bot::Intake = vex::motor(vex::PORT7, vex::ratio6_1, false);//High Speed
 vex::motor Bot::Arm = vex::motor(vex::PORT9, vex::ratio36_1, false);//High Torque
 //vex::motor Bot::LiftL = vex::motor(vex::PORT9, vex::ratio18_1, true);//Low Power
 //vex::motor Bot::LiftR = vex::motor(vex::PORT10, vex::ratio18_1, true);//Low Power
@@ -252,7 +250,7 @@ void Bot::releaseClutch() {
 //use this eventually? no!
 void Bot::checkInstall() {
     Bot::Brain.Screen.printAt(0, 30, "Arm: %d", Bot::Arm.installed());
-    Bot::Brain.Screen.printAt(0, 50, "Intake: %d", Bot::IntakeA.installed());
+    Bot::Brain.Screen.printAt(0, 50, "Intake: %d", Bot::Intake.installed());
     Bot::Brain.Screen.printAt(0, 70, "LeftA: %d", Bot::LeftA.installed());
     Bot::Brain.Screen.printAt(0, 90, "LeftB: %d", Bot::LeftB.installed());
     Bot::Brain.Screen.printAt(0, 110, "LeftC: %d", Bot::LeftC.installed());
@@ -412,8 +410,7 @@ int Bot::monitorLoop() {
         if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightA TEMP");
         if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightB TEMP");
         if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightC TEMP");
-        if(Intake.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("IntakeA TEMP");
-        if(IntakeB.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("IntakeB TEMP");
+        if(Intake.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("Intake TEMP");
         if(Arm.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("Arm TEMP");
 
         if(!LeftA.installed()) Notifications::addNotification("LeftA DISCONNECT");
@@ -422,8 +419,7 @@ int Bot::monitorLoop() {
         if(!RightA.installed()) Notifications::addNotification("RightA DISCONNECT");
         if(!RightB.installed()) Notifications::addNotification("RightB DISCONNECT");
         if(!RightC.installed()) Notifications::addNotification("RightC DISCONNECT");
-        if(!IntakeA.installed()) Notifications::addNotification("IntakeA DISCONNECT");
-        if(!IntakeB.installed()) Notifications::addNotification("IntakeB DISCONNECT");
+        if(!Intake.installed()) Notifications::addNotification("Intake DISCONNECT");
         if(!Arm.installed()) Notifications::addNotification("Arm DISCONNECT");
         if(!RotationForward.installed()) Notifications::addNotification("RotationF DISCONNECT");
         if(!RotationLateral.installed()) Notifications::addNotification("RotationL DISCONNECT");
