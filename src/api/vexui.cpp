@@ -133,7 +133,7 @@ void vexui::Rectangle::render() {
     if(showText) {
         txcolor.gset();
         vexDisplayBackgroundColor(rgbtocol(color.R, color.G, color.B));
-        vexDisplayStringAt((x+width)/2,(y+height)/4,text.c_str());
+        //vexDisplaySmallStringAt((x+width)/2,(y+height)/4,text.c_str());
     }
     if(hasBorder) {
         vexDisplayBackgroundColor(rgbtocol(0, 0, 0));
@@ -315,8 +315,8 @@ vexui::Panel::Panel(int x, int y, int width, int height)  : vexui::UIElement() {
 }
 
 void vexui::Panel::addElement(UIElement* element) {
-    element->x = x+element->x;
-    element->y = y+element->y;
+    element->x = this->x+element->x;
+    element->y = this->y+element->y;
     items.push_back(element);
 }
 

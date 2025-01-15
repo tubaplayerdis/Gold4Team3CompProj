@@ -2,6 +2,7 @@
 #include "vex.h"
 #include <cmath>
 #include <algorithm>
+#include "Notifications.h"
 
 // Odometry Variables
 double Odometry::x = 0.0;   // X position in inches (forward/backward)
@@ -182,6 +183,13 @@ int displayCoordinates() {
 int Odometry::setupAndStartOdometry() {
     Bot::Drivetrain.setDriveVelocity(100.0, vex::percent);
     Bot::Drivetrain.setTurnVelocity(100.0, vex::percent);
+    if(!Bot::RotationForward.installed() || !Bot::RotationLateral.installed()) {
+        Notifications::addNotification("ODO DISABLE DISC");
+        Odometry::x = -1;
+        Odometry::y = -1;
+        Odometry::heading = -1;
+        return 1;
+    };
     vex::task updateLoop(odometry);
     vex::task driveLoop(wrapperwallstake);
     return 0;

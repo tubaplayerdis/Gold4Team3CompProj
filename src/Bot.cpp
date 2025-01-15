@@ -423,6 +423,7 @@ int Bot::monitorLoop() {
         if(!Arm.installed()) Notifications::addNotification("Arm DISCONNECT");
         if(!RotationForward.installed()) Notifications::addNotification("RotationF DISCONNECT");
         if(!RotationLateral.installed()) Notifications::addNotification("RotationL DISCONNECT");
+        if(!Inertial.installed()) Notifications::addNotification("Inertial DISCONNECT");
 
         if(Brain.Battery.capacity() < 30) Notifications::addNotification("Battery 30 WARN");
         if(Brain.Battery.capacity() < 10) Notifications::addNotification("Battery 10 REPLACE");
