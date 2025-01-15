@@ -73,7 +73,7 @@ vexui::Rectangle UISystem::RightCTempRec = vexui::Rectangle(200,0,250,50);
 
 //Console Panel Elements
 vexui::Label UISystem::labc = vexui::Label(10,10, "Diagnostics Panel");
-vexui::Dropdown UISystem::diagDropdown = vexui::Dropdown(5,25, 50, 20, "System Info", true);
+vexui::DropdownS UISystem::diagDropdown = vexui::DropdownS(5,5, 180, 30, "Notifications", false);
 vexui::Label UISystem::memFreeLabel = vexui::Label(0,0," ");
  
 
@@ -113,6 +113,10 @@ void DecreaseSelectedPosisiton() {
     UISystem::odoMap.setNewY(UISystem::positions[UISystem::SelectedPosition].pos.y, vexui::INCHES);
     Bot::Inertial.setHeading(UISystem::positions[UISystem::SelectedPosition].heading, vex::degrees);
     UISystem::odoMap.setNewH(UISystem::positions[UISystem::SelectedPosition].heading);
+}
+
+void toggleDiagDropdown() {
+    UISystem::diagDropdown.toggle();
 }
 
 void UISystem::setup() {
@@ -189,9 +193,11 @@ void UISystem::setup() {
 
 
     memFreeLabel.bgcolor = diagDropdown.bgcolor;
-    memFreeLabel.color.mset(255,255,255);
-    diagDropdown.addElement(&memFreeLabel);
-    diagnosticsPanel.addElement(&labc);
+    memFreeLabel.color.mset(0,0,0);
+    //I hate this workaround so much
+    diagDropdown.pressEvent.addListener(toggleDiagDropdown);
+    //diagDropdown.addElement(&memFreeLabel);
+    //diagnosticsPanel.addElement(&labc);
     diagnosticsPanel.addElement(&diagDropdown);
 
 
@@ -257,25 +263,37 @@ int UISystem::renderLoop() {
         if(diagnosticsPanel.dorender) {
 
             if(!Bot::LeftA.installed()) {
-                LeftATempRec.text = "LA: " + to_string_double_f(500);
-                LeftBTempRec.text = "LB: " + to_string_double_f(500);
-                LeftCTempRec.text = "LC: " + to_string_double_f(500);
-                RightATempRec.text = "RA: " + to_string_double_f(500);
-                RightBTempRec.text = "RB: " + to_string_double_f(500);
-                RightCTempRec.text = "RC: " + to_string_double_f(500);
-                LeftATempRec.color = calculateColorFromTemperature(500);
-                LeftBTempRec.color = calculateColorFromTemperature(500);
-                LeftCTempRec.color = calculateColorFromTemperature(500);
-                RightATempRec.color = calculateColorFromTemperature(500);
-                RightBTempRec.color = calculateColorFromTemperature(500);
-                RightCTempRec.color = calculateColorFromTemperature(500);
+                LeftATempRec.text = "LA";
+                LeftATempRec.extext = to_string_double_f(129);
+                LeftBTempRec.text = "LB";
+                LeftBTempRec.extext = to_string_double_f(129);
+                LeftCTempRec.text = "LC";
+                LeftCTempRec.extext = to_string_double_f(129);
+                RightATempRec.text = "RA";
+                RightATempRec.extext = to_string_double_f(129);
+                RightBTempRec.text = "RB";
+                RightBTempRec.extext = to_string_double_f(129);
+                RightCTempRec.text = "RC";
+                RightCTempRec.extext = to_string_double_f(129);
+                LeftATempRec.color = calculateColorFromTemperature(129);
+                LeftBTempRec.color = calculateColorFromTemperature(129);
+                LeftCTempRec.color = calculateColorFromTemperature(129);
+                RightATempRec.color = calculateColorFromTemperature(129);
+                RightBTempRec.color = calculateColorFromTemperature(129);
+                RightCTempRec.color = calculateColorFromTemperature(129);
             } else {
-                LeftATempRec.text = "LA: " + to_string_double_f(Bot::LeftA.temperature());
-                LeftBTempRec.text = "LB: " + to_string_double_f(Bot::LeftB.temperature());
-                LeftCTempRec.text = "LC: " + to_string_double_f(Bot::LeftC.temperature());
-                RightATempRec.text = "RA: " + to_string_double_f(Bot::RightA.temperature());
-                RightBTempRec.text = "RB: " + to_string_double_f(Bot::RightB.temperature());
-                RightCTempRec.text = "RC: " + to_string_double_f(Bot::RightC.temperature());
+                LeftATempRec.text = "LA";
+                LeftATempRec.extext = to_string_double_f(Bot::LeftA.temperature());
+                LeftBTempRec.text = "LB";
+                LeftBTempRec.extext = to_string_double_f(Bot::LeftB.temperature());
+                LeftCTempRec.text = "LC";
+                LeftCTempRec.extext = to_string_double_f(Bot::LeftC.temperature());
+                RightATempRec.text = "RA";
+                RightATempRec.extext = to_string_double_f(Bot::RightA.temperature());
+                RightBTempRec.text = "RB";
+                RightBTempRec.extext = to_string_double_f(Bot::RightA.temperature());
+                RightCTempRec.text = "RC";
+                RightCTempRec.extext = to_string_double_f(Bot::RightC.temperature());
                 LeftATempRec.color = calculateColorFromTemperature(Bot::LeftA.temperature());
                 LeftBTempRec.color = calculateColorFromTemperature(Bot::LeftB.temperature());
                 LeftCTempRec.color = calculateColorFromTemperature(Bot::LeftC.temperature());

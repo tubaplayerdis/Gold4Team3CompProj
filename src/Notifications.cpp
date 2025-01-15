@@ -2,6 +2,8 @@
 #include "vector"
 #include "string"
 #include "Bot.h"
+#include "UISystem.h"
+#include "api/vexui.h"
 
 std::vector<std::string> Notifications::NotificationList = std::vector<std::string>();
 int Notifications::notifIndex = 0;

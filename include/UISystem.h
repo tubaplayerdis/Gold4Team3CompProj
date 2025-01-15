@@ -65,7 +65,7 @@ class UISystem
         static vexui::Rectangle RightCTempRec;
 
         static vexui::Label labc;
-        static vexui::Dropdown diagDropdown;
+        static vexui::DropdownS diagDropdown;
         static vexui::Label memFreeLabel;
 
         //Functions and list

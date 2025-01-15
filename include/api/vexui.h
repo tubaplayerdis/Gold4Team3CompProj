@@ -143,7 +143,9 @@ namespace vexui
     class Rectangle : public UIElement {
         public:
             std::string text = " ";
+            std::string extext = " ";
             bool showText = false;
+            bool showExText = false;
             bool hasBorder = false;
             vexui::Color color{255,255,255, false}, txcolor{0,0,0,true};
 
@@ -199,7 +201,7 @@ namespace vexui
 
         public:
             std::string text;
-            vexui::Color bdcolor{200, 200, 200, true}, txcolor{255, 255, 255, true}, bgcolor{160, 160, 160, false}, btcolor{50,50,50, true};
+            vexui::Color bdcolor{200, 200, 200, true}, txcolor{0, 0, 0, true}, bgcolor{160, 160, 160, false}, btcolor{50,50,50, true};
             bool renderBorder;
             bool isCollapsable;
             bool collapsed;
@@ -209,6 +211,35 @@ namespace vexui
             void toggle();
 
             void addElement(UIElement* element);
+
+            void addString(std::string what);
+
+            void removeElement(int index);
+
+            void removeAll();
+
+            void render() override;
+            
+    };
+
+    class DropdownS : public UIElement
+    {
+        private:
+            std::vector<std::string> items;
+            const int buffer = 5;
+
+        public:
+            std::string text;
+            vexui::Color bdcolor{200, 200, 200, true}, txcolor{0, 0, 0, true}, bgcolor{160, 160, 160, false}, btcolor{50,50,50, true};
+            bool renderBorder;
+            bool isCollapsable;
+            bool collapsed;
+
+            DropdownS(int x, int y, int width, int height, const std::string &text, bool iscollapsable);
+
+            void toggle();
+
+            void addString(std::string what);
 
             void removeElement(int index);
 

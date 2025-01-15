@@ -133,7 +133,8 @@ void vexui::Rectangle::render() {
     if(showText) {
         txcolor.gset();
         vexDisplayBackgroundColor(rgbtocol(color.R, color.G, color.B));
-        //vexDisplaySmallStringAt((x+width)/2,(y+height)/4,text.c_str());
+        vexDisplaySmallStringAt(x+10,y+10,text.c_str());
+        vexDisplaySmallStringAt(x+10,y+25,extext.c_str());
     }
     if(hasBorder) {
         vexDisplayBackgroundColor(rgbtocol(0, 0, 0));
@@ -202,13 +203,15 @@ void vexui::Button::render() {
     resetColor();
 }
 
-vexui::Dropdown::Dropdown(int x, int y, int width, int height, const std::string &text, bool iscollapsable)  : vexui::UIElement() {
+
+vexui::Dropdown::Dropdown(int x, int y, int width, int height, const std::string &text_, bool iscollapsable)  : vexui::UIElement() {
     this->x = x;
     this->y = y;
     this->width = width;
     this->height = height;
     this->renderBorder = true;
     this->isCollapsable = iscollapsable;
+    this->text = text_;
     items = std::vector<UIElement*>();
 }
 
@@ -217,7 +220,13 @@ void vexui::Dropdown::toggle() {
 }
 
 void vexui::Dropdown::addElement(vexui::UIElement* element) {
+    element->x = this->x+element->x;
+    element->y = this->y+element->y;
     items.push_back(element);
+}
+
+void vexui::Dropdown::addString(std::string what) {
+
 }
 
 void vexui::Dropdown::removeElement(int index) {
@@ -231,20 +240,20 @@ void vexui::Dropdown::removeAll() {
 void vexui::Dropdown::render() {
     cpoi();
     if(!dorender) return;
-    if(isPress()) toggle();
 
     bgcolor.gset();
-    vexDisplayRectFill(x, y, x+width, y+width);
+    vexDisplayRectFill(x, y, x+width, y+height);
     bdcolor.gset();
-    if(renderBorder) vexDisplayRectDraw(x, y, x+width, y+ height);
+    if(renderBorder) vexDisplayRectDraw(x, y, x+width, y+height);
     txcolor.gset();
-    vexDisplayStringAt(x+3,y+(height/10),text.c_str());
+    vexDisplayBackgroundColor(rgbtocol(bgcolor.R, bgcolor.G, bgcolor.B));
+    vexDisplaySmallStringAt(x+30,y+10,text.c_str());
 
     if(!collapsed) {
+        btcolor.gset();
+        vexDisplayLineDraw(x+5,y+(height/1.5),x+10,y+(height/3));
+        vexDisplayLineDraw(x+15,(y+height/1.5),x+10,y+(height/3));
         if(items.size() > 0) {
-            btcolor.gset();
-            vexDisplayLineDraw(x+5,y+(height/1.5),x+10,y+(height/3));
-            vexDisplayLineDraw(x+15,(y+height/1.5),x+10,y+(height/3));
             int space = 0;
             int enumeration = 0;
             for(UIElement* item : items) {
@@ -262,6 +271,64 @@ void vexui::Dropdown::render() {
             vexDisplayRectFill(x+1, y-space, x+width-1, space+1);
             for(UIElement* item : items) {
                 item->render();
+            }
+        }
+    } else {
+        btcolor.gset();
+        vexDisplayLineDraw(x+5,y+(height/3),x+10,y+(height/1.5));
+        vexDisplayLineDraw(x+15,y+(height/3),x+10,y+(height/1.5));
+    }
+    resetColor();
+}
+
+vexui::DropdownS::DropdownS(int x, int y, int width, int height, const std::string &text_, bool iscollapsable)  : vexui::UIElement() {
+    this->x = x;
+    this->y = y;
+    this->width = width;
+    this->height = height;
+    this->renderBorder = true;
+    this->isCollapsable = iscollapsable;
+    this->text = text_;
+    items = std::vector<std::string>();
+}
+
+void vexui::DropdownS::toggle() {
+    collapsed = !collapsed;
+}
+
+void vexui::DropdownS::addString(std::string what) {
+    
+}
+
+void vexui::DropdownS::removeElement(int index) {
+    items.erase(items.begin() + index);
+}
+
+void vexui::DropdownS::removeAll() {
+    items.clear();
+}
+
+void vexui::DropdownS::render() {
+    cpoi();
+    if(!dorender) return;
+
+    bgcolor.gset();
+    vexDisplayRectFill(x, y, x+width, y+height);
+    bdcolor.gset();
+    if(renderBorder) vexDisplayRectDraw(x, y, x+width, y+height);
+    txcolor.gset();
+    vexDisplayBackgroundColor(rgbtocol(bgcolor.R, bgcolor.G, bgcolor.B));
+    vexDisplaySmallStringAt(x+30,y+10,text.c_str());
+
+    if(!collapsed) {
+        btcolor.gset();
+        vexDisplayLineDraw(x+5,y+(height/1.5),x+10,y+(height/3));
+        vexDisplayLineDraw(x+15,(y+height/1.5),x+10,y+(height/3));
+        if(items.size() > 0) {
+            bgcolor.gset();
+            vexDisplayRectFill(x+1, y+items.size()*10, x+width-1, items.size()*10+1);
+            for(int i = 0; i < items.size(); i++) {
+                vexDisplaySmallStringAt(x+5, y+height+(i*10), items[i].c_str());
             }
         }
     } else {
