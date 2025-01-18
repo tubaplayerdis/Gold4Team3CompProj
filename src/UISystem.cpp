@@ -289,36 +289,6 @@ int UISystem::renderLoop() {
         
 
         if(diagnosticsPanel.dorender) {
-
-            if(!Bot::LeftA.installed()) {
-                LeftATempRec.text = "LA";
-                LeftATempRec.extext = to_string_double_f(129);
-                LeftBTempRec.text = "LB";
-                LeftBTempRec.extext = to_string_double_f(129);
-                LeftCTempRec.text = "LC";
-                LeftCTempRec.extext = to_string_double_f(129);
-                RightATempRec.text = "RA";
-                RightATempRec.extext = to_string_double_f(129);
-                RightBTempRec.text = "RB";
-                RightBTempRec.extext = to_string_double_f(129);
-                RightCTempRec.text = "RC";
-                RightCTempRec.extext = to_string_double_f(129);
-                ArmLTempRec.text = "ARML";
-                ArmLTempRec.extext = to_string_double_f(129);
-                ArmRTempRec.text = "ARMR";
-                ArmRTempRec.extext = to_string_double_f(129);
-                IntakeTempRec.text = "INTK";
-                IntakeTempRec.extext = to_string_double_f(129);
-                LeftATempRec.color = calculateColorFromTemperature(129);
-                LeftBTempRec.color = calculateColorFromTemperature(129);
-                LeftCTempRec.color = calculateColorFromTemperature(129);
-                RightATempRec.color = calculateColorFromTemperature(129);
-                RightBTempRec.color = calculateColorFromTemperature(129);
-                RightCTempRec.color = calculateColorFromTemperature(129);
-                ArmLTempRec.color = calculateColorFromTemperature(129);
-                ArmRTempRec.color = calculateColorFromTemperature(129);
-                IntakeTempRec.color = calculateColorFromTemperature(129);
-            } else {
                 LeftATempRec.text = "LA";
                 LeftATempRec.extext = to_string_double_f(getTemputureUnlessMotor(Bot::LeftA));
                 LeftBTempRec.text = "LB";
@@ -346,10 +316,6 @@ int UISystem::renderLoop() {
                 ArmLTempRec.color = calculateColorFromTemperature(std::atof(ArmLTempRec.extext.c_str()));
                 ArmRTempRec.color = calculateColorFromTemperature(std::atof(ArmRTempRec.extext.c_str()));
                 IntakeTempRec.color = calculateColorFromTemperature(std::atof(IntakeTempRec.extext.c_str()));
-            }
-
-            
-
         }
 
         if(!doRender) continue;
