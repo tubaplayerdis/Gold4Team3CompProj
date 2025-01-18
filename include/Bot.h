@@ -73,13 +73,15 @@ class Bot {
 
         //Misc
         static vex::motor Intake;
-        static vex::motor Arm;
+        static vex::motor ArmL;
+        static vex::motor ArmR;
+        static vex::motor_group Arm;
         //static vex::motor LiftL;
         //static vex::motor LiftR;
         //static vex::motor_group LiftMotors;
         static vex::digital_out MogoMech;
         static vex::digital_out Clutch;
-        static vex::bumper MogoBumper;
+        static vex::digital_out Doinker;
 
         //Gryos and stuff
         static vex::inertial Inertial;
@@ -96,12 +98,14 @@ class Bot {
         static vex::gps GpsB;
 
         //Led Array
+        /*
         static vex::led ModeLED;
         static vex::led ControllerInputLED;
         static vex::led NotificationLED;
         static vex::led WarningLED;
         static vex::led CriticalErrorCodeLED;
         static vex::led CriticalErrorLED;
+        */
 
 
         static bool feedGps;
@@ -126,9 +130,10 @@ class Bot {
         //Main Loop Function use at task
         static int mainLoop();
         //"tasks"
-        static bool ClutchToggle, MogoToggle;
+        static bool ClutchToggle, MogoToggle, DoinkerToggle;
         static void toggleClutch();
         static void toggleMogo();
+        static void toggleDoinker();
         static void switchAlliance();
         static void clampMobileGoal();
         static void releaseMobileGoal();

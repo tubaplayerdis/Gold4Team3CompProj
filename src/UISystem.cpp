@@ -63,15 +63,16 @@ vexui::Button UISystem::calibrationPositionBackButton = vexui::Button(245, 50, 4
 vexui::Button UISystem::calibrationPositionForwardButton = vexui::Button(440, 50, 40, 40, ">");
 vexui::Label UISystem::calibrationWarningLabel = vexui::Label(205, 100, "Will Calibrate On Position Select*!");
 
-vexui::Panel UISystem::motorTempVisualPanel = vexui::Panel(220,5, 250, 140);
+vexui::Panel UISystem::motorTempVisualPanel = vexui::Panel(220,5, 250, 170);
 vexui::Rectangle UISystem::LeftATempRec = vexui::Rectangle(0,60,50,110);
 vexui::Rectangle UISystem::LeftBTempRec = vexui::Rectangle(55,20,105,70);
 vexui::Rectangle UISystem::LeftCTempRec = vexui::Rectangle(0,0,50,50);
 vexui::Rectangle UISystem::RightATempRec = vexui::Rectangle(200,60,250,110);
 vexui::Rectangle UISystem::RightBTempRec = vexui::Rectangle(145,20,195,70);
 vexui::Rectangle UISystem::RightCTempRec = vexui::Rectangle(200,0,250,50);
-vexui::Rectangle UISystem::ArmTempRec = vexui::Rectangle(55,90,105,140);
-vexui::Rectangle UISystem::IntakeTempRec = vexui::Rectangle(145,90,195,140);
+vexui::Rectangle UISystem::ArmLTempRec = vexui::Rectangle(0,120,50,170);
+vexui::Rectangle UISystem::ArmRTempRec = vexui::Rectangle(200,120,250,170);
+vexui::Rectangle UISystem::IntakeTempRec = vexui::Rectangle(100,120,150,170);
 
 //Console Panel Elements
 vexui::Label UISystem::labc = vexui::Label(10,10, "Diagnostics Panel");
@@ -83,6 +84,7 @@ void UISystem::mainTabButton_Press() {
     mainPanel.dorender = true;
     odometryPanel.dorender = false;
     diagnosticsPanel.dorender = false;
+    
 }
 
 void UISystem::odometryTabButton_Press() {
@@ -160,7 +162,8 @@ void UISystem::setup() {
     motorTempVisualPanel.addElement(&RightATempRec);
     motorTempVisualPanel.addElement(&RightBTempRec);
     motorTempVisualPanel.addElement(&RightCTempRec);
-    motorTempVisualPanel.addElement(&ArmTempRec);
+    motorTempVisualPanel.addElement(&ArmLTempRec);
+    motorTempVisualPanel.addElement(&ArmRTempRec);
     motorTempVisualPanel.addElement(&IntakeTempRec);
     motorTempVisualPanel.color = diagnosticsPanel.color;
 
@@ -194,10 +197,15 @@ void UISystem::setup() {
     RightCTempRec.width = motorTempVisualPanel.x + RightCTempRec.width;
     RightCTempRec.height = motorTempVisualPanel.y + RightCTempRec.height;
 
-    ArmTempRec.showText = true;
-    ArmTempRec.hasBorder = true;
-    ArmTempRec.width = motorTempVisualPanel.x + ArmTempRec.width;
-    ArmTempRec.height = motorTempVisualPanel.y + ArmTempRec.height;
+    ArmLTempRec.showText = true;
+    ArmLTempRec.hasBorder = true;
+    ArmLTempRec.width = motorTempVisualPanel.x + ArmLTempRec.width;
+    ArmLTempRec.height = motorTempVisualPanel.y + ArmLTempRec.height;
+
+    ArmRTempRec.showText = true;
+    ArmRTempRec.hasBorder = true;
+    ArmRTempRec.width = motorTempVisualPanel.x + ArmRTempRec.width;
+    ArmRTempRec.height = motorTempVisualPanel.y + ArmRTempRec.height;
 
     IntakeTempRec.showText = true;
     IntakeTempRec.hasBorder = true;
@@ -264,6 +272,12 @@ vexui::Color calculateColorFromTemperature(double temperature) {
     return vexui::Color(r,g,b,false);
 }
 
+//Returns tempurture of the motor if exists, otherwise returns 129f
+double getTemputureUnlessMotor(vex::motor motor) {
+    if(!motor.installed()) return 129;
+    return motor.temperature(vex::fahrenheit);
+}
+
 int UISystem::renderLoop() {
 
     while(true) {
@@ -289,8 +303,10 @@ int UISystem::renderLoop() {
                 RightBTempRec.extext = to_string_double_f(129);
                 RightCTempRec.text = "RC";
                 RightCTempRec.extext = to_string_double_f(129);
-                ArmTempRec.text = "ARM";
-                ArmTempRec.extext = to_string_double_f(129);
+                ArmLTempRec.text = "ARML";
+                ArmLTempRec.extext = to_string_double_f(129);
+                ArmRTempRec.text = "ARMR";
+                ArmRTempRec.extext = to_string_double_f(129);
                 IntakeTempRec.text = "INTK";
                 IntakeTempRec.extext = to_string_double_f(129);
                 LeftATempRec.color = calculateColorFromTemperature(129);
@@ -299,33 +315,37 @@ int UISystem::renderLoop() {
                 RightATempRec.color = calculateColorFromTemperature(129);
                 RightBTempRec.color = calculateColorFromTemperature(129);
                 RightCTempRec.color = calculateColorFromTemperature(129);
-                ArmTempRec.color = calculateColorFromTemperature(129);
+                ArmLTempRec.color = calculateColorFromTemperature(129);
+                ArmRTempRec.color = calculateColorFromTemperature(129);
                 IntakeTempRec.color = calculateColorFromTemperature(129);
             } else {
                 LeftATempRec.text = "LA";
-                LeftATempRec.extext = to_string_double_f(Bot::LeftA.temperature());
+                LeftATempRec.extext = to_string_double_f(getTemputureUnlessMotor(Bot::LeftA));
                 LeftBTempRec.text = "LB";
-                LeftBTempRec.extext = to_string_double_f(Bot::LeftB.temperature());
+                LeftBTempRec.extext = to_string_double_f(getTemputureUnlessMotor(Bot::LeftB));
                 LeftCTempRec.text = "LC";
-                LeftCTempRec.extext = to_string_double_f(Bot::LeftC.temperature());
+                LeftCTempRec.extext = to_string_double_f(getTemputureUnlessMotor(Bot::LeftC));
                 RightATempRec.text = "RA";
-                RightATempRec.extext = to_string_double_f(Bot::RightA.temperature());
+                RightATempRec.extext = to_string_double_f(getTemputureUnlessMotor(Bot::RightA));
                 RightBTempRec.text = "RB";
-                RightBTempRec.extext = to_string_double_f(Bot::RightA.temperature());
+                RightBTempRec.extext = to_string_double_f(getTemputureUnlessMotor(Bot::RightB));
                 RightCTempRec.text = "RC";
-                RightCTempRec.extext = to_string_double_f(Bot::RightC.temperature());
-                ArmTempRec.text = "ARM";
-                ArmTempRec.extext = to_string_double_f(Bot::Arm.temperature());
+                RightCTempRec.extext = to_string_double_f(getTemputureUnlessMotor(Bot::RightC));
+                ArmLTempRec.text = "ARML";
+                ArmLTempRec.extext = to_string_double_f(getTemputureUnlessMotor(Bot::ArmL));
+                ArmRTempRec.text = "ARMR";
+                ArmRTempRec.extext = to_string_double_f(getTemputureUnlessMotor(Bot::ArmR));
                 IntakeTempRec.text = "INTK";
-                IntakeTempRec.extext = to_string_double_f(Bot::Intake.temperature());
-                LeftATempRec.color = calculateColorFromTemperature(Bot::LeftA.temperature());
-                LeftBTempRec.color = calculateColorFromTemperature(Bot::LeftB.temperature());
-                LeftCTempRec.color = calculateColorFromTemperature(Bot::LeftC.temperature());
-                RightATempRec.color = calculateColorFromTemperature(Bot::RightA.temperature());
-                RightBTempRec.color = calculateColorFromTemperature(Bot::RightB.temperature());
-                RightCTempRec.color = calculateColorFromTemperature(Bot::RightC.temperature());
-                ArmTempRec.color = calculateColorFromTemperature(Bot::Arm.temperature());
-                IntakeTempRec.color = calculateColorFromTemperature(Bot::Intake.temperature());
+                IntakeTempRec.extext = to_string_double_f(getTemputureUnlessMotor(Bot::Intake));
+                LeftATempRec.color = calculateColorFromTemperature(std::atof(LeftATempRec.extext.c_str()));
+                LeftBTempRec.color = calculateColorFromTemperature(std::atof(LeftBTempRec.extext.c_str()));
+                LeftCTempRec.color = calculateColorFromTemperature(std::atof(LeftCTempRec.extext.c_str()));
+                RightATempRec.color = calculateColorFromTemperature(std::atof(RightATempRec.extext.c_str()));
+                RightBTempRec.color = calculateColorFromTemperature(std::atof(RightBTempRec.extext.c_str()));
+                RightCTempRec.color = calculateColorFromTemperature(std::atof(RightCTempRec.extext.c_str()));
+                ArmLTempRec.color = calculateColorFromTemperature(std::atof(ArmLTempRec.extext.c_str()));
+                ArmRTempRec.color = calculateColorFromTemperature(std::atof(ArmRTempRec.extext.c_str()));
+                IntakeTempRec.color = calculateColorFromTemperature(std::atof(IntakeTempRec.extext.c_str()));
             }
 
             

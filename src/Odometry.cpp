@@ -191,6 +191,7 @@ int Odometry::setupAndStartOdometry() {
         return 1;
     };
     vex::task updateLoop(odometry);
-    vex::task driveLoop(wrapperwallstake);
+    //This dosent work and its kinda useless.
+    //vex::task driveLoop(wrapperwallstake);
     return 0;
 }

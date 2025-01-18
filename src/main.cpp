@@ -104,6 +104,16 @@ void usercontrol(void) {
   }
 }
 
+void PrimeLadyBrown() {
+  Bot::Arm.spinTo(50, vex::degrees);
+  Bot::Arm.setStopping(vex::hold);
+  Bot::Arm.stop();
+}
+
+void SendBackConveyor() {
+  Bot::Intake.spinFor(-300, vex::degrees);
+}
+
 //
 // Main will set up the competition functions and callbacks.
 //
@@ -112,8 +122,11 @@ int main() {
   Odometry::setupAndStartOdometry();
   Bot::Aliance = aliance::Nuetral;
 
-  Bot::Controller.ButtonY.pressed(cycleStartingPosistions);
-  Bot::Controller.ButtonL1.pressed(Bot::swapFeedPos);
+  //Bot::Controller.ButtonY.pressed(cycleStartingPosistions);
+  //Bot::Controller.ButtonX.pressed(Bot::swapFeedPos);
+
+  Bot::Controller.ButtonX.pressed(PrimeLadyBrown);
+  Bot::Controller.ButtonY.pressed(SendBackConveyor);
   Bot::Controller.ButtonA.pressed(Bot::toggleMogo);
   Bot::Controller.ButtonB.pressed(Bot::toggleClutch);
 

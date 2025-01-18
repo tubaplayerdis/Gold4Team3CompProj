@@ -19,12 +19,14 @@ vex::motor Bot::RightC = vex::motor(vex::PORT6, vex::ratio6_1, true);//High Spee
 
 
 vex::motor Bot::Intake = vex::motor(vex::PORT7, vex::ratio6_1, false);//High Speed
-vex::motor Bot::Arm = vex::motor(vex::PORT9, vex::ratio36_1, false);//High Torque
-//vex::motor Bot::LiftL = vex::motor(vex::PORT9, vex::ratio18_1, true);//Low Power
-//vex::motor Bot::LiftR = vex::motor(vex::PORT10, vex::ratio18_1, true);//Low Power
+vex::motor Bot::ArmL = vex::motor(vex::PORT8, vex::ratio18_1, true); //Low Power
+vex::motor Bot::ArmR = vex::motor(vex::PORT9, vex::ratio18_1, false); //Low Power
+vex::motor_group Bot::Arm = vex::motor_group(Bot::ArmL, Bot::ArmR);//High Torque
+
+
 vex::digital_out Bot::MogoMech = vex::digital_out(Bot::Brain.ThreeWirePort.A);
 vex::digital_out Bot::Clutch = vex::digital_out(Bot::Brain.ThreeWirePort.B);
-vex::bumper Bot::MogoBumper = vex::bumper(Bot::Brain.ThreeWirePort.C);
+vex::digital_out Bot::Doinker = vex::digital_out(Bot::Brain.ThreeWirePort.C);
 
 vex::inertial Bot::Inertial = vex::inertial(vex::PORT11);
 vex::rotation Bot::RotationForward = vex::rotation(vex::PORT12); //Forwards
@@ -44,12 +46,14 @@ vex::gps Bot::GpsB = vex::gps(vex::PORT19, 17, -17, vex::inches, 180);
 bool Bot::feedGps = false;
 
 //Led Array
+/*
 vex::led Bot::ModeLED = vex::led(Bot::Brain.ThreeWirePort.C);
 vex::led Bot::ControllerInputLED = vex::led(Bot::Brain.ThreeWirePort.D);
 vex::led Bot::NotificationLED = vex::led(Bot::Brain.ThreeWirePort.E);
 vex::led Bot::WarningLED = vex::led(Bot::Brain.ThreeWirePort.F);
 vex::led Bot::CriticalErrorCodeLED = vex::led(Bot::Brain.ThreeWirePort.G);
 vex::led Bot::CriticalErrorLED = vex::led(Bot::Brain.ThreeWirePort.H);
+*/
 BlinkTypes ModeType = BlinkTypes::Solid;
 BlinkTypes CriticalErrorType = BlinkTypes::Solid;
 
@@ -77,6 +81,7 @@ int Bot::NumDevices = 0;
 
 bool Bot::ClutchToggle = false;
 bool Bot::MogoToggle = true;
+bool Bot::DoinkerToggle = false;
 
 void Bot::swapFeedPos() {
     feedGps = !feedGps;
@@ -121,6 +126,7 @@ void Bot::setup() {
 
     MogoMech.set(false);
     Clutch.set(false);
+    Doinker.set(false);
 
     if(Bot::GpsF.installed()) Bot::GpsF.calibrate();
     if(Bot::GpsL.installed()) Bot::GpsL.calibrate();
@@ -157,34 +163,44 @@ int Bot::mainLoop() {
         if(IgnoreMain) continue;
         if(Comp.isAutonomous()) continue;
 
+        /*
         if(Controller.Axis1.value() != 0 || Controller.Axis2.value() || Controller.Axis3.value() != 0 || Controller.Axis4.value() || Controller.ButtonA.pressing() || Controller.ButtonB.pressing() || Controller.ButtonX.pressing() || Controller.ButtonY.pressing() || Controller.ButtonUp.pressing() || Controller.ButtonDown.pressing() || Controller.ButtonLeft.pressing() || Controller.ButtonRight.pressing() || Controller.ButtonL1.pressing() || Controller.ButtonL2.pressing() || Controller.ButtonR1.pressing() || Controller.ButtonR2.pressing()) {
             ControllerInputLED.on();
         } else {
             ControllerInputLED.off();
         }
+        */
 
         if(Controller.ButtonL2.pressing() && Controller.ButtonR2.pressing()) {
             Intake.setVelocity(0, vex::rpm);
             Intake.stop();
         } else if (Controller.ButtonL2.pressing()) {
             Intake.setVelocity(600, vex::rpm);
-            Intake.spin(vex::forward);
+            Intake.spin(vex::reverse);
         } else if (Controller.ButtonR2.pressing()) {
             Intake.setVelocity(600, vex::rpm);
-            Intake.spin(vex::reverse);
+            Intake.spin(vex::forward);
         } else {
             Intake.setVelocity(0, vex::rpm);
             Intake.stop();
         }
 
-        if(Controller.ButtonUp.pressing()) {
-            Arm.setVelocity(100, vex::rpm);
-        } else if (Controller.ButtonDown.pressing()) {
-            Arm.setVelocity(100, vex::rpm);
+        if(Controller.ButtonL1.pressing() && Controller.ButtonR1.pressing()) {
+            Arm.setVelocity(0, vex::rpm);
+            Arm.stop();
+        } else if (Controller.ButtonL1.pressing()) {
+            Arm.setStopping(vex::coast);
+            Arm.setVelocity(200, vex::rpm);
+            Arm.spin(vex::reverse);
+        } else if (Controller.ButtonR1.pressing()) {
+            Arm.setStopping(vex::coast);
+            Arm.setVelocity(200, vex::rpm);
             Arm.spin(vex::forward);
         } else {
+            Arm.setVelocity(0, vex::rpm);
             Arm.stop();
         }
+
 
         //Clear notifications
         if(Controller.ButtonLeft.pressing() && Controller.ButtonRight.pressing()) {
@@ -209,6 +225,11 @@ void Bot::toggleClutch() {
 void Bot::toggleMogo() {
     MogoToggle = !MogoToggle;
     MogoMech.set(MogoToggle);
+}
+
+void Bot::toggleMogo() {
+    DoinkerToggle = !DoinkerToggle;
+    Doinker.set(Doinker);
 }
 
 void Bot::switchAlliance() {
@@ -249,7 +270,7 @@ void Bot::releaseClutch() {
 }
 //use this eventually? no!
 void Bot::checkInstall() {
-    Bot::Brain.Screen.printAt(0, 30, "Arm: %d", Bot::Arm.installed());
+    //Bot::Brain.Screen.printAt(0, 30, "Arm: %d", Bot::Arm.installed());
     Bot::Brain.Screen.printAt(0, 50, "Intake: %d", Bot::Intake.installed());
     Bot::Brain.Screen.printAt(0, 70, "LeftA: %d", Bot::LeftA.installed());
     Bot::Brain.Screen.printAt(0, 90, "LeftB: %d", Bot::LeftB.installed());
@@ -264,6 +285,7 @@ void Bot::checkInstall() {
 }
 
 int Bot::blinkerLoop() {
+    /*
     while(true) {
         switch (ModeType)
         {
@@ -321,6 +343,7 @@ int Bot::blinkerLoop() {
         }
         vex::this_thread::sleep_for(50);
     }
+    */
     return 0;
 }
 
@@ -411,7 +434,8 @@ int Bot::monitorLoop() {
         if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightB TEMP");
         if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightC TEMP");
         if(Intake.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("Intake TEMP");
-        if(Arm.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("Arm TEMP");
+        if(ArmL.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("ArmL TEMP");
+        if(ArmR.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("ArmR TEMP");
 
         if(!LeftA.installed()) Notifications::addNotification("LeftA DISCONNECT");
         if(!LeftB.installed()) Notifications::addNotification("LeftB DISCONNECT");
@@ -420,7 +444,8 @@ int Bot::monitorLoop() {
         if(!RightB.installed()) Notifications::addNotification("RightB DISCONNECT");
         if(!RightC.installed()) Notifications::addNotification("RightC DISCONNECT");
         if(!Intake.installed()) Notifications::addNotification("Intake DISCONNECT");
-        if(!Arm.installed()) Notifications::addNotification("Arm DISCONNECT");
+        if(!ArmL.installed()) Notifications::addNotification("ArmL DISCONNECT");
+        if(!ArmR.installed()) Notifications::addNotification("ArmR DISCONNECT");
         if(!RotationForward.installed()) Notifications::addNotification("RotationF DISCONNECT");
         if(!RotationLateral.installed()) Notifications::addNotification("RotationL DISCONNECT");
         if(!Inertial.installed()) Notifications::addNotification("Inertial DISCONNECT");

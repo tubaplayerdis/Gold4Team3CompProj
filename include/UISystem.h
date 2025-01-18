@@ -63,7 +63,8 @@ class UISystem
         static vexui::Rectangle RightATempRec;
         static vexui::Rectangle RightBTempRec;
         static vexui::Rectangle RightCTempRec;
-        static vexui::Rectangle ArmTempRec;
+        static vexui::Rectangle ArmLTempRec;
+        static vexui::Rectangle ArmRTempRec;
         static vexui::Rectangle IntakeTempRec;
 
         static vexui::Label labc;
