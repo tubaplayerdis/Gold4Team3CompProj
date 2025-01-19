@@ -105,13 +105,21 @@ void usercontrol(void) {
 }
 
 void PrimeLadyBrown() {
-  Bot::Arm.spinTo(50, vex::degrees);
+  Bot::IgnoreArm = true;
   Bot::Arm.setStopping(vex::hold);
-  Bot::Arm.stop();
+  Bot::Arm.setVelocity(100, vex::percent);
+  Bot::Arm.setMaxTorque(100, vex::percent);
+  Bot::Arm.spinTo(-29, vex::degrees, true);
+  Bot::IgnoreArm = false;
+  //Bot::Arm.stop();
 }
 
 void SendBackConveyor() {
-  Bot::Intake.spinFor(-300, vex::degrees);
+  Bot::IgnoreIntake = true;
+  Bot::Intake.setVelocity(100, vex::percent);
+  Bot::Intake.setMaxTorque(100, vex::percent);
+  Bot::Intake.spinFor(-100, vex::degrees, true);
+  Bot::IgnoreIntake = false;
 }
 
 //
@@ -128,7 +136,7 @@ int main() {
   Bot::Controller.ButtonX.pressed(PrimeLadyBrown);
   Bot::Controller.ButtonY.pressed(SendBackConveyor);
   Bot::Controller.ButtonA.pressed(Bot::toggleMogo);
-  Bot::Controller.ButtonB.pressed(Bot::toggleClutch);
+  Bot::Controller.ButtonB.pressed(Bot::toggleDoinker);
 
   Bot::Controller.ButtonLeft.pressed(Notifications::notifBackward);
   Bot::Controller.ButtonRight.pressed(Notifications::notifForward);

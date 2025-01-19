@@ -125,6 +125,9 @@ class Bot {
         static bool IgnoreMonitor;
         static bool IgnoreVision;
 
+        static bool IgnoreArm;
+        static bool IgnoreIntake;
+
         //setup stuf
         static void setup();
         //Main Loop Function use at task

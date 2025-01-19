@@ -70,6 +70,8 @@ bool Bot::IgnoreMain = false;
 bool Bot::IgnoreDisplay = false;
 bool Bot::IgnoreMonitor = false;
 bool Bot::IgnoreVision = false;
+bool Bot::IgnoreArm = false;
+bool Bot::IgnoreIntake = false;
 
 //Define important stuff
 vex::controller Bot::Controller = vex::controller(vex::primary);
@@ -123,6 +125,14 @@ void Bot::setup() {
     RightB.setBrake(vex::brakeType::coast);
     LeftC.setBrake(vex::brakeType::coast);
     RightC.setBrake(vex::brakeType::coast);
+    Intake.setStopping(vex::brakeType::coast);
+    Intake.setBrake(vex::brakeType::coast);
+
+    Arm.setPosition(0, vex::degrees);
+    Arm.setStopping(vex::hold);
+    ArmL.setBrake(vex::hold);
+    ArmR.setBrake(vex::hold);
+
 
     MogoMech.set(false);
     Clutch.set(false);
@@ -171,34 +181,36 @@ int Bot::mainLoop() {
         }
         */
 
-        if(Controller.ButtonL2.pressing() && Controller.ButtonR2.pressing()) {
-            Intake.setVelocity(0, vex::rpm);
-            Intake.stop();
-        } else if (Controller.ButtonL2.pressing()) {
-            Intake.setVelocity(600, vex::rpm);
-            Intake.spin(vex::reverse);
-        } else if (Controller.ButtonR2.pressing()) {
-            Intake.setVelocity(600, vex::rpm);
-            Intake.spin(vex::forward);
-        } else {
-            Intake.setVelocity(0, vex::rpm);
-            Intake.stop();
+        if(!IgnoreIntake) {
+            if(Controller.ButtonL2.pressing() && Controller.ButtonR2.pressing()) {
+                Intake.setVelocity(0, vex::rpm);
+                Intake.stop();
+            } else if (Controller.ButtonL2.pressing()) {
+                Intake.setVelocity(600, vex::rpm);
+                Intake.spin(vex::reverse);
+            } else if (Controller.ButtonR2.pressing()) {
+                Intake.setVelocity(600, vex::rpm);
+                Intake.spin(vex::forward);
+            } else {
+                Intake.setVelocity(0, vex::rpm);
+                Intake.stop();
+            }
         }
 
-        if(Controller.ButtonL1.pressing() && Controller.ButtonR1.pressing()) {
+        if(!IgnoreArm) {
+            if(Controller.ButtonL1.pressing() && Controller.ButtonR1.pressing()) {
             Arm.setVelocity(0, vex::rpm);
             Arm.stop();
-        } else if (Controller.ButtonL1.pressing()) {
-            Arm.setStopping(vex::coast);
-            Arm.setVelocity(200, vex::rpm);
-            Arm.spin(vex::reverse);
-        } else if (Controller.ButtonR1.pressing()) {
-            Arm.setStopping(vex::coast);
-            Arm.setVelocity(200, vex::rpm);
-            Arm.spin(vex::forward);
-        } else {
-            Arm.setVelocity(0, vex::rpm);
-            Arm.stop();
+            } else if (Controller.ButtonL1.pressing()) {
+                Arm.setVelocity(200, vex::rpm);
+                Arm.spin(vex::forward);
+            } else if (Controller.ButtonR1.pressing()) {
+                Arm.setVelocity(200, vex::rpm);
+                Arm.spin(vex::reverse);
+            } else {
+                Arm.setVelocity(0, vex::rpm);
+                Arm.stop();
+            }
         }
 
 
@@ -227,9 +239,9 @@ void Bot::toggleMogo() {
     MogoMech.set(MogoToggle);
 }
 
-void Bot::toggleMogo() {
+void Bot::toggleDoinker() {
     DoinkerToggle = !DoinkerToggle;
-    Doinker.set(Doinker);
+    Doinker.set(DoinkerToggle);
 }
 
 void Bot::switchAlliance() {
