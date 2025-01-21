@@ -49,11 +49,7 @@ vexui::Panel UISystem::diagnosticsPanel = vexui::Panel(0,40,480,200);
 vexui::Label UISystem::watermark = vexui::Label(315, 15, "GBS 38535B");
 
 //Main Panel Elements
-vexui::Label UISystem::labm = vexui::Label(10,10, "AI Vision");
-vexui::Label UISystem::motorTempLabel = vexui::Label(10, 100, "Temps:");
-vexui::Label UISystem::redRingNumLabel = vexui::Label(10,30, "Red Ring#:");
-vexui::Label UISystem::blueRingNumLabel = vexui::Label(10,50, "Blue Ring#: ");
-vexui::Label UISystem::MobileGoalNumLabel = vexui::Label(10,70, "Moblie Goal#: ");
+vexui::Label UISystem::labm = vexui::Label(5,5, "Auton Select");
 
 //Odometry Panel Elements
 vexui::Label UISystem::labo = vexui::Label(250,10, "Calibration");
@@ -139,7 +135,6 @@ void UISystem::setup() {
     labc.bgcolor = diagnosticsPanel.color;
 
     labo.txsize = vexui::LARGE;
-    motorTempLabel.txsize = vexui::SMALL;
     calibrationSelectLabel.bgcolor = odometryPanel.color;
     calibrationPositionBackButton.pressEvent.addListener(DecreaseSelectedPosisiton);
     calibrationPositionForwardButton.pressEvent.addListener(IncreaseSelectedPosisiton);
@@ -150,10 +145,6 @@ void UISystem::setup() {
     diagnosticsPanel.addElement(&motorTempVisualPanel);
 
     mainPanel.addElement(&labm);
-    mainPanel.addElement(&redRingNumLabel);
-    mainPanel.addElement(&blueRingNumLabel);
-    mainPanel.addElement(&MobileGoalNumLabel);
-    mainPanel.addElement(&motorTempLabel);
 
 
     motorTempVisualPanel.addElement(&LeftATempRec);
@@ -282,10 +273,6 @@ int UISystem::renderLoop() {
 
     while(true) {
         vexDisplayErase();
-        
-        redRingNumLabel.setText("Red Rings: "+to_string_int_f(Bot::redRingNum));
-        blueRingNumLabel.setText("Blue Rings: "+to_string_int_f(Bot::redRingNum));
-        MobileGoalNumLabel.setText("Mobile Goals: "+to_string_int_f(Bot::redRingNum));
         
 
         if(diagnosticsPanel.dorender) {

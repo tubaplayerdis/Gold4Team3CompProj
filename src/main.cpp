@@ -67,11 +67,15 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
-  Bot::Drivetrain.setDriveVelocity(30, vex::percent);
-  Bot::Drivetrain.driveFor(800, vex::mm, true);
+  Bot::Drivetrain.setDriveVelocity(20, vex::percent);
+  Bot::Drivetrain.driveFor(910, vex::mm, true);
+  Bot::Drivetrain.setStopping(vex::coast);
   Bot::MogoMech.set(true);
-  Bot::Intake.setVelocity(-600, vex::rpm);
-  Bot::Intake.spinFor(5, vex::seconds);
+  Bot::Arm.setVelocity(100,vex::percent);
+  Bot::Arm.spinTo(-160, vex::degrees);
+  Bot::Intake.setVelocity(600, vex::rpm);
+  Bot::Intake.spinFor(1.5, vex::seconds);
+  Bot::Drivetrain.turnFor(-35, vex::degrees, true);
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
@@ -104,14 +108,73 @@ void usercontrol(void) {
   }
 }
 
-void PrimeLadyBrown() {
-  Bot::IgnoreArm = true;
-  Bot::Arm.setStopping(vex::hold);
-  Bot::Arm.setVelocity(100, vex::percent);
-  Bot::Arm.setMaxTorque(100, vex::percent);
-  Bot::Arm.spinTo(-29, vex::degrees, true);
-  Bot::IgnoreArm = false;
+const double Kp = 0.5; // Proportional gain
+const double Ki = 0.01; // Integral gain
+const double Kd = 0.1; // Derivative gain
+const double maxPower = 100; // Maximum motor power (percent)
+
+//-----------------------------------------------------------------------
+
+const double tolerance = 1.0; // Allowable error (degrees)
+const double targetAngle = -22.0; // Desired angle in degrees
+
+//-----------------------------------------------------------------------
+
+void ToggleLadyBrown() {
+
+  Bot::isArmPIDActive = !Bot::isArmPIDActive;
   //Bot::Arm.stop();
+}
+
+int ArmLoop() {
+
+  Bot::isArmPIDActive = true;
+
+  double error = 0.0;       // Current error
+  double previousError = 0.0; // Error from the previous step
+  double integral = 0.0;    // Accumulated error
+  double derivative = 0.0;  // Rate of error change
+  double power = 0.0;       // Motor power
+
+  while (true) {
+
+    if(!Bot::isArmPIDActive) continue; 
+
+    // Get the current position of the motor
+    double currentAngle = Bot::Arm.position(degrees);
+
+    // Calculate error
+    error = targetAngle - currentAngle;
+
+    // Break the loop if the error is within the tolerance
+    if (fabs(error) <= tolerance) {
+        Bot::Arm.stop(brakeType::hold);
+        Bot::isArmPIDActive = false;
+        Bot::Controller.rumble("...");
+        continue;
+    }
+
+    // Calculate integral and derivative terms
+    integral += error; // Accumulate error
+    derivative = error - previousError;
+
+    // Calculate PID output
+    power = (Kp * error) + (Ki * integral) + (Kd * derivative);
+
+    // Constrain the power to the motor's limits
+    if (power > maxPower) power = maxPower;
+    if (power < -maxPower) power = -maxPower;
+
+    // Apply power to the motor
+    Bot::Arm.spin(forward, power, percent);
+
+    // Save the current error for the next loop
+    previousError = error;
+
+    // Small delay to prevent overwhelming the CPU
+    vex::task::sleep(20);
+  }
+  return 0;
 }
 
 void SendBackConveyor() {
@@ -122,24 +185,54 @@ void SendBackConveyor() {
   Bot::IgnoreIntake = false;
 }
 
+void IncreaseSelectedPosisitonAuton() {
+    UISystem::SelectedPosition++;
+    if(UISystem::SelectedPosition > UISystem::positions.size() -1 || UISystem::SelectedPosition < 0) UISystem::SelectedPosition = 0;
+    UISystem::calibrationSelectLabel.setText(UISystem::positions[UISystem::SelectedPosition].name);
+    UISystem::odoMap.setNewX(UISystem::positions[UISystem::SelectedPosition].pos.x, vexui::INCHES);
+    UISystem::odoMap.setNewY(UISystem::positions[UISystem::SelectedPosition].pos.y, vexui::INCHES);
+    Bot::Inertial.setHeading(UISystem::positions[UISystem::SelectedPosition].heading, vex::degrees);
+    UISystem::odoMap.setNewH(UISystem::positions[UISystem::SelectedPosition].heading);
+
+    switch (UISystem::SelectedPosition)
+    {
+        case 0:
+            Bot::Aliance = Blue;
+            break;
+        case 1:
+            Bot::Aliance = Blue;
+            break;
+        case 2:
+            Bot::Aliance = Red;
+            break;
+        case 3:
+            Bot::Aliance = Red;
+            break;
+    
+    }
+}
+
 //
 // Main will set up the competition functions and callbacks.
 //
 int main() {
   Skills::runSkills(1);
   Odometry::setupAndStartOdometry();
-  Bot::Aliance = aliance::Nuetral;
+  Bot::Aliance = aliance::Blue;
 
   //Bot::Controller.ButtonY.pressed(cycleStartingPosistions);
   //Bot::Controller.ButtonX.pressed(Bot::swapFeedPos);
 
-  Bot::Controller.ButtonX.pressed(PrimeLadyBrown);
+  Bot::Controller.ButtonX.pressed(ToggleLadyBrown);
   Bot::Controller.ButtonY.pressed(SendBackConveyor);
   Bot::Controller.ButtonA.pressed(Bot::toggleMogo);
   Bot::Controller.ButtonB.pressed(Bot::toggleDoinker);
 
   Bot::Controller.ButtonLeft.pressed(Notifications::notifBackward);
   Bot::Controller.ButtonRight.pressed(Notifications::notifForward);
+
+  Bot::Controller.ButtonUp.pressed(IncreaseSelectedPosisitonAuton);
+  Bot::Controller.ButtonDown.pressed(ColorDetection::toggleEnabled);
 
 
   vex::task drivetrian(Drivetrain::ControllerLoop);
@@ -148,6 +241,7 @@ int main() {
   //vex::task blinkerLoop(Bot::blinkerLoop);
   vex::task colorsensing(ColorDetection::visionTask);
   vex::task monitoring(Bot::monitorLoop);
+  vex::task ArmPIDLoop(ArmLoop);
   //vex::task aivisionLoop(Bot::aiLoop);
   //Bot::Brain.Screen.printAt(0, 150, "Systems Go!");
   

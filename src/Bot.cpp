@@ -22,6 +22,7 @@ vex::motor Bot::Intake = vex::motor(vex::PORT7, vex::ratio6_1, false);//High Spe
 vex::motor Bot::ArmL = vex::motor(vex::PORT8, vex::ratio18_1, true); //Low Power
 vex::motor Bot::ArmR = vex::motor(vex::PORT9, vex::ratio18_1, false); //Low Power
 vex::motor_group Bot::Arm = vex::motor_group(Bot::ArmL, Bot::ArmR);//High Torque
+bool Bot::isArmPIDActive = false;
 
 
 vex::digital_out Bot::MogoMech = vex::digital_out(Bot::Brain.ThreeWirePort.A);
@@ -32,7 +33,7 @@ vex::inertial Bot::Inertial = vex::inertial(vex::PORT11);
 vex::rotation Bot::RotationForward = vex::rotation(vex::PORT12); //Forwards
 vex::rotation Bot::RotationLateral = vex::rotation(vex::PORT13);; //Lateral
 vex::optical Bot::ColorSensor = vex::optical(vex::PORT14);;
-aliance Bot::Aliance = aliance::Nuetral;
+aliance Bot::Aliance = aliance::Blue;
 
 // AI Vision Color Descriptions
 // AI Vision Code Descriptions
@@ -132,6 +133,10 @@ void Bot::setup() {
     Arm.setStopping(vex::hold);
     ArmL.setBrake(vex::hold);
     ArmR.setBrake(vex::hold);
+
+    Bot::Arm.setStopping(vex::hold);
+    Bot::Arm.setVelocity(100, vex::percent);
+    Bot::Arm.setMaxTorque(100, vex::percent);
 
 
     MogoMech.set(false);
@@ -247,20 +252,16 @@ void Bot::toggleDoinker() {
 void Bot::switchAlliance() {
     switch (Bot::Aliance)
     {
-        case aliance::Nuetral:
-            Bot::Aliance = aliance::Blue;
-            break;
-
         case aliance::Blue:
             Bot::Aliance = aliance::Red;
             break;
 
         case aliance::Red:
-            Bot::Aliance = aliance::Nuetral;
+            Bot::Aliance = aliance::Blue;
             break;
 
         default:
-            Bot::Aliance = aliance::Nuetral;
+            Bot::Aliance = aliance::Blue;
             break;
     }
 }
@@ -375,10 +376,10 @@ int Bot::displayLoop() {
             CONTROLLER
         */
         Bot::Controller.Screen.setCursor(1,1);
-        if(Bot::feedGps) {
+        if(Bot::feedGps, Skills::isSkillsActive()) {
             Bot::Controller.Screen.print("X:%.1f,Y:%.1f,H:%.1f", Skills::x, Skills::y, Skills::h);
         } else {
-            Bot::Controller.Screen.print("X:%.1f,Y:%.1f,H:%.1f", Odometry::x, Odometry::y, Odometry::heading);
+            Bot::Controller.Screen.print("H:%.1f, APID: %d", Bot::Inertial.heading(), Bot::isArmPIDActive);
         }
         Bot::Controller.Screen.setCursor(3,1);
         if(Skills::isSkillsActive()) {
@@ -387,16 +388,16 @@ int Bot::displayLoop() {
             switch (UISystem::SelectedPosition)
             {
                 case 0:
-                    Bot::Controller.Screen.print("BLUE LEFT       GPS%d  ", Bot::feedGps);
+                    Bot::Controller.Screen.print("BLUE LEFT       CS%d  ", ColorDetection::isEnabled);
                     break;
                 case 1:
-                    Bot::Controller.Screen.print("BLUE RIGHT      GPS%d  ", Bot::feedGps);
+                    Bot::Controller.Screen.print("BLUE RIGHT      CS%d  ", ColorDetection::isEnabled);
                     break;
                 case 2:
-                    Bot::Controller.Screen.print("RED LEFT        GPS%d  ", Bot::feedGps);
+                    Bot::Controller.Screen.print("RED LEFT        CS%d  ", ColorDetection::isEnabled);
                     break;
                 case 3:
-                    Bot::Controller.Screen.print("RED RIGHT       GPS%d  ", Bot::feedGps);
+                    Bot::Controller.Screen.print("RED RIGHT       CS%d  ", ColorDetection::isEnabled);
                     break;
             
             }

@@ -42,10 +42,7 @@ class UISystem
 
         //Main Panel Elements
         static vexui::Label labm;
-        static vexui::Label motorTempLabel;
-        static vexui::Label redRingNumLabel;
-        static vexui::Label blueRingNumLabel;
-        static vexui::Label MobileGoalNumLabel;
+
 
         //Odometry Panel Elements
         static vexui::Label labo;

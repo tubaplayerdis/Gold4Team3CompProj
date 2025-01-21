@@ -6,9 +6,8 @@
 #include <sstream>
 
 enum aliance {
-    Nuetral = 0,
-    Blue = 1,
-    Red = 2
+    Blue = 0,
+    Red = 1
 };
 
 enum autonSelect {
@@ -76,6 +75,7 @@ class Bot {
         static vex::motor ArmL;
         static vex::motor ArmR;
         static vex::motor_group Arm;
+        static bool isArmPIDActive;
         //static vex::motor LiftL;
         //static vex::motor LiftR;
         //static vex::motor_group LiftMotors;
