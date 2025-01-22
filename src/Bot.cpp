@@ -23,6 +23,7 @@ vex::motor Bot::ArmL = vex::motor(vex::PORT8, vex::ratio18_1, true); //Low Power
 vex::motor Bot::ArmR = vex::motor(vex::PORT9, vex::ratio18_1, false); //Low Power
 vex::motor_group Bot::Arm = vex::motor_group(Bot::ArmL, Bot::ArmR);//High Torque
 bool Bot::isArmPIDActive = false;
+int Bot::desiredARMAngle = -22;
 
 
 vex::digital_out Bot::MogoMech = vex::digital_out(Bot::Brain.ThreeWirePort.A);

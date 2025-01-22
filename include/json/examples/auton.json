@@ -1,15 +1,6 @@
 {
     "tasks": [
         {
-            "name": "Drive To 200, 200",
-            "stype": "Driving",
-            "destx": 200,
-            "desty": 200,
-            "desth": 30,
-            "tp": 100,
-            "vp": 100
-        },
-        {
             "name": "Drive Forward",
             "stype": "Segmenting",
             "segDist": 90,

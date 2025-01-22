@@ -8,7 +8,8 @@ enum SkillsTaskType {
     Mogo = 3,
     Arm = 4,
     EndGame = 5,
-    Error = 6
+    Doinker = 6,
+    Error = 7
 };
 
 
@@ -40,7 +41,10 @@ struct SkillsTask {
     double turnArmTo = -1;
 
     //Actuate Endgame. To Use It Drive Forward OR BackWard
-    bool togglePTUTo;
+    bool togglePTUTo = false;
+
+    //If Using doinker
+    bool toggleDoinkerTO = false;
 
     bool isComplete = false;
 };
