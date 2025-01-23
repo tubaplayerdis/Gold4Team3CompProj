@@ -103,12 +103,14 @@ void interpretSkill(SkillsTask task) {
             Bot::MogoMech.set(task.toggleMogoTo);
             break;
         case Arm:
-            /*
-            Do IMPL
-            */
+            Bot::desiredARMAngle = task.turnArmTo;
+            Bot::isArmPIDActive = true;
             break;
         case EndGame:
             Bot::Clutch.set(task.togglePTUTo);
+            break;
+        case Doinker:
+            Bot::Doinker.set(task.toggleDoinkerTO);
             break;
         default:
             break;
@@ -212,7 +214,10 @@ std::vector<SkillsTask> getTasksFromFileData() {
                 } else if (obj["stype"].string_value() == "Endgame" || obj["stype"].string_value() == "end") {
                     task.stype = EndGame;
                     task.togglePTUTo = obj["endTo"].bool_value();
-                    
+                }
+                else if (obj["stype"].string_value() == "Doinker" || obj["stype"].string_value() == "doi") {
+                    task.stype = Doinker;
+                    task.toggleDoinkerTO = obj["doinkTo"].bool_value();
                 } else {
                     task.stype = Error;
                     task.name = "Error: " + obj["name"].string_value();

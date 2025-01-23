@@ -116,12 +116,11 @@ const double maxPower = 100; // Maximum motor power (percent)
 //-----------------------------------------------------------------------
 
 const double tolerance = 1.0; // Allowable error (degrees)
-const double targetAngle = -22.0; // Desired angle in degrees
 
 //-----------------------------------------------------------------------
 
 void ToggleLadyBrown() {
-
+  Bot::desiredARMAngle = -22;
   Bot::isArmPIDActive = !Bot::isArmPIDActive;
   //Bot::Arm.stop();
 }
@@ -144,7 +143,7 @@ int ArmLoop() {
     double currentAngle = Bot::Arm.position(degrees);
 
     // Calculate error
-    error = targetAngle - currentAngle;
+    error = Bot::desiredARMAngle - currentAngle;
 
     // Break the loop if the error is within the tolerance
     if (fabs(error) <= tolerance) {

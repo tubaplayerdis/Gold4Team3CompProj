@@ -251,6 +251,28 @@ Use this stype to control the PTO(Power Transfer Unit) that transfers power from
 
 This Example Will:
 - Set the PTO to true
+
+# stype - Doinker
+
+Use this stype to control the doinker on the back of the bot
+
+### stype Doinker Specific Members
+
+- doinkTo - set Doinker to value (Number)
+
+### stype Doinker Example
+
+```
+{
+    "name": "Toggle On Doinker",
+    "stype": "Doinker",
+    "endTo": true
+}
+```
+### stype Doinker Example Explanation
+
+This Example Will:
+- Set the Doinker to true
  
 ___
 
