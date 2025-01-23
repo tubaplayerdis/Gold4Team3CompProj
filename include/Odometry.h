@@ -13,6 +13,7 @@ class Odometry {
         static double x;
         static double y;
         static double heading;
+        static bool trackingWheelsInstalled;
         static vex::controller::button MotorRunKey;
 
         //Functions

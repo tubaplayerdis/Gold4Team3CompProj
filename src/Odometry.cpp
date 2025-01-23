@@ -8,6 +8,7 @@
 double Odometry::x = 0.0;   // X position in inches (forward/backward)
 double Odometry::y = 0.0;   // Y position in inches (left/rsight)
 double Odometry::heading = 0.0; // spin in degress?
+bool Odometry::trackingWheelsInstalled = true;
 
 
 gameElementPosition Odometry::startMobilePP = { 24, 24, vexui::gameElements::mobileGoal};
@@ -141,6 +142,8 @@ int Odometry::wrapperwallstake() {
 void Odometry::updateOdometry() {
     Odometry::heading = Bot::Inertial.heading(vex::degrees);
 
+    if(!trackingWheelsInstalled) return;
+
     double forward_distance = (Bot::RotationForward.position(vex::degrees) / 360) * Odometry::tracking_wheel_circumference; // Forward movement
     //Bot::Brain.Screen.printAt(100,100,"Forward Dis %f", forward_distance);
     double lateral_distance = (Bot::RotationLateral.position(vex::degrees) / 360) * Odometry::tracking_wheel_circumference; // Lateral movement
@@ -187,8 +190,7 @@ int Odometry::setupAndStartOdometry() {
         Notifications::addNotification("ODO DISABLE DISC");
         Odometry::x = -1;
         Odometry::y = -1;
-        Odometry::heading = -1;
-        return 1;
+        trackingWheelsInstalled=false;
     };
     vex::task updateLoop(odometry);
     //This dosent work and its kinda useless.

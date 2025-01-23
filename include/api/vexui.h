@@ -212,8 +212,6 @@ namespace vexui
 
             void addElement(UIElement* element);
 
-            void addString(std::string what);
-
             void removeElement(int index);
 
             void removeAll();

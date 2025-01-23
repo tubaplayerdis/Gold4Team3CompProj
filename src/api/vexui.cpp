@@ -225,10 +225,6 @@ void vexui::Dropdown::addElement(vexui::UIElement* element) {
     items.push_back(element);
 }
 
-void vexui::Dropdown::addString(std::string what) {
-
-}
-
 void vexui::Dropdown::removeElement(int index) {
     items.erase(items.begin() + index);
 }
