@@ -20,9 +20,8 @@ int ColorDetection::visionTask() {
             //Blue Ring Detected
             if(Bot::Aliance != aliance::Blue) {
                 Bot::IgnoreIntake = true;
-                /*
-                    IMPL of abortion mechanism throw
-                */
+                Bot::Intake.stop();
+                vex::this_thread::sleep_for(50);
                 Bot::IgnoreIntake = false;
             }
         } else if( GV < RED_HUE_EXCLUSION_LOW && GV > RED_HUE_EXCLUSION_HIGH) {
@@ -32,10 +31,8 @@ int ColorDetection::visionTask() {
             //Red Ring Detected
             if(Bot::Aliance != aliance::Red) {
                 Bot::IgnoreIntake = true;
-                /*
-                    IMPL of abortion mechanism throw
-                */
-
+                Bot::Intake.stop();
+                vex::this_thread::sleep_for(50);
                 Bot::IgnoreIntake = false;
             }
         }
