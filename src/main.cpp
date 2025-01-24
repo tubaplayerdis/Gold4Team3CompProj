@@ -66,7 +66,10 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
+#define ABANDON_ITEM_WIDTH_THRESHOLD 30
+
 void autonomous(void) {
+  Bot::isArmPIDActive = false;
   Bot::Drivetrain.setDriveVelocity(20, vex::percent);
   Bot::Drivetrain.driveFor(910, vex::mm, true);
   Bot::Drivetrain.setStopping(vex::coast);
@@ -74,7 +77,43 @@ void autonomous(void) {
   Bot::Arm.setVelocity(100,vex::percent);
   Bot::Arm.spinTo(-160, vex::degrees);
   Bot::Intake.setVelocity(600, vex::rpm);
-  Bot::Intake.spinFor(1.5, vex::seconds);
+  Bot::Intake.spinFor(0.2, vex::seconds);
+
+  while (true)
+  {
+    Bot::AIVisionF.takeSnapshot(vex::aivision::ALL_AIOBJS);
+    //Brain.Screen.printAt(0,50, "AI Vision Count: %d", AIVisionF.objectCount);
+    vex::aivision::object pursuit = vex::aivision::object();
+    bool hasFirst = false;
+    for(int i = 0; i < Bot::AIVisionF.objectCount; i++) {
+        int id = Bot::AIVisionF.objects[i].id;
+        if(id == 0 || id == 1) {
+          vex::aivision::object temp = Bot::AIVisionF.objects[i];
+
+          if(temp.width > ABANDON_ITEM_WIDTH_THRESHOLD) {
+            if(!hasFirst) { pursuit = temp; }
+            else {
+              if(temp.width > pursuit.width) {
+                hasFirst = true;
+                pursuit = temp;
+                break;
+              }
+            }
+            
+
+          }
+
+
+
+        }
+        //Brain.Screen.printAt(0, 70+(20*i), str, AIVisionF.objects[i].centerX, AIVisionF.objects[i].centerY);
+        //ID: %s, 
+        //AIVisionF.objects[i].name
+    } 
+  }
+  
+
+
   Bot::Drivetrain.turnFor(-35, vex::degrees, true);
   // ..........................................................................
   // Insert autonomous user code here.
