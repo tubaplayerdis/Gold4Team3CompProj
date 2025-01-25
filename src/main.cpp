@@ -32,6 +32,10 @@ void cycleStartingPosistions() {
   UISystem::odoMap.setNewH(UISystem::positions[UISystem::SelectedPosition].heading);
 }
 
+
+
+vex::task autonTimer(timerAutonController);
+
 // define your global instances of motors and other devices here
 
 /*---------------------------------------------------------------------------*/
@@ -69,7 +73,26 @@ void pre_auton(void) {
 #define ABANDON_ITEM_WIDTH_THRESHOLD 50
 #define RING_INTAKEN_WIDTH_THRESHOLD 140
 
+
+int timerAutonController() {
+  while (true)
+  {
+    char computed[20];
+    sprintf(computed, "CLOCK: %2d", Bot::Brain.Timer.value());
+    vexControllerTextSet(kControllerMaster, 3, 1, computed);
+    vex::this_thread::sleep_for(10);
+  }
+  return 0;
+}
+
 void autonomous(void) {
+
+  Bot::IgnoreDisplay = true;
+  Bot::Brain.Timer.reset();
+  autonTimer.resume();
+
+  
+
 
   //Motor Through the Getting the goal
 
@@ -85,6 +108,7 @@ void autonomous(void) {
   Bot::Intake.spinFor(0.1, vex::seconds);
   */
 
+
   while (true)
   {
     Bot::AIVisionF.takeSnapshot(vex::aivision::ALL_AIOBJS);
@@ -94,6 +118,21 @@ void autonomous(void) {
     //has pursuit been filled?
     bool hasFirst = false;
     bool didFind = false;
+
+    Bot::Controller.Screen.setCursor(1,1);
+    Bot::Controller.Screen.print("OBJ NUM: %i", Bot::AIVisionF.objectCount);
+
+    if(Bot::AIVisionF.objectCount == 0) {
+      Bot::Controller.Screen.setCursor(2,1);
+      Bot::Controller.Screen.print("SEARCH  ");
+      Bot::Drivetrain.turnFor(5, vex::degrees, true);
+      vex::this_thread::sleep_for(20);
+      continue;
+    }
+
+    Bot::Controller.Screen.setCursor(2,1);
+    Bot::Controller.Screen.print("NUM REQ  ");
+
     for(int i = 0; i < Bot::AIVisionF.objectCount; i++) {
       int id = Bot::AIVisionF.objects[i].id;
       if(id == 0 || id == 1) {
@@ -113,10 +152,16 @@ void autonomous(void) {
       }
     } 
 
+
+    Bot::Controller.Screen.setCursor(2,1);
+    Bot::Controller.Screen.print("FOUND  ");
+
     //The AI Vision Sensor has a resolution of 320 x 240 pixels.
 
     if(hasFirst) {
       //Turning to face
+      Bot::Controller.Screen.setCursor(2,1);
+      Bot::Controller.Screen.print("PURSUIT  ");
       while (true)
       {
         if(pursuit.centerX < 150) {
@@ -138,8 +183,6 @@ void autonomous(void) {
   }
   
 
-
-  Bot::Drivetrain.turnFor(-35, vex::degrees, true);
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
@@ -156,6 +199,8 @@ void autonomous(void) {
 /*---------------------------------------------------------------------------*/
 
 void usercontrol(void) {
+  autonTimer.stop();
+  Bot::IgnoreDisplay = false;
   // User control code here, inside the loop
   while (1) {
     // This is the main execution loop for the user control program.
@@ -279,7 +324,8 @@ void IncreaseSelectedPosisitonAuton() {
 // Main will set up the competition functions and callbacks.
 //
 int main() {
-  Skills::runSkills(1);
+  autonTimer.suspend();
+  //Skills::runSkills(1);
   Odometry::setupAndStartOdometry();
   Bot::Aliance = aliance::Blue;
 
