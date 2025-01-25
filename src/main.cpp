@@ -66,9 +66,14 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-#define ABANDON_ITEM_WIDTH_THRESHOLD 30
+#define ABANDON_ITEM_WIDTH_THRESHOLD 50
+#define RING_INTAKEN_WIDTH_THRESHOLD 140
 
 void autonomous(void) {
+
+  //Motor Through the Getting the goal
+
+  /*
   Bot::isArmPIDActive = false;
   Bot::Drivetrain.setDriveVelocity(20, vex::percent);
   Bot::Drivetrain.driveFor(910, vex::mm, true);
@@ -77,39 +82,59 @@ void autonomous(void) {
   Bot::Arm.setVelocity(100,vex::percent);
   Bot::Arm.spinTo(-160, vex::degrees);
   Bot::Intake.setVelocity(600, vex::rpm);
-  Bot::Intake.spinFor(0.2, vex::seconds);
+  Bot::Intake.spinFor(0.1, vex::seconds);
+  */
 
   while (true)
   {
     Bot::AIVisionF.takeSnapshot(vex::aivision::ALL_AIOBJS);
     //Brain.Screen.printAt(0,50, "AI Vision Count: %d", AIVisionF.objectCount);
     vex::aivision::object pursuit = vex::aivision::object();
+
+    //has pursuit been filled?
     bool hasFirst = false;
+    bool didFind = false;
     for(int i = 0; i < Bot::AIVisionF.objectCount; i++) {
-        int id = Bot::AIVisionF.objects[i].id;
-        if(id == 0 || id == 1) {
-          vex::aivision::object temp = Bot::AIVisionF.objects[i];
-
-          if(temp.width > ABANDON_ITEM_WIDTH_THRESHOLD) {
-            if(!hasFirst) { pursuit = temp; }
-            else {
-              if(temp.width > pursuit.width) {
-                hasFirst = true;
-                pursuit = temp;
-                break;
-              }
-            }
-            
-
+      int id = Bot::AIVisionF.objects[i].id;
+      if(id == 0 || id == 1) {
+        vex::aivision::object temp = Bot::AIVisionF.objects[i];
+        if(temp.width > ABANDON_ITEM_WIDTH_THRESHOLD) {
+          if(!hasFirst) { 
+            pursuit = temp;
+            hasFirst = true;
           }
-
-
-
+          else {
+            if(temp.width > pursuit.width) {
+              pursuit = temp;
+              break;
+            }
+          }
         }
-        //Brain.Screen.printAt(0, 70+(20*i), str, AIVisionF.objects[i].centerX, AIVisionF.objects[i].centerY);
-        //ID: %s, 
-        //AIVisionF.objects[i].name
+      }
     } 
+
+    //The AI Vision Sensor has a resolution of 320 x 240 pixels.
+
+    if(hasFirst) {
+      //Turning to face
+      while (true)
+      {
+        if(pursuit.centerX < 150) {
+          Bot::Drivetrain.turn(vex::left);
+        } else if (pursuit.centerX > 170) {
+          Bot::Drivetrain.turn(vex::right);
+        } else {
+          Bot::Drivetrain.drive(reverse);
+          if(pursuit.width >= RING_INTAKEN_WIDTH_THRESHOLD) {
+            Bot::Drivetrain.driveFor(10, vex::inches, true);
+            break;
+          }
+        }
+      }
+      
+    } else {
+      continue;
+    }
   }
   
 
