@@ -158,11 +158,11 @@ void autonomous(void) {
 
       bool isTurningtoDriving = false;
 
-
-      if(pursuit.originX + pursuit.width < 155) {
+      //Center of screen is 160,160.
+      if(pursuit.originX + pursuit.width < 160) {
         Bot::Drivetrain.turn(vex::left);
         isTurningtoDriving = true;
-      } else if (pursuit.originX > 165) {
+      } else if (pursuit.originX > 160) {
         Bot::Drivetrain.turn(vex::right);
         isTurningtoDriving = true;
       } else {   
