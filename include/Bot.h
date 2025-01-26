@@ -92,6 +92,8 @@ class Bot {
         static vex::digital_out MogoMech;
         static vex::digital_out Clutch;
         static vex::digital_out Doinker;
+        static vex::limit RingCounter;
+        static int RingsIntaken;
 
         //Gryos and stuff
         static vex::inertial Inertial;

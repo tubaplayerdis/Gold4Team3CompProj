@@ -346,6 +346,10 @@ void IncreaseSelectedPosisitonAuton() {
     }
 }
 
+void ringCounterTripped() {
+  Bot::RingsIntaken++;
+}
+
 //
 // Main will set up the competition functions and callbacks.
 //
@@ -368,6 +372,8 @@ int main() {
 
   Bot::Controller.ButtonUp.pressed(IncreaseSelectedPosisitonAuton);
   Bot::Controller.ButtonDown.pressed(ColorDetection::toggleEnabled);
+
+  Bot::RingCounter.pressed(ringCounterTripped);
 
 
   vex::task drivetrian(Drivetrain::ControllerLoop);

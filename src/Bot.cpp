@@ -30,6 +30,9 @@ vex::digital_out Bot::MogoMech = vex::digital_out(Bot::Brain.ThreeWirePort.A);
 vex::digital_out Bot::Clutch = vex::digital_out(Bot::Brain.ThreeWirePort.B);
 vex::digital_out Bot::Doinker = vex::digital_out(Bot::Brain.ThreeWirePort.C);
 
+vex::limit Bot::RingCounter = vex::limit(Bot::Brain.ThreeWirePort.D);
+int Bot::RingsIntaken = 0;
+
 vex::inertial Bot::Inertial = vex::inertial(vex::PORT11);
 vex::rotation Bot::RotationForward = vex::rotation(vex::PORT12); //Forwards
 vex::rotation Bot::RotationLateral = vex::rotation(vex::PORT13);; //Lateral
