@@ -5,6 +5,15 @@
 #include <vector>
 #include <sstream>
 
+#define AI_HEU_TOLERANCE 24 //1-40
+#define AI_SATURATION_TOLERANCE 0.41 //0.10-1
+
+//BLUE
+  //rgb(88,156,156)
+
+  //RED
+  //rgb(225,42,68)
+
 enum aliance {
     Blue = 0,
     Red = 1
@@ -90,6 +99,10 @@ class Bot {
         static vex::rotation RotationLateral; //Lateral
         static vex::optical ColorSensor;
         static aliance Aliance;
+
+        //AI
+        static vex::aivision::colordesc BLUEDESJ;
+        static vex::aivision::colordesc REDDESJ;
         static vex::aivision AIVisionF;
 
         //"Game Posistioning System"

@@ -38,7 +38,9 @@ aliance Bot::Aliance = aliance::Blue;
 
 // AI Vision Color Descriptions
 // AI Vision Code Descriptions
-vex::aivision Bot::AIVisionF = vex::aivision(vex::PORT20, vex::aivision::ALL_TAGS, vex::aivision::ALL_AIOBJS);
+vex::aivision::colordesc Bot::BLUEDESJ = vex::aivision::colordesc(1, 42,103,172, AI_HEU_TOLERANCE, AI_SATURATION_TOLERANCE);
+vex::aivision::colordesc Bot::REDDESJ = vex::aivision::colordesc(2, 209,30,105, AI_HEU_TOLERANCE, AI_SATURATION_TOLERANCE);
+vex::aivision Bot::AIVisionF = vex::aivision(vex::PORT20, BLUEDESJ, REDDESJ);
 
 vex::gps Bot::GpsF = vex::gps(vex::PORT16, -16, 16, vex::inches, 0);
 vex::gps Bot::GpsL = vex::gps(vex::PORT17, -16, -15, vex::inches, -90);
@@ -363,15 +365,14 @@ int Bot::blinkerLoop() {
 
 int Bot::displayLoop() {
     Bot::Controller.Screen.clearScreen();
-    vex::competition comp;
     while (true) {
-        if(IgnoreDisplay) continue;
+        if(IgnoreDisplay) {
+            vex::this_thread::sleep_for(50);
+            continue;
+        }
         /*
             LED
         */
-        if(comp.isDriverControl()) ModeType = BlinkTypes::Solid;
-        if(comp.isAutonomous()) ModeType = BlinkTypes::Single;
-        if(comp.isAutonomous() && Skills::isSkillsActive()) ModeType = BlinkTypes::Double;
 
         /*
             CONTROLLER

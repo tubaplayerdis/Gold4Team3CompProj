@@ -33,9 +33,6 @@ void cycleStartingPosistions() {
 }
 
 
-
-vex::task autonTimer(timerAutonController);
-
 // define your global instances of motors and other devices here
 
 /*---------------------------------------------------------------------------*/
@@ -51,9 +48,9 @@ vex::task autonTimer(timerAutonController);
 void pre_auton(void) {
   Bot::updateDeviceList();
   Bot::setup();
-  Bot::Drivetrain.setDriveVelocity(100, vex::percent);
-  Bot::Drivetrain.setTurnVelocity(100, vex::percent);
-  Bot::Drivetrain.setStopping(vex::coast);
+  Bot::Drivetrain.setDriveVelocity(45, vex::percent);
+  Bot::Drivetrain.setTurnVelocity(10, vex::percent);
+  Bot::Drivetrain.setStopping(vex::brake);
   
   
   // All activities that occur before the competition starts
@@ -70,26 +67,27 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-#define ABANDON_ITEM_WIDTH_THRESHOLD 50
-#define RING_INTAKEN_WIDTH_THRESHOLD 140
-
-
-int timerAutonController() {
-  while (true)
-  {
-    char computed[20];
-    sprintf(computed, "CLOCK: %2d", Bot::Brain.Timer.value());
-    vexControllerTextSet(kControllerMaster, 3, 1, computed);
-    vex::this_thread::sleep_for(10);
-  }
-  return 0;
+int percentageFromRange(int input, int lower, int upper) {
+  return 100 * ((upper - input)/(upper-lower));
 }
+
+int capPercentage(int percentage, int cap) {
+  if(percentage > cap) {
+    return cap;
+  }
+  return cap;
+}
+
+
+#define ABANDON_ITEM_WIDTH_THRESHOLD 20
+#define RING_INTAKEN_WIDTH_THRESHOLD 240
 
 void autonomous(void) {
 
   Bot::IgnoreDisplay = true;
-  Bot::Brain.Timer.reset();
-  autonTimer.resume();
+  Bot::AIVisionF.modelDetection(false);
+  Bot::AIVisionF.colorDetection(true);
+  //Bot::AIVisionF.startAwb();
 
   
 
@@ -108,77 +106,79 @@ void autonomous(void) {
   Bot::Intake.spinFor(0.1, vex::seconds);
   */
 
+  Bot::Drivetrain.driveFor(10, vex::mm, true);
 
   while (true)
   {
-    Bot::AIVisionF.takeSnapshot(vex::aivision::ALL_AIOBJS);
+    Bot::Drivetrain.stop();
+    //Defualt blue
+    if(Bot::Aliance == Blue) {
+      Bot::AIVisionF.takeSnapshot(Bot::BLUEDESJ, 1);
+    } else {
+      //red
+      Bot::AIVisionF.takeSnapshot(Bot::REDDESJ, 1);
+    }
     //Brain.Screen.printAt(0,50, "AI Vision Count: %d", AIVisionF.objectCount);
     vex::aivision::object pursuit = vex::aivision::object();
 
-    //has pursuit been filled?
-    bool hasFirst = false;
-    bool didFind = false;
-
+    Bot::Controller.Screen.clearScreen();
     Bot::Controller.Screen.setCursor(1,1);
-    Bot::Controller.Screen.print("OBJ NUM: %i", Bot::AIVisionF.objectCount);
+    Bot::Controller.Screen.print("OBJ NUM: %f", Bot::AIVisionF.objectCount);
 
     if(Bot::AIVisionF.objectCount == 0) {
       Bot::Controller.Screen.setCursor(2,1);
-      Bot::Controller.Screen.print("SEARCH  ");
-      Bot::Drivetrain.turnFor(5, vex::degrees, true);
-      vex::this_thread::sleep_for(20);
+      Bot::Controller.Screen.print("SEARCHING  ");
+      //Bot::Drivetrain.turnFor(5, vex::degrees, true);
+      vex::this_thread::sleep_for(70);
       continue;
     }
 
-    Bot::Controller.Screen.setCursor(2,1);
-    Bot::Controller.Screen.print("NUM REQ  ");
-
-    for(int i = 0; i < Bot::AIVisionF.objectCount; i++) {
-      int id = Bot::AIVisionF.objects[i].id;
-      if(id == 0 || id == 1) {
-        vex::aivision::object temp = Bot::AIVisionF.objects[i];
-        if(temp.width > ABANDON_ITEM_WIDTH_THRESHOLD) {
-          if(!hasFirst) { 
-            pursuit = temp;
-            hasFirst = true;
-          }
-          else {
-            if(temp.width > pursuit.width) {
-              pursuit = temp;
-              break;
-            }
-          }
-        }
-      }
-    } 
-
-
-    Bot::Controller.Screen.setCursor(2,1);
-    Bot::Controller.Screen.print("FOUND  ");
-
     //The AI Vision Sensor has a resolution of 320 x 240 pixels.
 
-    if(hasFirst) {
-      //Turning to face
-      Bot::Controller.Screen.setCursor(2,1);
-      Bot::Controller.Screen.print("PURSUIT  ");
-      while (true)
-      {
-        if(pursuit.centerX < 150) {
-          Bot::Drivetrain.turn(vex::left);
-        } else if (pursuit.centerX > 170) {
-          Bot::Drivetrain.turn(vex::right);
-        } else {
-          Bot::Drivetrain.drive(reverse);
-          if(pursuit.width >= RING_INTAKEN_WIDTH_THRESHOLD) {
-            Bot::Drivetrain.driveFor(10, vex::inches, true);
-            break;
-          }
-        }
+    //Turning to face
+    Bot::Controller.Screen.setCursor(2,1);
+    Bot::Controller.Screen.print("PURSUIT  ");
+    while (true)
+    {
+      //vex::this_thread::sleep_for(10);
+      if(Bot::Aliance == Blue) {
+        Bot::AIVisionF.takeSnapshot(Bot::BLUEDESJ, 1);
+      } else {
+        //red
+        Bot::AIVisionF.takeSnapshot(Bot::REDDESJ, 1);
       }
-      
-    } else {
-      continue;
+
+      if(Bot::AIVisionF.objectCount == 0) {
+        //Lost Ring
+        Bot::Drivetrain.stop();
+        break;
+      }
+
+      pursuit = Bot::AIVisionF.objects[0];
+
+      bool isTurningtoDriving = false;
+
+
+      if(pursuit.originX + pursuit.width < 155) {
+        Bot::Drivetrain.turn(vex::left);
+        isTurningtoDriving = true;
+      } else if (pursuit.originX > 165) {
+        Bot::Drivetrain.turn(vex::right);
+        isTurningtoDriving = true;
+      } else {   
+        if(isTurningtoDriving) {
+          Bot::Drivetrain.stop();
+          isTurningtoDriving = false;
+        } //Stop turning
+        Bot::Drivetrain.drive(reverse);
+        if(pursuit.width >= RING_INTAKEN_WIDTH_THRESHOLD) {
+          Bot::Controller.Screen.setCursor(2,1);
+          Bot::Controller.Screen.print("ENDING  ");
+          Bot::Drivetrain.driveFor(-10, vex::inches, true);
+          Bot::Drivetrain.stop();
+          break;
+        }        
+      }
     }
   }
   
@@ -187,6 +187,30 @@ void autonomous(void) {
   // Insert autonomous user code here.
   // ..........................................................................
 }
+
+/*
+if(pursuit.centerX < 130) {
+          Bot::Drivetrain.setTurnVelocity(15, vex::percent);
+        } else {
+          //[130 - 160]
+          //percentage = 100 * ((upper - x)/(upper - lower))
+          Bot::Drivetrain.setTurnVelocity(capPercentage(percentageFromRange(pursuit.centerX, 130, 160), 15) ,vex::percent);
+        }
+        Bot::Drivetrain.turn(vex::left);
+        isTurningtoDriving = true;
+      } else if (pursuit.centerX > 180) {
+        if(pursuit.centerX > 190) {
+          Bot::Drivetrain.setTurnVelocity(15, vex::percent);
+        } else {
+          //[180 - 160]
+          //percentage = 100 * ((upper - x)/(upper - lower))
+          Bot::Drivetrain.setTurnVelocity(capPercentage(percentageFromRange(pursuit.centerX, 180, 160), 15) ,vex::percent);
+        }
+        Bot::Drivetrain.turn(vex::right);
+        isTurningtoDriving = true;
+
+
+*/
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -199,7 +223,6 @@ void autonomous(void) {
 /*---------------------------------------------------------------------------*/
 
 void usercontrol(void) {
-  autonTimer.stop();
   Bot::IgnoreDisplay = false;
   // User control code here, inside the loop
   while (1) {
@@ -236,7 +259,7 @@ void ToggleLadyBrown() {
 
 int ArmLoop() {
 
-  Bot::isArmPIDActive = true;
+  Bot::isArmPIDActive = false;
 
   double error = 0.0;       // Current error
   double previousError = 0.0; // Error from the previous step
@@ -246,7 +269,10 @@ int ArmLoop() {
 
   while (true) {
 
-    if(!Bot::isArmPIDActive) continue; 
+    if(!Bot::isArmPIDActive) {
+      vex::this_thread::sleep_for(50);
+      continue; 
+    }
 
     // Get the current position of the motor
     double currentAngle = Bot::Arm.position(degrees);
@@ -324,10 +350,10 @@ void IncreaseSelectedPosisitonAuton() {
 // Main will set up the competition functions and callbacks.
 //
 int main() {
-  autonTimer.suspend();
   //Skills::runSkills(1);
   Odometry::setupAndStartOdometry();
   Bot::Aliance = aliance::Blue;
+
 
   //Bot::Controller.ButtonY.pressed(cycleStartingPosistions);
   //Bot::Controller.ButtonX.pressed(Bot::swapFeedPos);
@@ -348,9 +374,9 @@ int main() {
   vex::task mainLoop(Bot::mainLoop);
   vex::task displayLoop(Bot::displayLoop);
   //vex::task blinkerLoop(Bot::blinkerLoop);
-  vex::task colorsensing(ColorDetection::visionTask);
+  //vex::task colorsensing(ColorDetection::visionTask);
   vex::task monitoring(Bot::monitorLoop);
-  vex::task ArmPIDLoop(ArmLoop);
+  //vex::task ArmPIDLoop(ArmLoop);
   //vex::task aivisionLoop(Bot::aiLoop);
   //Bot::Brain.Screen.printAt(0, 150, "Systems Go!");
   
@@ -358,12 +384,12 @@ int main() {
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
 
+  UISystem::setup();
+  vex::task uiloop(UISystem::renderLoop);
+
 
   // Run the pre-autonomous function.
   pre_auton();
-
-  UISystem::setup();
-  vex::task uiloop(UISystem::renderLoop);
 
   // Prevent main from exiting with an infinite loop.
   while (true) {
