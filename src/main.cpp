@@ -86,6 +86,8 @@ int capPercentage(int percentage, int cap) {
 #define ABANDON_ITEM_WIDTH_THRESHOLD 20
 #define RING_INTAKEN_WIDTH_THRESHOLD 240
 
+#define MAX_OBJ_TO_TRACK 3 //Cannot be larger than 8
+
 void autonomous(void) {
   //Bot::AIVisionF.startAwb();
 
@@ -113,6 +115,7 @@ void autonomous(void) {
   while (true)
   {
     if(Bot::RingsIntaken >= 6) {
+      //Full mobile goal
       break;
     }
 
@@ -120,10 +123,10 @@ void autonomous(void) {
 
     //Defualt blue
     if(Bot::Aliance == Blue) {
-      Bot::AIVisionF.takeSnapshot(Bot::BLUEDESJ, 1);
+      Bot::AIVisionF.takeSnapshot(Bot::BLUEDESJ, MAX_OBJ_TO_TRACK);
     } else {
       //red
-      Bot::AIVisionF.takeSnapshot(Bot::REDDESJ, 1);
+      Bot::AIVisionF.takeSnapshot(Bot::REDDESJ, MAX_OBJ_TO_TRACK);
     }
     //Brain.Screen.printAt(0,50, "AI Vision Count: %d", AIVisionF.objectCount);
     vex::aivision::object pursuit = vex::aivision::object();
@@ -157,10 +160,10 @@ void autonomous(void) {
     {
       //vex::this_thread::sleep_for(10);
       if(Bot::Aliance == Blue) {
-        Bot::AIVisionF.takeSnapshot(Bot::BLUEDESJ, 1);
+        Bot::AIVisionF.takeSnapshot(Bot::BLUEDESJ, MAX_OBJ_TO_TRACK);
       } else {
         //red
-        Bot::AIVisionF.takeSnapshot(Bot::REDDESJ, 1);
+        Bot::AIVisionF.takeSnapshot(Bot::REDDESJ, MAX_OBJ_TO_TRACK);
       }
 
       if(Bot::AIVisionF.objectCount == 0) {
@@ -169,7 +172,7 @@ void autonomous(void) {
         break;
       }
 
-      pursuit = Bot::AIVisionF.objects[0];
+      pursuit = Bot::AIVisionF.largestObject;
 
       bool isTurningtoDriving = false;
 
