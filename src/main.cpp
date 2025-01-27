@@ -48,9 +48,13 @@ void cycleStartingPosistions() {
 void pre_auton(void) {
   Bot::updateDeviceList();
   Bot::setup();
-  Bot::Drivetrain.setDriveVelocity(45, vex::percent);
+  Bot::Drivetrain.setDriveVelocity(15, vex::percent);
   Bot::Drivetrain.setTurnVelocity(10, vex::percent);
   Bot::Drivetrain.setStopping(vex::brake);
+  Bot::AIVisionF.modelDetection(false);
+  Bot::AIVisionF.colorDetection(true);
+  //Preload
+  Bot::RingsIntaken = 1;
   
   
   // All activities that occur before the competition starts
@@ -83,12 +87,9 @@ int capPercentage(int percentage, int cap) {
 #define RING_INTAKEN_WIDTH_THRESHOLD 240
 
 void autonomous(void) {
-
-  Bot::IgnoreDisplay = true;
-  Bot::AIVisionF.modelDetection(false);
-  Bot::AIVisionF.colorDetection(true);
   //Bot::AIVisionF.startAwb();
 
+  Bot::IgnoreDisplay = true;
   
 
 
@@ -106,11 +107,13 @@ void autonomous(void) {
   Bot::Intake.spinFor(0.1, vex::seconds);
   */
 
-  Bot::Drivetrain.driveFor(10, vex::mm, true);
+  //Bot::Drivetrain.driveFor(10, vex::mm, true);
 
   while (true)
   {
-    Bot::Drivetrain.stop();
+    if(Bot::RingsIntaken >= 6) {
+      break;
+    }
     //Defualt blue
     if(Bot::Aliance == Blue) {
       Bot::AIVisionF.takeSnapshot(Bot::BLUEDESJ, 1);
@@ -123,21 +126,28 @@ void autonomous(void) {
 
     Bot::Controller.Screen.clearScreen();
     Bot::Controller.Screen.setCursor(1,1);
-    Bot::Controller.Screen.print("OBJ NUM: %f", Bot::AIVisionF.objectCount);
+    Bot::Controller.Screen.print("RING NUM: %f", Bot::RingsIntaken);
+
+    Bot::Drivetrain.setDriveVelocity(15, vex::percent);
+    Bot::Drivetrain.setTurnVelocity(15, vex::percent);
 
     if(Bot::AIVisionF.objectCount == 0) {
       Bot::Controller.Screen.setCursor(2,1);
       Bot::Controller.Screen.print("SEARCHING  ");
-      //Bot::Drivetrain.turnFor(5, vex::degrees, true);
+      Bot::Drivetrain.turn(vex::right);
       vex::this_thread::sleep_for(70);
       continue;
     }
+
+    Bot::Drivetrain.stop();
 
     //The AI Vision Sensor has a resolution of 320 x 240 pixels.
 
     //Turning to face
     Bot::Controller.Screen.setCursor(2,1);
     Bot::Controller.Screen.print("PURSUIT  ");
+    Bot::Drivetrain.setDriveVelocity(15, vex::percent);
+    Bot::Drivetrain.setTurnVelocity(5, vex::percent);
     while (true)
     {
       //vex::this_thread::sleep_for(10);
@@ -174,13 +184,14 @@ void autonomous(void) {
         if(pursuit.width >= RING_INTAKEN_WIDTH_THRESHOLD) {
           Bot::Controller.Screen.setCursor(2,1);
           Bot::Controller.Screen.print("ENDING  ");
-          Bot::Drivetrain.driveFor(-10, vex::inches, true);
           Bot::Drivetrain.stop();
           break;
         }        
       }
     }
   }
+
+  //Drive to corner and throw mobile goal in
   
 
   // ..........................................................................
