@@ -90,6 +90,7 @@ void autonomous(void) {
   //Bot::AIVisionF.startAwb();
 
   Bot::IgnoreDisplay = true;
+  bool isExitAiLoop = false;
   
 
 
@@ -114,6 +115,9 @@ void autonomous(void) {
     if(Bot::RingsIntaken >= 6) {
       break;
     }
+
+    if(isExitAiLoop) break;
+
     //Defualt blue
     if(Bot::Aliance == Blue) {
       Bot::AIVisionF.takeSnapshot(Bot::BLUEDESJ, 1);
@@ -186,6 +190,8 @@ void autonomous(void) {
           Bot::Controller.Screen.setCursor(2,1);
           Bot::Controller.Screen.print("ENDING  ");
           Bot::Drivetrain.stop();
+          Bot::toggleDoinker();
+          isExitAiLoop = true;
           break;
         }        
       }
