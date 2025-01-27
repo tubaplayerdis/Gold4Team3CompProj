@@ -131,6 +131,7 @@ void autonomous(void) {
     Bot::Drivetrain.setDriveVelocity(15, vex::percent);
     Bot::Drivetrain.setTurnVelocity(15, vex::percent);
 
+
     if(Bot::AIVisionF.objectCount == 0) {
       Bot::Controller.Screen.setCursor(2,1);
       Bot::Controller.Screen.print("SEARCHING  ");
