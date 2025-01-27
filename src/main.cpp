@@ -86,7 +86,7 @@ int capPercentage(int percentage, int cap) {
 #define ABANDON_ITEM_WIDTH_THRESHOLD 20
 #define RING_INTAKEN_WIDTH_THRESHOLD 240
 
-#define MAX_OBJ_TO_TRACK 3
+#define MAX_OBJ_TO_TRACK 3 //Cannot be larger than 8
 
 void autonomous(void) {
   //Bot::AIVisionF.startAwb();
