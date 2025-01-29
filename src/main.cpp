@@ -83,17 +83,19 @@ int capPercentage(int percentage, int cap) {
 }
 
 
-#define ABANDON_ITEM_WIDTH_THRESHOLD 20
+#define ABANDON_ITEM_WIDTH_THRESHOLD 100
 #define RING_INTAKEN_WIDTH_THRESHOLD 240
 
 #define MAX_OBJ_TO_TRACK 3 //Cannot be larger than 8
+
+#define APPROACH_VELOCITY_PERCENT -35
 
 void autonomous(void) {
   //Bot::AIVisionF.startAwb();
 
   Bot::IgnoreDisplay = true;
   bool isExitAiLoop = false;
-  
+
 
 
   //Motor Through the Getting the goal
@@ -112,14 +114,19 @@ void autonomous(void) {
 
   //Bot::Drivetrain.driveFor(10, vex::mm, true);
 
+
   while (true)
   {
+    Bot::IgnoreDisplay = true;
+
     if(Bot::RingsIntaken >= 6) {
       //Full mobile goal
       break;
     }
 
     if(isExitAiLoop) break;
+
+    Bot::Controller.Screen.clearScreen();
 
     //Defualt blue
     if(Bot::Aliance == Blue) {
@@ -128,34 +135,47 @@ void autonomous(void) {
       //red
       Bot::AIVisionF.takeSnapshot(Bot::REDDESJ, MAX_OBJ_TO_TRACK);
     }
+
+    vex::timer snpashotTimer;
+    snpashotTimer.reset();
+    Bot::Controller.Screen.setCursor(3,1);
+    Bot::Controller.Screen.print("%02d", snpashotTimer.value());
+
     //Brain.Screen.printAt(0,50, "AI Vision Count: %d", AIVisionF.objectCount);
     vex::aivision::object pursuit = vex::aivision::object();
 
-    Bot::Controller.Screen.clearScreen();
     Bot::Controller.Screen.setCursor(1,1);
     Bot::Controller.Screen.print("RING NUM: %f", Bot::RingsIntaken);
 
-    Bot::Drivetrain.setDriveVelocity(15, vex::percent);
-    Bot::Drivetrain.setTurnVelocity(15, vex::percent);
+    //Bot::Drivetrain.setDriveVelocity(15, vex::percent);
+    //Bot::Drivetrain.setTurnVelocity(15, vex::percent);
 
 
     if(Bot::AIVisionF.objectCount == 0) {
       Bot::Controller.Screen.setCursor(2,1);
       Bot::Controller.Screen.print("SEARCHING  ");
-      Bot::Drivetrain.turn(vex::right);
       vex::this_thread::sleep_for(70);
       continue;
     }
 
-    Bot::Drivetrain.stop();
+    Bot::LeftMotors.stop();
+    Bot::RightMotors.stop();
 
     //The AI Vision Sensor has a resolution of 320 x 240 pixels.
 
     //Turning to face
     Bot::Controller.Screen.setCursor(2,1);
     Bot::Controller.Screen.print("PURSUIT  ");
-    Bot::Drivetrain.setDriveVelocity(15, vex::percent);
-    Bot::Drivetrain.setTurnVelocity(5, vex::percent);
+    //Bot::Drivetrain.setDriveVelocity(35, vex::percent);
+    //Bot::Drivetrain.setTurnVelocity(5, vex::percent);
+
+    Bot::LeftMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
+    Bot::RightMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
+    Bot::LeftMotors.spin(vex::forward);
+    Bot::RightMotors.spin(vex::forward);
+
+    vex::this_thread::sleep_for(10);
+
     while (true)
     {
       //vex::this_thread::sleep_for(10);
@@ -165,6 +185,7 @@ void autonomous(void) {
         //red
         Bot::AIVisionF.takeSnapshot(Bot::REDDESJ, MAX_OBJ_TO_TRACK);
       }
+    
 
       if(Bot::AIVisionF.objectCount == 0) {
         //Lost Ring
@@ -175,20 +196,21 @@ void autonomous(void) {
       pursuit = Bot::AIVisionF.largestObject;
 
       bool isTurningtoDriving = false;
-
       //Center of screen is 160,160.
+      
       if(pursuit.originX + pursuit.width < 160) {
-        Bot::Drivetrain.turn(vex::left);
+        Bot::LeftMotors.setVelocity(Bot::LeftMotors.velocity(vex::percent)-0.5, vex::percent);
         isTurningtoDriving = true;
       } else if (pursuit.originX > 160) {
-        Bot::Drivetrain.turn(vex::right);
+        Bot::RightMotors.setVelocity(Bot::RightMotors.velocity(vex::percent)-0.5, vex::percent);
         isTurningtoDriving = true;
       } else {   
+        Bot::LeftMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
+        Bot::RightMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
         if(isTurningtoDriving) {
-          Bot::Drivetrain.stop();
+          //Bot::Drivetrain.stop();
           isTurningtoDriving = false;
         } //Stop turning
-        Bot::Drivetrain.drive(reverse);
         if(pursuit.width >= RING_INTAKEN_WIDTH_THRESHOLD) {
           Bot::Controller.Screen.setCursor(2,1);
           Bot::Controller.Screen.print("ENDING  ");
@@ -196,8 +218,10 @@ void autonomous(void) {
           Bot::toggleDoinker();
           isExitAiLoop = true;
           break;
-        }        
+        }     
+          
       }
+      
     }
   }
 
@@ -401,10 +425,9 @@ int main() {
   vex::task mainLoop(Bot::mainLoop);
   vex::task displayLoop(Bot::displayLoop);
   //vex::task blinkerLoop(Bot::blinkerLoop);
-  //vex::task colorsensing(ColorDetection::visionTask);
+  vex::task colorsensing(ColorDetection::visionTask);
   vex::task monitoring(Bot::monitorLoop);
   //vex::task ArmPIDLoop(ArmLoop);
-  //vex::task aivisionLoop(Bot::aiLoop);
   //Bot::Brain.Screen.printAt(0, 150, "Systems Go!");
   
   // Set up callbacks for autonomous and driver control periods.
