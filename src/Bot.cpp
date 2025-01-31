@@ -173,13 +173,71 @@ void Bot::setup() {
 
 }
 
+//FOR PID
+const double Kp = 0.5; // Proportional gain
+const double Ki = 0.01; // Integral gain
+const double Kd = 0.1; // Derivative gain
+const double maxPower = 100; // Maximum motor power (percent)
+
+
+const double tolerance = 1.0; // Allowable error (degrees)
+
+
 int Bot::mainLoop() {
     setup();
     updateDeviceList(); //If not done already.
+    Bot::isArmPIDActive = false;
+
+    double error = 0.0;       // Current error
+    double previousError = 0.0; // Error from the previous step
+    double integral = 0.0;    // Accumulated error
+    double derivative = 0.0;  // Rate of error change
+    double power = 0.0;       // Motor power
     //Brain.Screen.printAt(100,100, "Main Loop started");
     vex::competition Comp;
     while (true)
     {
+        vex::this_thread::sleep_for(20);
+
+        if(Bot::isArmPIDActive) {
+        
+            // Get the current position of the motor
+            double currentAngle = Bot::Arm.position(degrees);
+
+            // Calculate error
+            error = Bot::desiredARMAngle - currentAngle;
+
+            // Break the loop if the error is within the tolerance
+            if (fabs(error) <= tolerance) {
+                Bot::Arm.stop(brakeType::hold);
+                Bot::isArmPIDActive = false;
+                Bot::Controller.rumble("...");
+                
+            } else {
+                // Calculate integral and derivative terms
+                integral += error; // Accumulate error
+                derivative = error - previousError;
+
+                // Calculate PID output
+                power = (Kp * error) + (Ki * integral) + (Kd * derivative);
+
+                // Constrain the power to the motor's limits
+                if (power > maxPower) power = maxPower;
+                if (power < -maxPower) power = -maxPower;
+
+                // Apply power to the motor
+                Bot::Arm.spin(forward, power, percent);
+
+                // Save the current error for the next loop
+                previousError = error;
+
+                // Small delay to prevent overwhelming the CPU
+                vex::task::sleep(20);
+            }
+        }
+
+
+
         //Allow Auton Full Control Of Bot
         if(IgnoreMain) continue;
         if(Comp.isAutonomous()) continue;

@@ -285,16 +285,6 @@ void usercontrol(void) {
   }
 }
 
-const double Kp = 0.5; // Proportional gain
-const double Ki = 0.01; // Integral gain
-const double Kd = 0.1; // Derivative gain
-const double maxPower = 100; // Maximum motor power (percent)
-
-//-----------------------------------------------------------------------
-
-const double tolerance = 1.0; // Allowable error (degrees)
-
-//-----------------------------------------------------------------------
 
 void ToggleLadyBrown() {
   Bot::desiredARMAngle = -22;
@@ -302,6 +292,7 @@ void ToggleLadyBrown() {
   //Bot::Arm.stop();
 }
 
+//THIS WAS INCORPERATED INTO THE MAIN LOOP.
 int ArmLoop() {
 
   Bot::isArmPIDActive = false;
@@ -427,7 +418,6 @@ int main() {
   //vex::task blinkerLoop(Bot::blinkerLoop);
   vex::task colorsensing(ColorDetection::visionTask);
   vex::task monitoring(Bot::monitorLoop);
-  //vex::task ArmPIDLoop(ArmLoop);
   //Bot::Brain.Screen.printAt(0, 150, "Systems Go!");
   
   // Set up callbacks for autonomous and driver control periods.
