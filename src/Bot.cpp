@@ -23,7 +23,7 @@ vex::motor Bot::ArmL = vex::motor(vex::PORT8, vex::ratio18_1, true); //Low Power
 vex::motor Bot::ArmR = vex::motor(vex::PORT9, vex::ratio18_1, false); //Low Power
 vex::motor_group Bot::Arm = vex::motor_group(Bot::ArmL, Bot::ArmR);//High Torque
 bool Bot::isArmPIDActive = false;
-int Bot::desiredARMAngle = -22;
+int Bot::desiredARMAngle = LADYBROWN_DESIRED_ANGLE;
 
 
 vex::digital_out Bot::MogoMech = vex::digital_out(Bot::Brain.ThreeWirePort.A);
@@ -149,14 +149,10 @@ void Bot::setup() {
     Clutch.set(false);
     Doinker.set(false);
 
-    if(Bot::GpsF.installed()) Bot::GpsF.calibrate();
-    if(Bot::GpsL.installed()) Bot::GpsL.calibrate();
-    if(Bot::GpsR.installed()) Bot::GpsR.calibrate();
-    if(Bot::GpsB.installed()) Bot::GpsB.calibrate();
     Bot::Inertial.calibrate();
     Bot::Controller.Screen.clearScreen();
     Bot::Controller.Screen.setCursor(1,2);
-    while(Bot::GpsF.isCalibrating() || Bot::GpsL.isCalibrating() || Bot::GpsR.isCalibrating() || Bot::GpsB.isCalibrating() || Bot::Inertial.isCalibrating()) {
+    while(Bot::Inertial.isCalibrating()) {
         Bot::Controller.Screen.print("CALIBRATION");
         if(Bot::Controller.ButtonA.pressing()) break;
         vex::this_thread::sleep_for(30);
@@ -174,9 +170,9 @@ void Bot::setup() {
 }
 
 //FOR PID
-const double Kp = 0.5; // Proportional gain
-const double Ki = 0.01; // Integral gain
-const double Kd = 0.1; // Derivative gain
+const double Kp = 0.6; // Proportional gain
+const double Ki = 1.2; // Integral gain
+const double Kd = 0.075; // Derivative gain
 const double maxPower = 100; // Maximum motor power (percent)
 
 
@@ -197,19 +193,19 @@ int Bot::mainLoop() {
     vex::competition Comp;
     while (true)
     {
-        vex::this_thread::sleep_for(20);
+        vex::this_thread::sleep_for(1);
 
         if(Bot::isArmPIDActive) {
         
             // Get the current position of the motor
-            double currentAngle = Bot::Arm.position(degrees);
+            double currentAngle = Bot::Arm.position(vex::degrees);
 
             // Calculate error
             error = Bot::desiredARMAngle - currentAngle;
 
             // Break the loop if the error is within the tolerance
             if (fabs(error) <= tolerance) {
-                Bot::Arm.stop(brakeType::hold);
+                Bot::Arm.stop(vex::brakeType::hold);
                 Bot::isArmPIDActive = false;
                 Bot::Controller.rumble("...");
                 
@@ -226,13 +222,13 @@ int Bot::mainLoop() {
                 if (power < -maxPower) power = -maxPower;
 
                 // Apply power to the motor
-                Bot::Arm.spin(forward, power, percent);
+                Bot::Arm.spin(vex::forward, power, vex::percent);
 
                 // Save the current error for the next loop
                 previousError = error;
 
                 // Small delay to prevent overwhelming the CPU
-                vex::task::sleep(20);
+                vex::task::sleep(5);
             }
         }
 
@@ -271,9 +267,11 @@ int Bot::mainLoop() {
             Arm.setVelocity(0, vex::rpm);
             Arm.stop();
             } else if (Controller.ButtonL1.pressing()) {
+                Arm.setMaxTorque(100, vex::percent);
                 Arm.setVelocity(200, vex::rpm);
                 Arm.spin(vex::forward);
             } else if (Controller.ButtonR1.pressing()) {
+                Arm.setMaxTorque(100, vex::percent);
                 Arm.setVelocity(200, vex::rpm);
                 Arm.spin(vex::reverse);
             } else {
@@ -288,7 +286,7 @@ int Bot::mainLoop() {
             Notifications::NotificationList.empty();
         }
 
-        vex::wait(20, vex::msec);
+        vex::this_thread::sleep_for(5);
         //Add some delay for computations
     }
     Brain.Screen.setPenColor("#c96638");

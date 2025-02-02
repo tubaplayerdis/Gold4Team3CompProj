@@ -154,9 +154,11 @@ void autonomous(void) {
     if(Bot::AIVisionF.objectCount == 0) {
       Bot::Controller.Screen.setCursor(2,1);
       Bot::Controller.Screen.print("SEARCHING  ");
-      vex::this_thread::sleep_for(70);
+      vex::this_thread::sleep_for(20);
       continue;
     }
+
+    //Something was found
 
     Bot::LeftMotors.stop();
     Bot::RightMotors.stop();
@@ -171,8 +173,11 @@ void autonomous(void) {
 
     Bot::LeftMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
     Bot::RightMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
-    Bot::LeftMotors.spin(vex::forward);
-    Bot::RightMotors.spin(vex::forward);
+    for(int i =0; i < 5; i++) {
+      Bot::LeftMotors.spin(vex::forward);
+      Bot::RightMotors.spin(vex::forward);
+      vex::this_thread::sleep_for(10);
+    }
 
     vex::this_thread::sleep_for(10);
 
@@ -287,64 +292,14 @@ void usercontrol(void) {
 
 
 void ToggleLadyBrown() {
-  Bot::desiredARMAngle = -22;
+  Bot::desiredARMAngle = LADYBROWN_DESIRED_ANGLE;
   Bot::isArmPIDActive = !Bot::isArmPIDActive;
   //Bot::Arm.stop();
 }
 
 //THIS WAS INCORPERATED INTO THE MAIN LOOP.
 int ArmLoop() {
-
-  Bot::isArmPIDActive = false;
-
-  double error = 0.0;       // Current error
-  double previousError = 0.0; // Error from the previous step
-  double integral = 0.0;    // Accumulated error
-  double derivative = 0.0;  // Rate of error change
-  double power = 0.0;       // Motor power
-
-  while (true) {
-
-    if(!Bot::isArmPIDActive) {
-      vex::this_thread::sleep_for(50);
-      continue; 
-    }
-
-    // Get the current position of the motor
-    double currentAngle = Bot::Arm.position(degrees);
-
-    // Calculate error
-    error = Bot::desiredARMAngle - currentAngle;
-
-    // Break the loop if the error is within the tolerance
-    if (fabs(error) <= tolerance) {
-        Bot::Arm.stop(brakeType::hold);
-        Bot::isArmPIDActive = false;
-        Bot::Controller.rumble("...");
-        continue;
-    }
-
-    // Calculate integral and derivative terms
-    integral += error; // Accumulate error
-    derivative = error - previousError;
-
-    // Calculate PID output
-    power = (Kp * error) + (Ki * integral) + (Kd * derivative);
-
-    // Constrain the power to the motor's limits
-    if (power > maxPower) power = maxPower;
-    if (power < -maxPower) power = -maxPower;
-
-    // Apply power to the motor
-    Bot::Arm.spin(forward, power, percent);
-
-    // Save the current error for the next loop
-    previousError = error;
-
-    // Small delay to prevent overwhelming the CPU
-    vex::task::sleep(20);
-  }
-  return 0;
+  return 1;
 }
 
 void SendBackConveyor() {

@@ -7,6 +7,8 @@
 
 #define AI_HEU_TOLERANCE 24 //1-40
 #define AI_SATURATION_TOLERANCE 0.41 //0.10-1
+#define LADYBROWN_DESIRED_ANGLE 100 // The gear ratio is 1:4
+#define LADYBROWN_ANGLE_TOLERANCE 2 // Tolerance on the motor
 
 //BLUE
   //rgb(88,156,156)
