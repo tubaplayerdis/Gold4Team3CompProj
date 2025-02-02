@@ -36,7 +36,8 @@ int Bot::RingsIntaken = 0;
 vex::inertial Bot::Inertial = vex::inertial(vex::PORT11);
 vex::rotation Bot::RotationForward = vex::rotation(vex::PORT12); //Forwards
 vex::rotation Bot::RotationLateral = vex::rotation(vex::PORT13);; //Lateral
-vex::optical Bot::ColorSensor = vex::optical(vex::PORT14);;
+vex::optical Bot::ColorSensor = vex::optical(vex::PORT14);
+vex::rotation Bot::RotationArm = vex::rotation(vex::PORT15);
 aliance Bot::Aliance = aliance::Blue;
 
 // AI Vision Color Descriptions
@@ -45,6 +46,7 @@ vex::aivision::colordesc Bot::BLUEDESJ = vex::aivision::colordesc(1, 42,103,172,
 vex::aivision::colordesc Bot::REDDESJ = vex::aivision::colordesc(2, 209,30,105, AI_HEU_TOLERANCE, AI_SATURATION_TOLERANCE);
 vex::aivision Bot::AIVisionF = vex::aivision(vex::PORT20, BLUEDESJ, REDDESJ);
 
+//These are not installed.
 vex::gps Bot::GpsF = vex::gps(vex::PORT16, -16, 16, vex::inches, 0);
 vex::gps Bot::GpsL = vex::gps(vex::PORT17, -16, -15, vex::inches, -90);
 vex::gps Bot::GpsR = vex::gps(vex::PORT18, 16, -15, vex::inches, 90);
@@ -153,7 +155,7 @@ void Bot::setup() {
     Bot::Controller.Screen.clearScreen();
     Bot::Controller.Screen.setCursor(1,2);
     while(Bot::Inertial.isCalibrating()) {
-        Bot::Controller.Screen.print("CALIBRATION");
+        Bot::Controller.Screen.print("CALIB INRERT");
         if(Bot::Controller.ButtonA.pressing()) break;
         vex::this_thread::sleep_for(30);
     }
@@ -198,7 +200,7 @@ int Bot::mainLoop() {
         if(Bot::isArmPIDActive) {
         
             // Get the current position of the motor
-            double currentAngle = Bot::Arm.position(vex::degrees);
+            double currentAngle = Bot::RotationArm.position(vex::degrees);
 
             // Calculate error
             error = Bot::desiredARMAngle - currentAngle;

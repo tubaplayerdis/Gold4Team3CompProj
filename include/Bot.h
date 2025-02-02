@@ -7,8 +7,8 @@
 
 #define AI_HEU_TOLERANCE 24 //1-40
 #define AI_SATURATION_TOLERANCE 0.41 //0.10-1
-#define LADYBROWN_DESIRED_ANGLE 100 // The gear ratio is 1:4
-#define LADYBROWN_ANGLE_TOLERANCE 2 // Tolerance on the motor
+#define LADYBROWN_DESIRED_ANGLE 22 // Via a rotation sensor on the arm, not the pinion.
+#define LADYBROWN_ANGLE_TOLERANCE 1 // Tolerance on the motor
 
 //BLUE
   //rgb(88,156,156)
@@ -81,7 +81,7 @@ class Bot {
         static vex::motor_group LeftMotors;
         static vex::motor_group RightMotors;
 
-        //Misc
+        //Conveyor/Lady Brown
         static vex::motor Intake;
         static vex::motor ArmL;
         static vex::motor ArmR;
@@ -91,6 +91,8 @@ class Bot {
         //static vex::motor LiftL;
         //static vex::motor LiftR;
         //static vex::motor_group LiftMotors;
+
+        //3 Wrire Port
         static vex::digital_out MogoMech;
         static vex::digital_out Clutch;
         static vex::digital_out Doinker;
@@ -102,6 +104,7 @@ class Bot {
         static vex::rotation RotationForward; //Forward
         static vex::rotation RotationLateral; //Lateral
         static vex::optical ColorSensor;
+        static vex::rotation RotationArm;
         static aliance Aliance;
 
         //AI

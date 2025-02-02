@@ -89,6 +89,7 @@ int capPercentage(int percentage, int cap) {
 #define MAX_OBJ_TO_TRACK 3 //Cannot be larger than 8
 
 #define APPROACH_VELOCITY_PERCENT -35
+#define LINEAR_CHANGE_VELOCITY_CORRECTION -0.5
 
 void autonomous(void) {
   //Bot::AIVisionF.startAwb();
@@ -204,10 +205,10 @@ void autonomous(void) {
       //Center of screen is 160,160.
       
       if(pursuit.originX + pursuit.width < 160) {
-        Bot::LeftMotors.setVelocity(Bot::LeftMotors.velocity(vex::percent)-0.5, vex::percent);
+        Bot::LeftMotors.setVelocity(Bot::LeftMotors.velocity(vex::percent)-LINEAR_CHANGE_VELOCITY_CORRECTION, vex::percent);
         isTurningtoDriving = true;
       } else if (pursuit.originX > 160) {
-        Bot::RightMotors.setVelocity(Bot::RightMotors.velocity(vex::percent)-0.5, vex::percent);
+        Bot::RightMotors.setVelocity(Bot::RightMotors.velocity(vex::percent)-LINEAR_CHANGE_VELOCITY_CORRECTION, vex::percent);
         isTurningtoDriving = true;
       } else {   
         Bot::LeftMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
