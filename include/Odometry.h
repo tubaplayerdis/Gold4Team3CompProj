@@ -26,7 +26,7 @@ class Odometry {
         static int odometry();
 
         //Consts
-        static constexpr double tracking_wheel_radius = 1.375;                  // Radius in inches (assuming 1:1 gear ratio)
+        static constexpr double tracking_wheel_radius = 1;                  // Radius in inches (assuming 1:1 gear ratio)
         static constexpr double tracking_wheel_circumference = 2 * M_PI * tracking_wheel_radius;
         static const double tallWallStake1X = -30.0; // X position of the first wall stake
         static const double tallWallStake1Y = -35.0;     // Y position of the first wall stake
