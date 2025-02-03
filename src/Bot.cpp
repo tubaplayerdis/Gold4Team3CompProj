@@ -5,6 +5,7 @@
 #include "Notifications.h"
 #include "UISystem.h"
 #include "Skills.h"
+#include "macros.h"
 
 //Define Brain
 vex::brain Bot::Brain = vex::brain();
@@ -200,7 +201,7 @@ int Bot::mainLoop() {
         if(Bot::isArmPIDActive) {
         
             // Get the current position of the motor
-            double currentAngle = Bot::RotationArm.position(vex::degrees);
+            double currentAngle = Bot::Arm.position(vex::degrees);
 
             // Calculate error
             error = Bot::desiredARMAngle - currentAngle;
