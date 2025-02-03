@@ -19,6 +19,7 @@ void Notifications::addNotification(std::string notif) {
     notifIndex = NotificationList.size()-1;
     UISystem::diagDropdown.addString(notif);
     isNotifying = false;
+    Bot::Controller.rumble("-");
 }
 
 //Dont use
