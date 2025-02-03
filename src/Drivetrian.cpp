@@ -60,7 +60,7 @@ int Drivetrain::ControllerLoop() {
         }
       }
       // wait before repeating the process
-      vex::wait(20, vex::msec);
+      vex::wait(10, vex::msec);
     }
 
     Bot::Brain.Screen.setPenColor("#c96638");

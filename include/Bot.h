@@ -160,6 +160,7 @@ class Bot {
         static void pushClutch();
         static void releaseClutch();
         static void checkInstall();
+        static void checkMonitors();
         static int blinkerLoop();
         static int displayLoop();
         static int monitorLoop();

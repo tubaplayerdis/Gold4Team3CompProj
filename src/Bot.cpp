@@ -235,7 +235,7 @@ int Bot::mainLoop() {
             }
         }
 
-
+        checkMonitors();
 
         //Allow Auton Full Control Of Bot
         if(IgnoreMain) continue;
@@ -499,6 +499,38 @@ int Bot::displayLoop() {
     return 0;
 }
 
+void Bot::checkInstall() {
+    if(IgnoreMonitor) return;
+
+    if(LeftA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LeftA TEMP");
+    if(LeftB.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LeftB TEMP");
+    if(LeftC.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LeftC TEMP");
+    if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightA TEMP");
+    if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightB TEMP");
+    if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightC TEMP");
+    if(Intake.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("Intake TEMP");
+    if(ArmL.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("ArmL TEMP");
+    if(ArmR.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("ArmR TEMP");
+
+    if(!LeftA.installed()) Notifications::addNotification("LeftA DISCONNECT");
+    if(!LeftB.installed()) Notifications::addNotification("LeftB DISCONNECT");
+    if(!LeftC.installed()) Notifications::addNotification("LeftC DISCONNECT");
+    if(!RightA.installed()) Notifications::addNotification("RightA DISCONNECT");
+    if(!RightB.installed()) Notifications::addNotification("RightB DISCONNECT");
+    if(!RightC.installed()) Notifications::addNotification("RightC DISCONNECT");
+    if(!Intake.installed()) Notifications::addNotification("Intake DISCONNECT");
+    if(!ArmL.installed()) Notifications::addNotification("ArmL DISCONNECT");
+    if(!ArmR.installed()) Notifications::addNotification("ArmR DISCONNECT");
+    if(!RotationForward.installed()) Notifications::addNotification("RotationF DISCONNECT");
+    if(!RotationLateral.installed()) Notifications::addNotification("RotationL DISCONNECT");
+    if(!Inertial.installed()) Notifications::addNotification("Inertial DISCONNECT");
+
+    if(Brain.Battery.capacity() < 30) Notifications::addNotification("Battery 30 WARN");
+    if(Brain.Battery.capacity() < 10) Notifications::addNotification("Battery 10 REPLACE");
+}
+
+
+//Dont use this. Used by main loop
 int Bot::monitorLoop() {
     while (true) {
 
@@ -536,7 +568,7 @@ int Bot::monitorLoop() {
     return 0;
 }
 
-
+//Dont use this either.
 int Bot::aiLoop() {
     while(true) {
 
