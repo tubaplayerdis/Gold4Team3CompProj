@@ -4,15 +4,16 @@ todo:
 CONTROLS:
     Joystick Left - Forward/backward
     Joystick Right - Left/Right
-    L1 - Toggle Color Sort
+    L1 - Lady Brown Down
     L2 - Intake In
+    R1 - Lady Brown Up
     R2 - Intake Out
-    A - Clamp Down
-    B - Clamp up
-    Y - Cycle Aliiance
-    X - Drive to nearest wall stake
-    Up - Arm Up
-    Down - Arm Down
+    A - Clamp Toggle
+    B - Doinker Toggle
+    Y - Step Back Conveyor
+    X - PID Align
+    Up - Cycle Auton Position and Alaince
+    Down - Color Sort Toggle
     Left - Cycle Notification Backward
     Right - Cycle Notifications Forward
 
