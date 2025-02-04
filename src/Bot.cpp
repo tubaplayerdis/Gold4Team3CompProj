@@ -272,11 +272,11 @@ int Bot::mainLoop() {
             } else if (Controller.ButtonL1.pressing()) {
                 Arm.setMaxTorque(100, vex::percent);
                 Arm.setVelocity(200, vex::rpm);
-                Arm.spin(vex::forward);
+                Arm.spin(vex::reverse);
             } else if (Controller.ButtonR1.pressing()) {
                 Arm.setMaxTorque(100, vex::percent);
                 Arm.setVelocity(200, vex::rpm);
-                Arm.spin(vex::reverse);
+                Arm.spin(vex::forward);
             } else {
                 Arm.setVelocity(0, vex::rpm);
                 Arm.stop();
