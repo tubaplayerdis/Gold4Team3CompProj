@@ -84,9 +84,6 @@ class Bot {
         static vex::motor_group Arm;
         static bool isArmPIDActive;
         static int desiredARMAngle;
-        //static vex::motor LiftL;
-        //static vex::motor LiftR;
-        //static vex::motor_group LiftMotors;
 
         //3 Wrire Port
         static vex::digital_out MogoMech;
@@ -100,7 +97,6 @@ class Bot {
         static vex::rotation RotationForward; //Forward
         static vex::rotation RotationLateral; //Lateral
         static vex::optical ColorSensor;
-        static vex::rotation RotationArm;
         static aliance Aliance;
 
         //AI
@@ -113,6 +109,8 @@ class Bot {
         static vex::gps GpsL;
         static vex::gps GpsR;
         static vex::gps GpsB;
+
+        static vex::competition Comp;
 
         //Led Array
         /*
@@ -161,9 +159,9 @@ class Bot {
         static void releaseClutch();
         static void checkInstall();
         static void checkMonitors();
-        static int blinkerLoop();
+        static int blinkerLoop();//dont use
         static int displayLoop();
-        static int monitorLoop();
+        static int monitorLoop();//dont use
 
 
 

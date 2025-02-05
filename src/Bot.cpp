@@ -38,7 +38,6 @@ vex::inertial Bot::Inertial = vex::inertial(vex::PORT11);
 vex::rotation Bot::RotationForward = vex::rotation(vex::PORT12); //Forwards
 vex::rotation Bot::RotationLateral = vex::rotation(vex::PORT13);; //Lateral
 vex::optical Bot::ColorSensor = vex::optical(vex::PORT14);
-vex::rotation Bot::RotationArm = vex::rotation(vex::PORT15);
 aliance Bot::Aliance = aliance::Blue;
 
 // AI Vision Color Descriptions
@@ -54,6 +53,8 @@ vex::gps Bot::GpsR = vex::gps(vex::PORT18, 16, -15, vex::inches, 90);
 vex::gps Bot::GpsB = vex::gps(vex::PORT19, 17, -17, vex::inches, 180);
 
 bool Bot::feedGps = false;
+
+vex::competition Bot::Comp = vex::competition();
 
 //Led Array
 /*
@@ -179,7 +180,7 @@ const double Kd = 0.075; // Derivative gain
 const double maxPower = 100; // Maximum motor power (percent)
 
 
-const double tolerance = 1.0; // Allowable error (degrees)
+const double tolerance = LADYBROWN_ANGLE_TOLERANCE; // Allowable error (degrees)
 
 
 int Bot::mainLoop() {
@@ -201,7 +202,7 @@ int Bot::mainLoop() {
         if(Bot::isArmPIDActive) {
         
             // Get the current position of the motor
-            double currentAngle = Bot::Arm.position(vex::degrees);
+            double currentAngle = Bot::Arm.position(vex::degrees)/4;//Divided by 4 to imitate rotation sensor on the Arm.
 
             // Calculate error
             error = Bot::desiredARMAngle - currentAngle;

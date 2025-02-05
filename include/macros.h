@@ -1,4 +1,4 @@
 #define AI_HEU_TOLERANCE 24 //1-40
 #define AI_SATURATION_TOLERANCE 0.41 //0.10-1
-#define LADYBROWN_DESIRED_ANGLE 100 // Via the pinion for now.
-#define LADYBROWN_ANGLE_TOLERANCE 1 // Tolerance on the angle via pinoin. assume it droops from play.
+#define LADYBROWN_DESIRED_ANGLE 25 // Via the pinion but represents the arm.
+#define LADYBROWN_ANGLE_TOLERANCE 1 // Tolerance on the arm angle via pinoin. The motors angle value is divided by 4 to imitate a rotation sensor on it.

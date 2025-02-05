@@ -156,6 +156,13 @@ void Odometry::updateOdometry() {
 
     x += deltaX;
     y += deltaY;
+
+    if(Bot::Comp.isAutonomous() && (x < 10 || x > -10)) {
+        Bot::Drivetrain.setDriveVelocity(0, vex::percent);
+        Bot::Drivetrain.setTurnVelocity(0, vex::percent);
+        Bot::Drivetrain.stop();
+        Notifications::addNotification("AUTON OVERRIDE OUT");
+    }
 }
 
 int Odometry::odometry() {
@@ -184,8 +191,6 @@ int displayCoordinates() {
 
 // "when started" hat block
 int Odometry::setupAndStartOdometry() {
-    Bot::Drivetrain.setDriveVelocity(100.0, vex::percent);
-    Bot::Drivetrain.setTurnVelocity(100.0, vex::percent);
     if(!Bot::RotationForward.installed() || !Bot::RotationLateral.installed()) {
         Notifications::addNotification("ODO DISABLE DISC");
         Odometry::x = -1;
