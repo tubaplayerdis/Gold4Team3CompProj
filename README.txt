@@ -1,5 +1,5 @@
 todo:
-    Implement Throwing mechanism of color detection;
+    Automnous;
     
 CONTROLS:
     Joystick Left - Forward/backward
