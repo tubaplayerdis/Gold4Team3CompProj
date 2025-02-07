@@ -33,6 +33,10 @@ void cycleStartingPosistions() {
 }
 
 
+#define APPROACH_VELOCITY_PERCENT -35
+#define LINEAR_CHANGE_VELOCITY_CORRECTION 0.5
+
+
 // define your global instances of motors and other devices here
 
 /*---------------------------------------------------------------------------*/
@@ -48,11 +52,12 @@ void cycleStartingPosistions() {
 void pre_auton(void) {
   Bot::updateDeviceList();
   Bot::setup();
-  Bot::Drivetrain.setDriveVelocity(15, vex::percent);
-  Bot::Drivetrain.setTurnVelocity(10, vex::percent);
+  Bot::LeftMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
+  Bot::RightMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
   Bot::Drivetrain.setStopping(vex::brake);
   Bot::AIVisionF.modelDetection(false);
   Bot::AIVisionF.colorDetection(true);
+  Bot::AIVisionF.startAwb();
   //Preload
   Bot::RingsIntaken = 1;
   
@@ -84,18 +89,17 @@ int capPercentage(int percentage, int cap) {
 
 
 #define ABANDON_ITEM_WIDTH_THRESHOLD 100
-#define RING_INTAKEN_WIDTH_THRESHOLD 240
+#define RING_INTAKEN_WIDTH_THRESHOLD 300
 
 #define MAX_OBJ_TO_TRACK 3 //Cannot be larger than 8
-
-#define APPROACH_VELOCITY_PERCENT -35
-#define LINEAR_CHANGE_VELOCITY_CORRECTION -0.5
 
 void autonomous(void) {
   //Bot::AIVisionF.startAwb();
 
   Bot::IgnoreDisplay = true;
   bool isExitAiLoop = false;
+
+
 
 
 
@@ -174,16 +178,17 @@ void autonomous(void) {
 
     Bot::LeftMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
     Bot::RightMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
-    for(int i =0; i < 5; i++) {
-      Bot::LeftMotors.spin(vex::forward);
-      Bot::RightMotors.spin(vex::forward);
-      vex::this_thread::sleep_for(10);
-    }
-
+    Bot::LeftMotors.spin(vex::forward);
+    Bot::RightMotors.spin(vex::forward);
     vex::this_thread::sleep_for(10);
+
+    Bot::Controller.Screen.clearScreen();
+
 
     while (true)
     {
+      //vex::this_thread::sleep_for(1000);
+
       //vex::this_thread::sleep_for(10);
       if(Bot::Aliance == Blue) {
         Bot::AIVisionF.takeSnapshot(Bot::BLUEDESJ, MAX_OBJ_TO_TRACK);
@@ -199,17 +204,34 @@ void autonomous(void) {
         break;
       }
 
-      pursuit = Bot::AIVisionF.largestObject;
+
+      pursuit = Bot::AIVisionF.objects[0];
+      for (size_t i = 0; i < 3; i++)
+      {
+        if(Bot::AIVisionF.objects[i].width > pursuit.width) pursuit = Bot::AIVisionF.objects[i];
+      }
+      
 
       bool isTurningtoDriving = false;
       //Center of screen is 160,160.
+
+      if(Bot::LeftMotors.velocity(vex::percent) > APPROACH_VELOCITY_PERCENT) Bot::LeftMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
+      if(Bot::RightMotors.velocity(vex::percent) > APPROACH_VELOCITY_PERCENT) Bot::RightMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
+
+
+      Bot::Controller.Screen.setCursor(3,1);
+      Bot::Controller.Screen.print("LV :%.2f  RV: %.2f    ", Bot::LeftMotors.velocity(vex::percent), Bot::RightMotors.velocity(vex::percent));
       
+      
+
       if(pursuit.originX + pursuit.width < 160) {
+        Bot::LeftMotors.spin(vex::forward);
         Bot::LeftMotors.setVelocity(Bot::LeftMotors.velocity(vex::percent)-LINEAR_CHANGE_VELOCITY_CORRECTION, vex::percent);
-        isTurningtoDriving = true;
+        continue;
       } else if (pursuit.originX > 160) {
+        Bot::RightMotors.spin(vex::forward);
         Bot::RightMotors.setVelocity(Bot::RightMotors.velocity(vex::percent)-LINEAR_CHANGE_VELOCITY_CORRECTION, vex::percent);
-        isTurningtoDriving = true;
+        continue;
       } else {   
         Bot::LeftMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
         Bot::RightMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
@@ -221,12 +243,14 @@ void autonomous(void) {
           Bot::Controller.Screen.setCursor(2,1);
           Bot::Controller.Screen.print("ENDING  ");
           Bot::Drivetrain.stop();
-          Bot::toggleDoinker();
           isExitAiLoop = true;
           break;
-        }     
+        }    
+
+        
           
       }
+
       
     }
   }
@@ -293,8 +317,13 @@ void usercontrol(void) {
 
 
 void ToggleLadyBrown() {
-  Bot::desiredARMAngle = LADYBROWN_DESIRED_ANGLE;
-  Bot::isArmPIDActive = !Bot::isArmPIDActive;
+  Bot::IgnoreArm = true;
+  Bot::Arm.setMaxTorque(100, vex::percent);
+  Bot::Arm.setVelocity(100, vex::percent);
+  Bot::Arm.spinTo(125, vex::degrees, true);
+  Bot::IgnoreArm = false;
+  //Bot::desiredARMAngle = LADYBROWN_DESIRED_ANGLE;
+  //Bot::isArmPIDActive = !Bot::isArmPIDActive;
   //Bot::Arm.stop();
 }
 
@@ -307,7 +336,7 @@ void SendBackConveyor() {
   Bot::IgnoreIntake = true;
   Bot::Intake.setVelocity(100, vex::percent);
   Bot::Intake.setMaxTorque(100, vex::percent);
-  Bot::Intake.spinFor(-100, vex::degrees, true);
+  Bot::Intake.spinFor(70, vex::degrees, true);
   Bot::IgnoreIntake = false;
 }
 
@@ -354,7 +383,6 @@ int main() {
   //Bot::Controller.ButtonY.pressed(cycleStartingPosistions);
   //Bot::Controller.ButtonX.pressed(Bot::swapFeedPos);
 
-  Bot::Controller.ButtonX.pressed(ToggleLadyBrown);
   Bot::Controller.ButtonY.pressed(SendBackConveyor);
   Bot::Controller.ButtonA.pressed(Bot::toggleMogo);
   Bot::Controller.ButtonB.pressed(Bot::toggleDoinker);
@@ -382,6 +410,8 @@ int main() {
 
   UISystem::setup();
   vex::task uiloop(UISystem::renderLoop);
+
+  Bot::Controller.ButtonX.pressed(ToggleLadyBrown);
 
 
   // Run the pre-autonomous function.

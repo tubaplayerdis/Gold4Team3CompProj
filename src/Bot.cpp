@@ -174,9 +174,9 @@ void Bot::setup() {
 }
 
 //FOR PID
-const double Kp = 0.6; // Proportional gain
-const double Ki = 1.2; // Integral gain
-const double Kd = 0.075; // Derivative gain
+const double Kp = KP; // Proportional gain
+const double Ki = KI; // Integral gain
+const double Kd = KD; // Derivative gain
 const double maxPower = 100; // Maximum motor power (percent)
 
 
@@ -199,7 +199,8 @@ int Bot::mainLoop() {
     {
         vex::this_thread::sleep_for(1);
 
-        if(Bot::isArmPIDActive) {
+        /*
+        if(false/*Bot::isArmPIDActive) {
         
             // Get the current position of the motor
             double currentAngle = Bot::Arm.position(vex::degrees)/4;//Divided by 4 to imitate rotation sensor on the Arm.
@@ -235,6 +236,7 @@ int Bot::mainLoop() {
                 vex::task::sleep(5);
             }
         }
+        */
 
         checkMonitors();
 
@@ -290,7 +292,7 @@ int Bot::mainLoop() {
             Notifications::NotificationList.empty();
         }
 
-        vex::this_thread::sleep_for(5);
+        vex::this_thread::sleep_for(15);
         //Add some delay for computations
     }
     Brain.Screen.setPenColor("#c96638");
@@ -347,21 +349,38 @@ void Bot::pushClutch() {
 void Bot::releaseClutch() {
     Bot::Clutch.set(false);
 }
-//use this eventually? no!
-void Bot::checkInstall() {
-    //Bot::Brain.Screen.printAt(0, 30, "Arm: %d", Bot::Arm.installed());
-    Bot::Brain.Screen.printAt(0, 50, "Intake: %d", Bot::Intake.installed());
-    Bot::Brain.Screen.printAt(0, 70, "LeftA: %d", Bot::LeftA.installed());
-    Bot::Brain.Screen.printAt(0, 90, "LeftB: %d", Bot::LeftB.installed());
-    Bot::Brain.Screen.printAt(0, 110, "LeftC: %d", Bot::LeftC.installed());
-    Bot::Brain.Screen.printAt(0, 130, "RightA: %d", Bot::RightA.installed());
-    Bot::Brain.Screen.printAt(0, 150, "RightB: %d", Bot::RightB.installed());
-    Bot::Brain.Screen.printAt(0, 170, "RightC: %d", Bot::RightC.installed());
-    Bot::Brain.Screen.printAt(0, 190, "Interial: %d", Bot::Inertial.installed());
-    Bot::Brain.Screen.printAt(0, 210, "RotationForward: %d", Bot::RotationForward.installed());
-    Bot::Brain.Screen.printAt(0, 230, "RotationLateral: %d", Bot::RotationLateral.installed());
-    Bot::Brain.Screen.printAt(0, 250, "ColorSensor: %d", Bot::ColorSensor.installed());
+
+
+void Bot::checkMonitors() {
+
+        if(LeftA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LeftA TEMP");
+        if(LeftB.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LeftB TEMP");
+        if(LeftC.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LeftC TEMP");
+        if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightA TEMP");
+        if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightB TEMP");
+        if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightC TEMP");
+        if(Intake.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("Intake TEMP");
+        if(ArmL.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("ArmL TEMP");
+        if(ArmR.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("ArmR TEMP");
+
+        if(!LeftA.installed()) Notifications::addNotification("LeftA DISCONNECT");
+        if(!LeftB.installed()) Notifications::addNotification("LeftB DISCONNECT");
+        if(!LeftC.installed()) Notifications::addNotification("LeftC DISCONNECT");
+        if(!RightA.installed()) Notifications::addNotification("RightA DISCONNECT");
+        if(!RightB.installed()) Notifications::addNotification("RightB DISCONNECT");
+        if(!RightC.installed()) Notifications::addNotification("RightC DISCONNECT");
+        if(!Intake.installed()) Notifications::addNotification("Intake DISCONNECT");
+        if(!ArmL.installed()) Notifications::addNotification("ArmL DISCONNECT");
+        if(!ArmR.installed()) Notifications::addNotification("ArmR DISCONNECT");
+        if(!RotationForward.installed()) Notifications::addNotification("RotationF DISCONNECT");
+        if(!RotationLateral.installed()) Notifications::addNotification("RotationL DISCONNECT");
+        if(!Inertial.installed()) Notifications::addNotification("Inertial DISCONNECT");
+
+        if(Brain.Battery.capacity() < 30) Notifications::addNotification("Battery 30 WARN");
+        if(Brain.Battery.capacity() < 10) Notifications::addNotification("Battery 10 REPLACE");
+
 }
+
 
 int Bot::blinkerLoop() {
     /*
@@ -529,7 +548,6 @@ void Bot::checkInstall() {
     if(Brain.Battery.capacity() < 30) Notifications::addNotification("Battery 30 WARN");
     if(Brain.Battery.capacity() < 10) Notifications::addNotification("Battery 10 REPLACE");
 }
-
 
 //Dont use this. Used by main loop
 int Bot::monitorLoop() {
