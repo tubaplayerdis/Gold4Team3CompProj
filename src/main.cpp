@@ -100,6 +100,25 @@ void autonomous(void) {
   bool isExitAiLoop = false;
 
 
+  const char* selecteduatonstring = "";
+  switch (UISystem::SelectedPosition)
+  {
+    case 0:
+        selecteduatonstring = "BLUE LEFT";
+        break;
+    case 1:
+        selecteduatonstring = "BLUE RIGHT";
+        break;
+    case 2:
+        selecteduatonstring = "RED LEFT  ";
+        break;
+    case 3:
+        selecteduatonstring = "RED RIGHT ";
+        break;
+  
+  }
+  Bot::Controller.Screen.setCursor(1,1);
+  Bot::Controller.Screen.print("RUN:  %s", selecteduatonstring);
 
 
 
@@ -148,9 +167,6 @@ void autonomous(void) {
 
     //Brain.Screen.printAt(0,50, "AI Vision Count: %d", AIVisionF.objectCount);
     vex::aivision::object pursuit = vex::aivision::object();
-
-    Bot::Controller.Screen.setCursor(1,1);
-    Bot::Controller.Screen.print("RING NUM: %f", Bot::RingsIntaken);
 
     //Bot::Drivetrain.setDriveVelocity(15, vex::percent);
     //Bot::Drivetrain.setTurnVelocity(15, vex::percent);
@@ -383,6 +399,7 @@ int main() {
   //Bot::Controller.ButtonY.pressed(cycleStartingPosistions);
   //Bot::Controller.ButtonX.pressed(Bot::swapFeedPos);
 
+  Bot::Controller.ButtonX.pressed(ToggleLadyBrown);
   Bot::Controller.ButtonY.pressed(SendBackConveyor);
   Bot::Controller.ButtonA.pressed(Bot::toggleMogo);
   Bot::Controller.ButtonB.pressed(Bot::toggleDoinker);
@@ -410,8 +427,6 @@ int main() {
 
   UISystem::setup();
   vex::task uiloop(UISystem::renderLoop);
-
-  Bot::Controller.ButtonX.pressed(ToggleLadyBrown);
 
 
   // Run the pre-autonomous function.

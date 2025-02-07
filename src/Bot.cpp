@@ -452,6 +452,11 @@ int Bot::displayLoop() {
             vex::this_thread::sleep_for(50);
             continue;
         }
+
+        if(Comp.isAutonomous()) {
+            vex::this_thread::sleep_for(50);
+            continue;
+        }
         /*
             LED
         */
@@ -463,7 +468,7 @@ int Bot::displayLoop() {
         if(Bot::feedGps, Skills::isSkillsActive()) {
             Bot::Controller.Screen.print("X:%.1f,Y:%.1f,H:%.1f", Skills::x, Skills::y, Skills::h);
         } else {
-            Bot::Controller.Screen.print("H:%.1f, APID: %d", Bot::Inertial.heading(), Bot::isArmPIDActive);
+            Bot::Controller.Screen.print("H:%.1f, BAT:%.1d", Bot::Inertial.heading(), Brain.Battery.capacity());
         }
         Bot::Controller.Screen.setCursor(3,1);
         if(Skills::isSkillsActive()) {
