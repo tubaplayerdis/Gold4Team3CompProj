@@ -160,8 +160,9 @@ void Odometry::updateOdometry() {
     /*
     if(Bot::Comp.isAutonomous() && (x < 10 || x > -10)) {
         Bot::Drivetrain.setDriveVelocity(0, vex::percent);
-        Bot::Drivetrain.setTurnVelocity(0, vex::percent);
+        Bot::Drivetrain.setTurnVelocity(100, vex::percent);
         Bot::Drivetrain.stop();
+        Bot::Drivetrain.turnFor(180, vex::degrees, true);
         Notifications::addNotification("AUTON OVERRIDE OUT");
     }
     */
