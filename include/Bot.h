@@ -97,6 +97,7 @@ class Bot {
         static vex::rotation RotationForward; //Forward
         static vex::rotation RotationLateral; //Lateral
         static vex::optical ColorSensor;
+        static vex::distance DistanceF;
         static aliance Aliance;
 
         //AI

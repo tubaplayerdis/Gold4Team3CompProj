@@ -38,6 +38,7 @@ vex::inertial Bot::Inertial = vex::inertial(vex::PORT11);
 vex::rotation Bot::RotationForward = vex::rotation(vex::PORT12); //Forwards
 vex::rotation Bot::RotationLateral = vex::rotation(vex::PORT13);; //Lateral
 vex::optical Bot::ColorSensor = vex::optical(vex::PORT14);
+vex::distance Bot::DistanceF = vex::distance(vex::PORT10);
 aliance Bot::Aliance = aliance::Blue;
 
 // AI Vision Color Descriptions
