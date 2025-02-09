@@ -469,7 +469,7 @@ int Bot::displayLoop() {
         if(Bot::feedGps, Skills::isSkillsActive()) {
             Bot::Controller.Screen.print("X:%.1f,Y:%.1f,H:%.1f", Skills::x, Skills::y, Skills::h);
         } else {
-            Bot::Controller.Screen.print("H:%.1f, BAT:%.1d", Bot::Inertial.heading(), Brain.Battery.capacity());
+            Bot::Controller.Screen.print("H:%.1f, DIS:%.1f", Bot::Inertial.heading(), DistanceF.objectDistance(vex::mm));
         }
         Bot::Controller.Screen.setCursor(3,1);
         if(Skills::isSkillsActive()) {
@@ -499,7 +499,7 @@ int Bot::displayLoop() {
             continue;
         }
         
-        if(!Notifications::isNotifying) {
+        if(!Notifications::isNotifying && !Comp.isAutonomous()) {
             Bot::Controller.Screen.setCursor(2,1);
             Bot::Controller.Screen.clearLine(2);
             Bot::Controller.Screen.print("%02d:", Notifications::notifIndex);

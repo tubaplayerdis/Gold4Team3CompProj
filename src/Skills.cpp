@@ -141,7 +141,7 @@ int SkillsEngine::_worker() {
             }
         }
         if(allComplete) {
-            Bot::controllerNotification("SKILLS COMPLETE");
+            if(!Bot::Comp.isAutonomous())  Bot::controllerNotification("SKILLS COMPLETE");
             break;
         }
     }

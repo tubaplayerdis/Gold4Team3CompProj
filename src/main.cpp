@@ -58,6 +58,7 @@ void pre_auton(void) {
   Bot::AIVisionF.modelDetection(false);
   Bot::AIVisionF.colorDetection(true);
   Bot::AIVisionF.startAwb();
+  ColorDetection::isEnabled = false; //Current Optical sensor literaly sees red
   //Preload
   Bot::RingsIntaken = 1;
   
@@ -89,7 +90,9 @@ int capPercentage(int percentage, int cap) {
 
 
 #define ABANDON_ITEM_WIDTH_THRESHOLD 100
-#define RING_INTAKEN_WIDTH_THRESHOLD 300
+#define RING_INTAKEN_WIDTH_THRESHOLD 180 //2/3 of the screen
+
+#define BOT_SLOWDOWN_DISTANCE 200
 
 #define MAX_OBJ_TO_TRACK 3 //Cannot be larger than 8
 
@@ -97,7 +100,7 @@ void autonomous(void) {
   //Bot::AIVisionF.startAwb();
 
   Bot::IgnoreDisplay = true;
-  bool isExitAiLoop = false;
+  bool isExitAiLoop = false; //shared
 
 
   const char* selecteduatonstring = "";
@@ -117,38 +120,56 @@ void autonomous(void) {
         break;
   
   }
+
+  
+  Bot::IgnoreDisplay = true; 
+  Bot::Controller.Screen.clearScreen();
+
   Bot::Controller.Screen.setCursor(1,1);
   Bot::Controller.Screen.print("RUN:  %s", selecteduatonstring);
 
+  
 
+  //drive full speed till 100mm
+  Bot::Drivetrain.setDriveVelocity(35, percent);
+  while(Bot::DistanceF.objectDistance(vex::mm) > BOT_SLOWDOWN_DISTANCE) {
+    Bot::Drivetrain.drive(vex::forward);
+  }
 
-  //Motor Through the Getting the goal
+  Bot::Controller.Screen.setCursor(2,1);
+  Bot::Controller.Screen.print("SLOWING!");
 
-  /*
-  Bot::isArmPIDActive = false;
-  Bot::Drivetrain.setDriveVelocity(20, vex::percent);
-  Bot::Drivetrain.driveFor(910, vex::mm, true);
-  Bot::Drivetrain.setStopping(vex::coast);
+  //Slow down and drive for another 100mm
+  Bot::Drivetrain.setDriveVelocity(20, percent);
+  Bot::Drivetrain.drive(vex::forward);
+  vex::this_thread::sleep_for(700);
+  Bot::MogoToggle = true;
   Bot::MogoMech.set(true);
-  Bot::Arm.setVelocity(100,vex::percent);
-  Bot::Arm.spinTo(-160, vex::degrees);
+  vex::this_thread::sleep_for(200);
+  Bot::Drivetrain.stop();
+
+  Bot::Controller.Screen.clearLine(2);
+  Bot::Controller.Screen.setCursor(2,1);
+  Bot::Controller.Screen.print("STARTING API:A");
+  
+  //Turn to face ring
+  Bot::Drivetrain.setTurnVelocity(5, vex::percent);
+  Bot::Drivetrain.turnFor(80, vex::degrees, true); 
+
   Bot::Intake.setVelocity(600, vex::rpm);
-  Bot::Intake.spinFor(0.1, vex::seconds);
-  */
+  Bot::Intake.spin(vex::forward);
 
-  //Bot::Drivetrain.driveFor(10, vex::mm, true);
+  Bot::IgnoreDisplay = true;
+  
 
-
+  #pragma region PAIA
   while (true)
   {
-    Bot::IgnoreDisplay = true;
-
-    if(Bot::RingsIntaken >= 6) {
-      //Full mobile goal
+    if(isExitAiLoop) {
+      isExitAiLoop = true;
       break;
     }
 
-    if(isExitAiLoop) break;
 
     Bot::Controller.Screen.clearScreen();
 
@@ -159,11 +180,6 @@ void autonomous(void) {
       //red
       Bot::AIVisionF.takeSnapshot(Bot::REDDESJ, MAX_OBJ_TO_TRACK);
     }
-
-    vex::timer snpashotTimer;
-    snpashotTimer.reset();
-    Bot::Controller.Screen.setCursor(3,1);
-    Bot::Controller.Screen.print("%02d", snpashotTimer.value());
 
     //Brain.Screen.printAt(0,50, "AI Vision Count: %d", AIVisionF.objectCount);
     vex::aivision::object pursuit = vex::aivision::object();
@@ -199,7 +215,6 @@ void autonomous(void) {
     vex::this_thread::sleep_for(10);
 
     Bot::Controller.Screen.clearScreen();
-
 
     while (true)
     {
@@ -255,10 +270,12 @@ void autonomous(void) {
           //Bot::Drivetrain.stop();
           isTurningtoDriving = false;
         } //Stop turning
-        if(pursuit.width >= RING_INTAKEN_WIDTH_THRESHOLD) {
+        if(pursuit.width >= 150) {
           Bot::Controller.Screen.setCursor(2,1);
-          Bot::Controller.Screen.print("ENDING  ");
-          Bot::Drivetrain.stop();
+          Bot::Controller.Screen.clearLine(2);
+          Bot::Controller.Screen.print("INTAKING");
+          Bot::Drivetrain.setDriveVelocity(35, vex::percent);
+          Bot::Drivetrain.driveFor(-300, vex::mm, true);
           isExitAiLoop = true;
           break;
         }    
@@ -270,6 +287,143 @@ void autonomous(void) {
       
     }
   }
+  #pragma endregion PAIA
+  //Got First Ring
+  isExitAiLoop = false; 
+
+  Bot::Drivetrain.turnFor(-140, vex::degrees, true);
+
+  
+
+  #pragma region PAIB
+
+  while (true)
+  {
+    if(isExitAiLoop) {
+      isExitAiLoop = true;
+      break;
+    }
+
+
+    Bot::Controller.Screen.clearScreen();
+
+    //Defualt blue
+    if(Bot::Aliance == Blue) {
+      Bot::AIVisionF.takeSnapshot(Bot::BLUEDESJ, MAX_OBJ_TO_TRACK);
+    } else {
+      //red
+      Bot::AIVisionF.takeSnapshot(Bot::REDDESJ, MAX_OBJ_TO_TRACK);
+    }
+
+    //Brain.Screen.printAt(0,50, "AI Vision Count: %d", AIVisionF.objectCount);
+    vex::aivision::object pursuit = vex::aivision::object();
+
+    //Bot::Drivetrain.setDriveVelocity(15, vex::percent);
+    //Bot::Drivetrain.setTurnVelocity(15, vex::percent);
+
+
+    if(Bot::AIVisionF.objectCount == 0) {
+      Bot::Controller.Screen.setCursor(2,1);
+      Bot::Controller.Screen.print("SEARCHING  ");
+      vex::this_thread::sleep_for(20);
+      continue;
+    }
+
+    //Something was found
+
+    Bot::LeftMotors.stop();
+    Bot::RightMotors.stop();
+
+    //The AI Vision Sensor has a resolution of 320 x 240 pixels.
+
+    //Turning to face
+    Bot::Controller.Screen.setCursor(2,1);
+    Bot::Controller.Screen.print("PURSUIT  ");
+    //Bot::Drivetrain.setDriveVelocity(35, vex::percent);
+    //Bot::Drivetrain.setTurnVelocity(5, vex::percent);
+
+    Bot::LeftMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
+    Bot::RightMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
+    Bot::LeftMotors.spin(vex::forward);
+    Bot::RightMotors.spin(vex::forward);
+    vex::this_thread::sleep_for(10);
+
+    Bot::Controller.Screen.clearScreen();
+
+    while (true)
+    {
+      //vex::this_thread::sleep_for(1000);
+
+      //vex::this_thread::sleep_for(10);
+      if(Bot::Aliance == Blue) {
+        Bot::AIVisionF.takeSnapshot(Bot::BLUEDESJ, MAX_OBJ_TO_TRACK);
+      } else {
+        //red
+        Bot::AIVisionF.takeSnapshot(Bot::REDDESJ, MAX_OBJ_TO_TRACK);
+      }
+    
+
+      if(Bot::AIVisionF.objectCount == 0) {
+        //Lost Ring
+        Bot::Drivetrain.stop();
+        break;
+      }
+
+
+      pursuit = Bot::AIVisionF.objects[0];
+      for (size_t i = 0; i < 3; i++)
+      {
+        if(Bot::AIVisionF.objects[i].width > pursuit.width) pursuit = Bot::AIVisionF.objects[i];
+      }
+      
+
+      bool isTurningtoDriving = false;
+      //Center of screen is 160,160.
+
+      if(Bot::LeftMotors.velocity(vex::percent) > APPROACH_VELOCITY_PERCENT) Bot::LeftMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
+      if(Bot::RightMotors.velocity(vex::percent) > APPROACH_VELOCITY_PERCENT) Bot::RightMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
+
+
+      Bot::Controller.Screen.setCursor(3,1);
+      Bot::Controller.Screen.print("LV :%.2f  RV: %.2f    ", Bot::LeftMotors.velocity(vex::percent), Bot::RightMotors.velocity(vex::percent));
+      
+      
+
+      if(pursuit.originX + pursuit.width < 160) {
+        Bot::LeftMotors.spin(vex::forward);
+        Bot::LeftMotors.setVelocity(Bot::LeftMotors.velocity(vex::percent)-LINEAR_CHANGE_VELOCITY_CORRECTION, vex::percent);
+        continue;
+      } else if (pursuit.originX > 160) {
+        Bot::RightMotors.spin(vex::forward);
+        Bot::RightMotors.setVelocity(Bot::RightMotors.velocity(vex::percent)-LINEAR_CHANGE_VELOCITY_CORRECTION, vex::percent);
+        continue;
+      } else {   
+        Bot::LeftMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
+        Bot::RightMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
+        if(isTurningtoDriving) {
+          //Bot::Drivetrain.stop();
+          isTurningtoDriving = false;
+        } //Stop turning
+        if(pursuit.width >= 180) {
+          Bot::Controller.Screen.setCursor(2,1);
+          Bot::Controller.Screen.clearLine(2);
+          Bot::Controller.Screen.print("INTAKING");
+          Bot::Drivetrain.setDriveVelocity(35, vex::percent);
+          Bot::Drivetrain.driveFor(-300, vex::mm, true);
+          isExitAiLoop = true;
+          break;
+        }    
+
+        
+          
+      }
+
+      
+    }
+  }
+
+
+  #pragma endregion
 
   //Drive to corner and throw mobile goal in
   
