@@ -564,9 +564,7 @@ void autonomous(void) {
   #pragma endregion
 
   Bot::Drivetrain.setDriveVelocity(35, percent);
-  Bot::Drivetrain.drive(reverse);
-  vex::this_thread::sleep_for(1000);
-  Bot::Drivetrain.turnFor(-80, vex::degrees, true);
+  Bot::Drivetrain.turnToHeading(270, vex::rotationUnits::deg, true);
 
   #pragma region PAID
 
