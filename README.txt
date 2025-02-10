@@ -16,3 +16,11 @@ CONTROLS:
     Down - Color Sort Toggle
     Left - Cycle Notification Backward
     Right - Cycle Notifications Forward
+
+
+FEATURES:
+
+    custom gui library (vexui)
+    notification system
+    STJS (Skills task json system) [Not currently used]
+    Adaptable AI Vision sensor follow algorithm
