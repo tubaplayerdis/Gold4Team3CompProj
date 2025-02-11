@@ -58,7 +58,7 @@ void pre_auton(void) {
   Bot::AIVisionF.modelDetection(false);
   Bot::AIVisionF.colorDetection(true);
   Bot::AIVisionF.startAwb();
-  ColorDetection::isEnabled = false; //Current Optical sensor literaly sees red
+  ColorDetection::isEnabled = true;
   //Preload
   Bot::RingsIntaken = 1;
   
