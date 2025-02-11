@@ -4,7 +4,7 @@
 bool ColorDetection::isEnabled = false;
 
 int ColorDetection::visionTask() {
-    Bot::ColorSensor.setLightPower(25, vex::percent);
+    Bot::ColorSensor.setLightPower(50, vex::percent);
     while(true)
     {
         if(!Bot::ColorSensor.installed()) isEnabled = false;
@@ -21,11 +21,15 @@ int ColorDetection::visionTask() {
             //Blue Ring Detected
             if(Bot::Aliance != aliance::Blue) {
                 Bot::IgnoreIntake = true;
-                Bot::Intake.setStopping(vex::brakeType::hold);
                 Bot::Intake.stop();
-                vex::this_thread::sleep_for(80);
-                Bot::Intake.setStopping(vex::brakeType::coast);
+                vex::this_thread::sleep_for(30);
+                if(Bot::Comp.isAutonomous()) {
+                    Bot::Intake.setMaxTorque(100, vex::percent);
+                    Bot::Intake.setVelocity(100, vex::percent);
+                    Bot::Intake.spin(vex::forward);
+                }
                 Bot::IgnoreIntake = false;
+                //vex::this_thread::sleep_for(200);
             }
         } else if( GV < RED_HUE_HIGH && GV > RED_HUE_LOW) {
             //Red Ring
@@ -34,11 +38,15 @@ int ColorDetection::visionTask() {
             //Red Ring Detected
             if(Bot::Aliance != aliance::Red) {
                 Bot::IgnoreIntake = true;
-                Bot::Intake.setStopping(vex::brakeType::hold);
                 Bot::Intake.stop();
-                vex::this_thread::sleep_for(80);
-                Bot::Intake.setStopping(vex::brakeType::coast);
+                vex::this_thread::sleep_for(30);
+                if(Bot::Comp.isAutonomous()) {
+                    Bot::Intake.setMaxTorque(100, vex::percent);
+                    Bot::Intake.setVelocity(100, vex::percent);
+                    Bot::Intake.spin(vex::forward);
+                }
                 Bot::IgnoreIntake = false;
+                //vex::this_thread::sleep_for(200);
             }
         }
         

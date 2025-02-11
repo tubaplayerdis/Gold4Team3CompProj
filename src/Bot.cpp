@@ -30,6 +30,7 @@ int Bot::desiredARMAngle = LADYBROWN_DESIRED_ANGLE;
 vex::digital_out Bot::MogoMech = vex::digital_out(Bot::Brain.ThreeWirePort.A);
 vex::digital_out Bot::Clutch = vex::digital_out(Bot::Brain.ThreeWirePort.B);
 vex::digital_out Bot::Doinker = vex::digital_out(Bot::Brain.ThreeWirePort.C);
+vex::digital_out Bot::Lift = vex::digital_out(Bot::Brain.ThreeWirePort.E);
 
 vex::limit Bot::RingCounter = vex::limit(Bot::Brain.ThreeWirePort.D);
 int Bot::RingsIntaken = 0;
@@ -96,6 +97,7 @@ int Bot::NumDevices = 0;
 bool Bot::ClutchToggle = false;
 bool Bot::MogoToggle = true;
 bool Bot::DoinkerToggle = false;
+bool Bot::LiftToggle = false;
 
 void Bot::swapFeedPos() {
     feedGps = !feedGps;
@@ -316,6 +318,11 @@ void Bot::toggleMogo() {
 void Bot::toggleDoinker() {
     DoinkerToggle = !DoinkerToggle;
     Doinker.set(DoinkerToggle);
+}
+
+void Bot::toggleLift() {
+    LiftToggle = !LiftToggle;
+    Lift.set(LiftToggle);
 }
 
 void Bot::switchAlliance() {

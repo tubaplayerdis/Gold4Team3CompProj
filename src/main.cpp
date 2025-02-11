@@ -154,7 +154,7 @@ void autonomous(void) {
   
   //Turn to face ring
   Bot::Drivetrain.setTurnVelocity(5, vex::percent);
-  Bot::Drivetrain.turnFor(-45, vex::degrees, true); 
+  Bot::Drivetrain.turnToHeading(310, vex::degrees, true);
 
   Bot::Intake.setMaxTorque(100, vex::percent);
   Bot::Intake.setVelocity(600, vex::rpm);
@@ -271,10 +271,12 @@ void autonomous(void) {
           //Bot::Drivetrain.stop();
           isTurningtoDriving = false;
         } //Stop turning
-        if(pursuit.width >= 150) {
+        if(pursuit.width >= 140) {
           Bot::Controller.Screen.setCursor(2,1);
           Bot::Controller.Screen.clearLine(2);
           Bot::Controller.Screen.print("INTAKING");
+          Bot::LiftToggle = true;
+          Bot::Lift.set(true);
           Bot::Drivetrain.setDriveVelocity(35, vex::percent);
           Bot::Drivetrain.driveFor(-300, vex::mm, true);
           isExitAiLoop = true;
@@ -292,7 +294,10 @@ void autonomous(void) {
   //Got First Ring
   isExitAiLoop = false; 
 
-  Bot::Drivetrain.turnFor(170, vex::degrees, true);
+  Bot::LiftToggle = false;
+  Bot::Lift.set(false);
+  vex::this_thread::sleep_for(200);
+  Bot::Drivetrain.turnToHeading(114, vex::degrees, true);
 
   #pragma region PAIB
 
@@ -543,12 +548,10 @@ void autonomous(void) {
           //Bot::Drivetrain.stop();
           isTurningtoDriving = false;
         } //Stop turning
-        if(pursuit.width >= 140) {
+        if(pursuit.width >= 180) {
           Bot::Controller.Screen.setCursor(2,1);
           Bot::Controller.Screen.clearLine(2);
           Bot::Controller.Screen.print("DOINKING");
-          Bot::Drivetrain.setDriveVelocity(35, vex::percent);
-          Bot::Drivetrain.driveFor(-300, vex::mm, true);
           isExitAiLoop = true;
           break;
         }    
@@ -563,7 +566,7 @@ void autonomous(void) {
 
   #pragma endregion
 
-  Bot::Drivetrain.setDriveVelocity(35, percent);
+  Bot::Drivetrain.setTurnVelocity(35, percent);
   Bot::Drivetrain.turnToHeading(270, vex::rotationUnits::deg, true);
 
   #pragma region PAID
@@ -823,7 +826,7 @@ int main() {
   //Bot::Controller.ButtonX.pressed(Bot::swapFeedPos);
 
   Bot::Controller.ButtonX.pressed(ToggleLadyBrown);
-  Bot::Controller.ButtonY.pressed(SendBackConveyor);
+  Bot::Controller.ButtonY.pressed(Bot::toggleLift);
   Bot::Controller.ButtonA.pressed(Bot::toggleMogo);
   Bot::Controller.ButtonB.pressed(Bot::toggleDoinker);
 

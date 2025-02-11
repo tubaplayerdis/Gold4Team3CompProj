@@ -89,6 +89,7 @@ class Bot {
         static vex::digital_out MogoMech;
         static vex::digital_out Clutch;
         static vex::digital_out Doinker;
+        static vex::digital_out Lift;
         static vex::limit RingCounter;
         static int RingsIntaken;
 
@@ -149,10 +150,11 @@ class Bot {
         //Main Loop Function use at task
         static int mainLoop();
         //"tasks"
-        static bool ClutchToggle, MogoToggle, DoinkerToggle;
+        static bool ClutchToggle, MogoToggle, DoinkerToggle, LiftToggle;
         static void toggleClutch();
         static void toggleMogo();
         static void toggleDoinker();
+        static void toggleLift();
         static void switchAlliance();
         static void clampMobileGoal();
         static void releaseMobileGoal();

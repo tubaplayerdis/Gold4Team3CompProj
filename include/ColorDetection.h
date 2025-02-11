@@ -17,7 +17,7 @@
 #define BLUE_HUE_HIGH 240
 
 #define RED_HUE_LOW 0
-#define RED_HUE_HIGH 30
+#define RED_HUE_HIGH 20
 
 
 //For Throwing:

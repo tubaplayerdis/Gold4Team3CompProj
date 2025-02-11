@@ -1,11 +1,39 @@
+/*
 #include "ProxyController.h"
 #include "vex.h"
 #include "fstream"
 #include "string"
 #include "vector"
 
+PlaybackState getControllerStates() {
+    PlaybackState temp;
+    temp.Axis1 = vexControllerGet(kControllerMaster, V5_ControllerIndex::Axis1);
+    temp.Axis2 = vexControllerGet(kControllerMaster, V5_ControllerIndex::Axis2);
+    temp.Axis3 = vexControllerGet(kControllerMaster, V5_ControllerIndex::Axis1);
+    temp.Axis4 = vexControllerGet(kControllerMaster, V5_ControllerIndex::Axis3);
+    temp.ButtonA = vexControllerGet(kControllerMaster, V5_ControllerIndex::ButtonA);
+    temp.ButtonB = vexControllerGet(kControllerMaster, V5_ControllerIndex::ButtonB);
+    temp.ButtonX = vexControllerGet(kControllerMaster, V5_ControllerIndex::ButtonX);
+    temp.ButtonY = vexControllerGet(kControllerMaster, V5_ControllerIndex::ButtonY);
+    temp.ButtonUp = vexControllerGet(kControllerMaster, V5_ControllerIndex::ButtonUp);
+    temp.ButtonDown = vexControllerGet(kControllerMaster, V5_ControllerIndex::ButtonDown);
+    temp.ButtonLeft = vexControllerGet(kControllerMaster, V5_ControllerIndex::ButtonLeft);
+    temp.ButtonRight = vexControllerGet(kControllerMaster, V5_ControllerIndex::ButtonRight);
+    temp.ButtonL1 = vexControllerGet(kControllerMaster, V5_ControllerIndex::ButtonL1);
+    temp.ButtonL2 = vexControllerGet(kControllerMaster, V5_ControllerIndex::ButtonL2);
+    temp.ButtonR1 = vexControllerGet(kControllerMaster, V5_ControllerIndex::ButtonR1);
+    temp.ButtonR2 = vexControllerGet(kControllerMaster, V5_ControllerIndex::ButtonR2);
+    return temp;
+}
+
+bool isPlaybackStateEmpty(PlaybackState state) {
+    if(state.Axis1 == (signed char)-127) return true;
+    return false;
+}
+
 int ProxyController::_workerFunction() {
     while(1) {
+        vex::this_thread::sleep_for(10);
         switch (ProxyController::status)
         {
             case IDLE:
@@ -13,9 +41,12 @@ int ProxyController::_workerFunction() {
                 break;
         
             case RECORD: {
-                for(unsigned short i; i < MAXIMUM_PLAYBACKS; i++) {
-                    PlaybackState temp;
-                    //For some reason I though only storing if 1 button press at a time was okay.
+                if(vexControllerConnectionStatusGet(kControllerMaster) == kV5ControllerOffline) continue;
+                for(unsigned short i; i < MAXIMUM_PLAYBACKS; i+=quality) {
+                    currentTime = i;
+                    PlaybackState state = getControllerStates();
+                    playback[i] = state;
+                    vex::this_thread::sleep_for(quality);
                 }
             }
 
@@ -30,13 +61,28 @@ int ProxyController::_workerFunction() {
 ProxyControllerStatus ProxyController::status = IDLE;
 vex::task ProxyController::worker = vex::task(ProxyController::_workerFunction);
 std::string ProxyController::file = "";
+unsigned char ProxyController::quality = 1;
+unsigned short ProxyController::currentTime = 0;
 
 void ProxyController::Initalize(std::string filename) {
     file = filename;
-}
-
-int ProxyController::recordAndWrite(double quality) {
-    for(unsigned short i; i < MAXIMUM_PLAYBACKS; i++) {
-
+    for(int i = 0; i < MAXIMUM_PLAYBACKS_WBUFFER; i++) {
+        PlaybackState non;
+        non.Axis1 = -127; //custom value to check if invalid. -127 is out of the domain of the controller axies.
+        playback[i] = non;
     }
 }
+
+int ProxyController::recordAndWrite(double quality_) {
+    if(vexControllerConnectionStatusGet(kControllerMaster) == kV5ControllerOffline) return;
+    quality = 101-quality_;
+    if(quality > 100 ) quality = 100;
+    if(quality < 1) quality = 1;
+    status = RECORD;
+    return 0;
+}
+
+int ProxyController::play() {
+
+}
+*/
