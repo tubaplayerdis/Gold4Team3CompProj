@@ -1,4 +1,3 @@
-/*
 #include "vex.h"
 #include "fstream"
 #include "string"
@@ -30,26 +29,11 @@ Total: 715,100 bytes
 TOTAL IN MB: 0.7101mb ~~ 0.8 MB.
 ----------------------------------------------------------
 That is infact, memory efficency 
-
+*/
 
 
 #define MAXIMUM_PLAYBACKS 65000
 #define MAXIMUM_PLAYBACKS_WBUFFER 65000 + 500
-
-enum ButtonKeycode : unsigned char {
-    ButtonA,
-    ButtonB,
-    ButtonX,
-    ButtonY,
-    ButtonUp,
-    ButtonDown,
-    ButtonLeft,
-    ButtonRight,
-    ButtonL1,
-    ButtonL2,
-    ButtonR1,
-    ButtonR2
-};
 
 enum ButtonEventType : bool {
     PRESSED,
@@ -82,22 +66,27 @@ enum ProxyControllerStatus {
     PLAY
 };
 
-struct Button {
-    ButtonKeycode code;
-    void (* pressedCallBack)(void);
-    void (* releasedCallBack)(void);
+class Button {
+    private:
+        _V5_ControllerIndex code;
+        void (* pressedCallBack)(void);
+        void  (* releasedCallBack)(void);
+        vex::thread pressedTask;
+        vex::thread releasedTask;
 
-    void pressed(void (* CallBack)(void)) {
-        pressedCallBack = CallBack;
-    }
+    protected:
+        bool isRegistered(bool por);
+        bool isRunning(bool por);
 
-    void released(void (* CallBack)(void)) {
-        releasedCallBack = CallBack;
-    }
+    public:
+        Button(_V5_ControllerIndex keycode);
 
-    bool pressing() {
-        return true;//ProxyController::playback[ProxyController::currentTime].
-    }
+        void pressed(void (* CallBack)(void));
+
+        void released(void (* CallBack)(void));
+
+        bool pressing();
+
 };
 
 class ProxyController {
@@ -117,8 +106,11 @@ class ProxyController {
         static void Initalize(std::string filename);
 
         static int recordAndWrite(double quality);//0-100 for quality. will be converted to real quality before flipping to record.
-        static int play(/*add a v5 controller to imitate?);
+        static int play(/*add a v5 controller to imitate?*/);
+
+
+        
 
 };
 
-*/
+

@@ -1,9 +1,88 @@
-/*
 #include "ProxyController.h"
 #include "vex.h"
 #include "fstream"
 #include "string"
 #include "vector"
+
+Button::Button(_V5_ControllerIndex keycode) {
+    code = keycode;
+    pressedCallBack = nullptr;
+    releasedCallBack = nullptr;
+    pressedTask = vex::thread();
+    releasedTask = vex::thread();
+}
+
+void Button::pressed(void (* CallBack)(void)) {
+    pressedCallBack = CallBack;
+    //pressedTask = vex::thread(pressedCallBack);
+}
+
+void Button::released(void (* CallBack)(void)) {
+    releasedCallBack = CallBack;
+    //pressedTask = vex::thread(pressedCallBack);
+}
+
+bool Button::pressing() {
+    switch (code)
+        {
+            case ButtonA:
+                return ProxyController::playback[ProxyController::currentTime].ButtonA;
+
+            case ButtonB:
+                return ProxyController::playback[ProxyController::currentTime].ButtonB;
+
+            case ButtonX:
+                return ProxyController::playback[ProxyController::currentTime].ButtonX;
+
+            case ButtonY:
+                return ProxyController::playback[ProxyController::currentTime].ButtonY;
+
+            case ButtonUp:
+                return ProxyController::playback[ProxyController::currentTime].ButtonUp;
+
+            case ButtonDown:
+                return ProxyController::playback[ProxyController::currentTime].ButtonDown;
+
+            case ButtonLeft:
+                return ProxyController::playback[ProxyController::currentTime].ButtonLeft;
+
+            case ButtonRight:
+                return ProxyController::playback[ProxyController::currentTime].ButtonRight;
+
+            case ButtonR1:
+                return ProxyController::playback[ProxyController::currentTime].ButtonR1;
+
+            case ButtonR2:
+                return ProxyController::playback[ProxyController::currentTime].ButtonR2;
+
+            case ButtonL1:
+                return ProxyController::playback[ProxyController::currentTime].ButtonL1;
+
+            case ButtonL2:
+                return ProxyController::playback[ProxyController::currentTime].ButtonL2;
+            
+            default:
+                return false; 
+        }
+}
+
+bool Button::isRegistered(bool por) {
+    if(por) {
+        return (pressedCallBack == nullptr) ? false : true;
+    } else {
+        return (releasedCallBack == nullptr) ? false : true;
+    }
+}
+
+bool Button::isRunning(bool por) {
+    if(por) {
+        if(!isRegistered(por)) return false;
+
+    } else {
+        if(!isRegistered(por)) return false;
+    }
+    return false;
+}
 
 PlaybackState getControllerStates() {
     PlaybackState temp;
@@ -31,6 +110,8 @@ bool isPlaybackStateEmpty(PlaybackState state) {
     return false;
 }
 
+  
+
 int ProxyController::_workerFunction() {
     while(1) {
         vex::this_thread::sleep_for(10);
@@ -45,7 +126,7 @@ int ProxyController::_workerFunction() {
                 for(unsigned short i; i < MAXIMUM_PLAYBACKS; i+=quality) {
                     currentTime = i;
                     PlaybackState state = getControllerStates();
-                    playback[i] = state;
+                    ProxyController::playback[i] = state;
                     vex::this_thread::sleep_for(quality);
                 }
             }
@@ -63,6 +144,7 @@ vex::task ProxyController::worker = vex::task(ProxyController::_workerFunction);
 std::string ProxyController::file = "";
 unsigned char ProxyController::quality = 1;
 unsigned short ProxyController::currentTime = 0;
+PlaybackState ProxyController::playback[MAXIMUM_PLAYBACKS_WBUFFER] = {};
 
 void ProxyController::Initalize(std::string filename) {
     file = filename;
@@ -74,7 +156,7 @@ void ProxyController::Initalize(std::string filename) {
 }
 
 int ProxyController::recordAndWrite(double quality_) {
-    if(vexControllerConnectionStatusGet(kControllerMaster) == kV5ControllerOffline) return;
+    if(vexControllerConnectionStatusGet(kControllerMaster) == kV5ControllerOffline) return 1;
     quality = 101-quality_;
     if(quality > 100 ) quality = 100;
     if(quality < 1) quality = 1;
@@ -83,6 +165,5 @@ int ProxyController::recordAndWrite(double quality_) {
 }
 
 int ProxyController::play() {
-
+    return 0;
 }
-*/
