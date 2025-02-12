@@ -29,16 +29,12 @@ Total: 715,100 bytes
 TOTAL IN MB: 0.7101mb ~~ 0.8 MB.
 ----------------------------------------------------------
 That is infact, memory efficency 
+1% of memory usage of the c++ enviroment
 */
 
 
 #define MAXIMUM_PLAYBACKS 65000
 #define MAXIMUM_PLAYBACKS_WBUFFER 65000 + 500
-
-enum ButtonEventType : bool {
-    PRESSED,
-    RELEASED
-};
 
 struct PlaybackState { // 20 bytes
     unsigned short time; //Skills matches are only 60 seconds (60,000) milliseconds long. 65,535 is the maximum value of a unsigned short, therefore the therorietical limit is 65.535 seconds of playback. Will be capped at 65.
@@ -71,8 +67,11 @@ class Button {
         _V5_ControllerIndex code;
         void (* pressedCallBack)(void);
         void  (* releasedCallBack)(void);
-        vex::thread pressedTask;
-        vex::thread releasedTask;
+        vex::event pressedTask;
+        vex::event releasedTask;
+
+        void _pressedWorker();
+        void _releasedWorker();
 
     protected:
         bool isRegistered(bool por);

@@ -8,18 +8,18 @@ Button::Button(_V5_ControllerIndex keycode) {
     code = keycode;
     pressedCallBack = nullptr;
     releasedCallBack = nullptr;
-    pressedTask = vex::thread();
-    releasedTask = vex::thread();
+    pressedTask = vex::event();
+    releasedTask = vex::event();
 }
 
 void Button::pressed(void (* CallBack)(void)) {
     pressedCallBack = CallBack;
-    //pressedTask = vex::thread(pressedCallBack);
+    pressedTask.set(pressedCallBack);
 }
 
 void Button::released(void (* CallBack)(void)) {
     releasedCallBack = CallBack;
-    //pressedTask = vex::thread(pressedCallBack);
+    releasedTask.set(pressedCallBack);
 }
 
 bool Button::pressing() {
