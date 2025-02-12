@@ -67,6 +67,10 @@ void pre_auton(void) {
   // Example: clearing encoders, setting servo positions, ...
 }
 
+void turnForEnhanced(double amount) {
+  Bot::Drivetrain.turnToHeading(amount + Bot::Inertial.heading(), vex::degrees, true);
+}
+
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*                              Autonomous Task                              */
@@ -271,14 +275,15 @@ void autonomous(void) {
           //Bot::Drivetrain.stop();
           isTurningtoDriving = false;
         } //Stop turning
-        if(pursuit.width >= 140) {
+        if(pursuit.width >= 130) {
           Bot::Controller.Screen.setCursor(2,1);
           Bot::Controller.Screen.clearLine(2);
           Bot::Controller.Screen.print("INTAKING");
           Bot::LiftToggle = true;
           Bot::Lift.set(true);
-          Bot::Drivetrain.setDriveVelocity(35, vex::percent);
-          Bot::Drivetrain.driveFor(-300, vex::mm, true);
+          Bot::Drivetrain.setDriveVelocity(5, vex::percent);
+          Bot::Drivetrain.driveFor(-200, vex::mm, true);
+          Bot::Drivetrain.driveFor(300, vex::mm, true);
           isExitAiLoop = true;
           break;
         }    
@@ -297,7 +302,7 @@ void autonomous(void) {
   Bot::LiftToggle = false;
   Bot::Lift.set(false);
   vex::this_thread::sleep_for(200);
-  Bot::Drivetrain.turnToHeading(114, vex::degrees, true);
+  Bot::Drivetrain.turnToHeading(120, vex::degrees, true);
 
   #pragma region PAIB
 
@@ -417,7 +422,7 @@ void autonomous(void) {
           Bot::Controller.Screen.clearLine(2);
           Bot::Controller.Screen.print("INTAKING");
           Bot::Drivetrain.setDriveVelocity(35, vex::percent);
-          Bot::Drivetrain.driveFor(-300, vex::mm, true);
+          Bot::Drivetrain.driveFor(-500, vex::mm, true);
           isExitAiLoop = true;
           break;
         }    
@@ -567,7 +572,7 @@ void autonomous(void) {
   #pragma endregion
 
   Bot::Drivetrain.setTurnVelocity(35, percent);
-  Bot::Drivetrain.turnToHeading(270, vex::rotationUnits::deg, true);
+  Bot::Drivetrain.turnToHeading(240, vex::rotationUnits::deg, true);
 
   #pragma region PAID
 
