@@ -487,6 +487,7 @@ void autonomous(void) {
 
   isExitAiLoop = false;
   vex::this_thread::sleep_for(300);//allow ring to not be heaved off bot during turn
+  Bot::Drivetrain.setTurnVelocity(15, vex::percent);
   turnForAccounting(-100);
   Bot::DoinkerToggle = true;
   Bot::Doinker.set(true);
