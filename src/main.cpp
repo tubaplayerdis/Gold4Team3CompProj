@@ -148,7 +148,7 @@ void autonomous(void) {
   const char* selecteduatonstring = "";
   //Force red auton.
   //UISystem::SelectedPosition = 2;
-  Bot::Inertial.setHeading(0, degrees);
+  Bot::Inertial.setHeading(360, degrees);
   switch (UISystem::SelectedPosition)
   {
     case 0:
