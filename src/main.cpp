@@ -71,6 +71,44 @@ void turnForEnhanced(double amount) {
   Bot::Drivetrain.turnToHeading(amount + Bot::Inertial.heading(), vex::degrees, true);
 }
 
+void turnToAccounting(double amount) {
+  switch (UISystem::SelectedPosition)
+  {
+    case 0:
+        Bot::Drivetrain.turnToHeading(amount, vex::degrees, true);
+        break;
+    case 1:
+        Bot::Drivetrain.turnToHeading(amount, vex::degrees, true);
+        break;
+    case 2:
+        Bot::Drivetrain.turnToHeading(360 - amount, vex::degrees, true);
+        break;
+    case 3:
+        Bot::Drivetrain.turnToHeading(360 - amount, vex::degrees, true);
+        break;
+  
+  }
+}
+
+void turnForAccounting(double amount) {
+  switch (UISystem::SelectedPosition)
+  {
+    case 0:
+        Bot::Drivetrain.turnFor(amount, degrees, true);
+        break;
+    case 1:
+        Bot::Drivetrain.turnFor(amount, degrees, true);
+        break;
+    case 2:
+        Bot::Drivetrain.turnFor(-1*amount, degrees, true);
+        break;
+    case 3:
+        Bot::Drivetrain.turnFor(-1*amount, degrees, true);
+        break;
+  
+  }
+}
+
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*                              Autonomous Task                              */
@@ -108,19 +146,26 @@ void autonomous(void) {
 
 
   const char* selecteduatonstring = "";
+  //Force red auton.
+  //UISystem::SelectedPosition = 2;
+  Bot::Inertial.setHeading(0, degrees);
   switch (UISystem::SelectedPosition)
   {
     case 0:
         selecteduatonstring = "BLUE LEFT";
+        Bot::Aliance = Blue;
         break;
     case 1:
         selecteduatonstring = "BLUE RIGHT";
+        Bot::Aliance = Blue;
         break;
     case 2:
         selecteduatonstring = "RED LEFT  ";
+        Bot::Aliance = Red;
         break;
     case 3:
         selecteduatonstring = "RED RIGHT ";
+        Bot::Aliance = Red;
         break;
   
   }
@@ -158,7 +203,7 @@ void autonomous(void) {
   
   //Turn to face ring
   Bot::Drivetrain.setTurnVelocity(5, vex::percent);
-  Bot::Drivetrain.turnToHeading(310, vex::degrees, true);
+  turnToAccounting(310);
 
   Bot::Intake.setMaxTorque(100, vex::percent);
   Bot::Intake.setVelocity(600, vex::rpm);
@@ -275,13 +320,15 @@ void autonomous(void) {
           //Bot::Drivetrain.stop();
           isTurningtoDriving = false;
         } //Stop turning
-        if(pursuit.width >= 130) {
+        if(pursuit.width >= 120) {
           Bot::Controller.Screen.setCursor(2,1);
           Bot::Controller.Screen.clearLine(2);
           Bot::Controller.Screen.print("INTAKING");
+          Bot::Drivetrain.stop();
           Bot::LiftToggle = true;
           Bot::Lift.set(true);
           Bot::Drivetrain.setDriveVelocity(5, vex::percent);
+          Bot::Drivetrain.drive(reverse);
           Bot::Drivetrain.driveFor(-200, vex::mm, true);
           Bot::Drivetrain.driveFor(300, vex::mm, true);
           isExitAiLoop = true;
@@ -302,7 +349,7 @@ void autonomous(void) {
   Bot::LiftToggle = false;
   Bot::Lift.set(false);
   vex::this_thread::sleep_for(200);
-  Bot::Drivetrain.turnToHeading(120, vex::degrees, true);
+  turnToAccounting(110);
 
   #pragma region PAIB
 
@@ -440,7 +487,7 @@ void autonomous(void) {
 
   isExitAiLoop = false;
   vex::this_thread::sleep_for(300);//allow ring to not be heaved off bot during turn
-  Bot::Drivetrain.turnFor(-100, vex::degrees, true);
+  turnForAccounting(-100);
   Bot::DoinkerToggle = true;
   Bot::Doinker.set(true);
 
@@ -572,7 +619,7 @@ void autonomous(void) {
   #pragma endregion
 
   Bot::Drivetrain.setTurnVelocity(35, percent);
-  Bot::Drivetrain.turnToHeading(240, vex::rotationUnits::deg, true);
+  turnToAccounting(240);
 
   #pragma region PAID
 
@@ -793,7 +840,7 @@ void IncreaseSelectedPosisitonAuton() {
     UISystem::calibrationSelectLabel.setText(UISystem::positions[UISystem::SelectedPosition].name);
     UISystem::odoMap.setNewX(UISystem::positions[UISystem::SelectedPosition].pos.x, vexui::INCHES);
     UISystem::odoMap.setNewY(UISystem::positions[UISystem::SelectedPosition].pos.y, vexui::INCHES);
-    Bot::Inertial.setHeading(UISystem::positions[UISystem::SelectedPosition].heading, vex::degrees);
+    //Bot::Inertial.setHeading(UISystem::positions[UISystem::SelectedPosition].heading, vex::degrees);
     UISystem::odoMap.setNewH(UISystem::positions[UISystem::SelectedPosition].heading);
 
     switch (UISystem::SelectedPosition)
@@ -848,6 +895,7 @@ int main() {
   vex::task mainLoop(Bot::mainLoop);
   vex::task displayLoop(Bot::displayLoop);
   //vex::task blinkerLoop(Bot::blinkerLoop);
+  ColorDetection::isEnabled = true;
   vex::task colorsensing(ColorDetection::visionTask);
   //vex::task monitoring(Bot::monitorLoop); //part of main loop now
   //Bot::Brain.Screen.printAt(0, 150, "Systems Go!");
