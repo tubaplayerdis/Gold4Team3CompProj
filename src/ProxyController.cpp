@@ -267,9 +267,9 @@ int ProxyController::_workerFunction() {
     //Write to file
     std::ofstream file(playPointer->file, std::ios::binary);
     if (file.is_open()) {
-        file.write(reinterpret_cast<const char*>(&arrp), sizeof(arrp));
+        file.write(reinterpret_cast<const char*>(&arrp), sizeof(PlaybackState));
         file.close();
-    }
+    } else return 1;
 
     return 0;
 }
@@ -302,6 +302,16 @@ int ProxyController::recordAndWrite(double quality_) {
 }
 
 int ProxyController::play() {
+    std::ifstream filep(file, std::ios::binary);
+    if (filep.is_open()) {
+        filep.read(reinterpret_cast<char*>(&playback), sizeof(PlaybackState));
+        filep.close(); 
+    }
+
+    ProxyController::_initWorker(PLAY, playback, 1, this);
+
+    vex::task work(ProxyController::_workerFunction);
+
     return 0;
 }
 
