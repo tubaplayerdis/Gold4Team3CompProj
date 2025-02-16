@@ -3,63 +3,62 @@
 #include "fstream"
 #include "string"
 #include "vector"
+#include "functional"
 
-Button::Button(_V5_ControllerIndex keycode) {
+Button::Button(_V5_ControllerIndex keycode, ProxyController* parent) {
     code = keycode;
     pressedCallBack = nullptr;
     releasedCallBack = nullptr;
-    pressedTask = vex::event();
-    releasedTask = vex::event();
+    parentPointer = parent;
+
 }
 
 void Button::pressed(void (* CallBack)(void)) {
     pressedCallBack = CallBack;
-    pressedTask.set(pressedCallBack);
 }
 
 void Button::released(void (* CallBack)(void)) {
     releasedCallBack = CallBack;
-    releasedTask.set(pressedCallBack);
 }
 
 bool Button::pressing() {
     switch (code)
         {
             case ButtonA:
-                return ProxyController::playback[ProxyController::currentTime].ButtonA;
+                return parentPointer->playback[parentPointer->currentTime].ButtonA;
 
             case ButtonB:
-                return ProxyController::playback[ProxyController::currentTime].ButtonB;
+                return parentPointer->playback[parentPointer->currentTime].ButtonB;
 
             case ButtonX:
-                return ProxyController::playback[ProxyController::currentTime].ButtonX;
+                return parentPointer->playback[parentPointer->currentTime].ButtonX;
 
             case ButtonY:
-                return ProxyController::playback[ProxyController::currentTime].ButtonY;
+                return parentPointer->playback[parentPointer->currentTime].ButtonY;
 
             case ButtonUp:
-                return ProxyController::playback[ProxyController::currentTime].ButtonUp;
+                return parentPointer->playback[parentPointer->currentTime].ButtonUp;
 
             case ButtonDown:
-                return ProxyController::playback[ProxyController::currentTime].ButtonDown;
+                return parentPointer->playback[parentPointer->currentTime].ButtonDown;
 
             case ButtonLeft:
-                return ProxyController::playback[ProxyController::currentTime].ButtonLeft;
+                return parentPointer->playback[parentPointer->currentTime].ButtonLeft;
 
             case ButtonRight:
-                return ProxyController::playback[ProxyController::currentTime].ButtonRight;
+                return parentPointer->playback[parentPointer->currentTime].ButtonRight;
 
             case ButtonR1:
-                return ProxyController::playback[ProxyController::currentTime].ButtonR1;
+                return parentPointer->playback[parentPointer->currentTime].ButtonR1;
 
             case ButtonR2:
-                return ProxyController::playback[ProxyController::currentTime].ButtonR2;
+                return parentPointer->playback[parentPointer->currentTime].ButtonR2;
 
             case ButtonL1:
-                return ProxyController::playback[ProxyController::currentTime].ButtonL1;
+                return parentPointer->playback[parentPointer->currentTime].ButtonL1;
 
             case ButtonL2:
-                return ProxyController::playback[ProxyController::currentTime].ButtonL2;
+                return parentPointer->playback[parentPointer->currentTime].ButtonL2;
             
             default:
                 return false; 
@@ -74,18 +73,43 @@ bool Button::isRegistered(bool por) {
     }
 }
 
-bool Button::isRunning(bool por) {
-    if(por) {
-        if(!isRegistered(por)) return false;
-
-    } else {
-        if(!isRegistered(por)) return false;
-    }
-    return false;
+Axis::Axis(_V5_ControllerIndex keycode, ProxyController* parent) {
+    code = keycode;
+    changedCallBack = nullptr;
+    parentPointer = parent;
 }
 
-PlaybackState getControllerStates() {
+bool Axis::isRegistered() {
+    return (changedCallBack == nullptr) ? false : true;
+}
+
+void Axis::changed(void (* CallBack)(void)) {
+    changedCallBack = CallBack;
+}
+
+int Axis::position() {
+    switch (code)
+    {
+        case Axis1:
+            return parentPointer->playback[parentPointer->currentTime].Axis1;
+
+        case Axis2:
+            return parentPointer->playback[parentPointer->currentTime].Axis2;
+
+        case Axis3:
+            return parentPointer->playback[parentPointer->currentTime].Axis3;
+
+        case Axis4:
+            return parentPointer->playback[parentPointer->currentTime].Axis4;
+
+        default:
+            return false;
+    }
+}
+
+PlaybackState getControllerStates(unsigned short time) {
     PlaybackState temp;
+    temp.time = time;
     temp.Axis1 = vexControllerGet(kControllerMaster, V5_ControllerIndex::Axis1);
     temp.Axis2 = vexControllerGet(kControllerMaster, V5_ControllerIndex::Axis2);
     temp.Axis3 = vexControllerGet(kControllerMaster, V5_ControllerIndex::Axis1);
@@ -110,43 +134,165 @@ bool isPlaybackStateEmpty(PlaybackState state) {
     return false;
 }
 
-  
+void ProxyController::_initWorker(ProxyControllerStatus status, PlaybackState *arrp, unsigned char quality, ProxyController* playPointer) {
+    sstatus == status;
+    sarrp = arrp;
+    squality = quality;
+    splayPointer = playPointer;
+}
+
+ProxyControllerStatus ProxyController::sstatus = RECORD;
+PlaybackState* ProxyController::sarrp = nullptr;
+unsigned char ProxyController::squality = 1;
+ProxyController* ProxyController::splayPointer = nullptr;
+
 
 int ProxyController::_workerFunction() {
-    while(1) {
-        vex::this_thread::sleep_for(10);
-        switch (ProxyController::status)
-        {
-            case IDLE:
-                vex::this_thread::sleep_for(10);
-                break;
-        
-            case RECORD: {
-                if(vexControllerConnectionStatusGet(kControllerMaster) == kV5ControllerOffline) continue;
-                for(unsigned short i; i < MAXIMUM_PLAYBACKS; i+=quality) {
-                    currentTime = i;
-                    PlaybackState state = getControllerStates();
-                    ProxyController::playback[i] = state;
-                    vex::this_thread::sleep_for(quality);
-                }
-            }
+    ProxyControllerStatus status = sstatus;
+    PlaybackState *arrp = sarrp;
+    unsigned char quality = squality;
+    ProxyController* playPointer = splayPointer;
 
-            case PLAY: {
 
+    switch (status)
+    {
+        case RECORD: {
+            if(vexControllerConnectionStatusGet(kControllerMaster) == kV5ControllerOffline) return 1;
+            for(unsigned short i = 0; i < MAXIMUM_PLAYBACKS; i+=quality) {
+                PlaybackState state = getControllerStates(i);
+                arrp[i] = state;
+                vex::this_thread::sleep_for(quality);
             }
         }
+
+        case PLAY: {
+            for(unsigned short i = 0; i < MAXIMUM_PLAYBACKS; i+=quality) {
+                playPointer->currentTime = i;
+                PlaybackStateEventReigsters reg = arrp[i].registers;
+
+                if(reg.ButtonAxis1Changed && playPointer->Axis1.isRegistered()) vex::thread(playPointer->Axis1.changedCallBack);
+                if(reg.ButtonAxis2Changed && playPointer->Axis2.isRegistered()) vex::thread(playPointer->Axis2.changedCallBack);
+                if(reg.ButtonAxis3Changed && playPointer->Axis3.isRegistered()) vex::thread(playPointer->Axis3.changedCallBack);
+                if(reg.ButtonAxis4Changed && playPointer->Axis4.isRegistered()) vex::thread(playPointer->Axis4.changedCallBack);
+
+                if(reg.ButtonAPressed && playPointer->ButtonA.isRegistered(true) ) vex::thread(playPointer->ButtonA.pressedCallBack);
+                if(reg.ButtonAPressed && playPointer->ButtonA.isRegistered(true) ) vex::thread(playPointer->ButtonA.pressedCallBack);
+
+                if(reg.ButtonBPressed && playPointer->ButtonB.isRegistered(true) ) vex::thread(playPointer->ButtonB.pressedCallBack);
+                if(reg.ButtonBPressed && playPointer->ButtonB.isRegistered(true) ) vex::thread(playPointer->ButtonB.pressedCallBack);
+
+                if(reg.ButtonXPressed && playPointer->ButtonX.isRegistered(true) ) vex::thread(playPointer->ButtonX.pressedCallBack);
+                if(reg.ButtonXPressed && playPointer->ButtonX.isRegistered(true) ) vex::thread(playPointer->ButtonX.pressedCallBack);
+
+                if(reg.ButtonYPressed && playPointer->ButtonY.isRegistered(true) ) vex::thread(playPointer->ButtonY.pressedCallBack);
+                if(reg.ButtonYPressed && playPointer->ButtonY.isRegistered(true) ) vex::thread(playPointer->ButtonY.pressedCallBack);
+
+                if(reg.ButtonUpPressed && playPointer->ButtonUp.isRegistered(true) ) vex::thread(playPointer->ButtonUp.pressedCallBack);
+                if(reg.ButtonUpPressed && playPointer->ButtonUp.isRegistered(true) ) vex::thread(playPointer->ButtonUp.pressedCallBack);
+
+                if(reg.ButtonDownPressed && playPointer->ButtonDown.isRegistered(true) ) vex::thread(playPointer->ButtonDown.pressedCallBack);
+                if(reg.ButtonDownPressed && playPointer->ButtonDown.isRegistered(true) ) vex::thread(playPointer->ButtonDown.pressedCallBack);
+
+                if(reg.ButtonLeftPressed && playPointer->ButtonLeft.isRegistered(true) ) vex::thread(playPointer->ButtonLeft.pressedCallBack);
+                if(reg.ButtonLeftPressed && playPointer->ButtonLeft.isRegistered(true) ) vex::thread(playPointer->ButtonLeft.pressedCallBack);
+
+                if(reg.ButtonRightPressed && playPointer->ButtonRight.isRegistered(true) ) vex::thread(playPointer->ButtonRight.pressedCallBack);
+                if(reg.ButtonRightPressed && playPointer->ButtonRight .isRegistered(true) ) vex::thread(playPointer->ButtonRight.pressedCallBack);
+
+                if(reg.ButtonL1Pressed && playPointer->ButtonL1.isRegistered(true) ) vex::thread(playPointer->ButtonL1.pressedCallBack);
+                if(reg.ButtonL1Pressed && playPointer->ButtonL1.isRegistered(true) ) vex::thread(playPointer->ButtonL1.pressedCallBack);
+
+                if(reg.ButtonL2Pressed && playPointer->ButtonL2.isRegistered(true) ) vex::thread(playPointer->ButtonL2.pressedCallBack);
+                if(reg.ButtonL2Pressed && playPointer->ButtonL2.isRegistered(true) ) vex::thread(playPointer->ButtonL2.pressedCallBack);
+
+                if(reg.ButtonR1Pressed && playPointer->ButtonR1.isRegistered(true) ) vex::thread(playPointer->ButtonR1.pressedCallBack);
+                if(reg.ButtonR1Pressed && playPointer->ButtonR1.isRegistered(true) ) vex::thread(playPointer->ButtonR1.pressedCallBack);
+
+                if(reg.ButtonR2Pressed && playPointer->ButtonR2.isRegistered(true) ) vex::thread(playPointer->ButtonR2.pressedCallBack);
+                if(reg.ButtonR2Pressed && playPointer->ButtonR2.isRegistered(true) ) vex::thread(playPointer->ButtonR2.pressedCallBack);
+
+                vex::this_thread::sleep_for(quality);
+            }
+            return 0;
+        }
     }
+
+    //Static anylsis after recording finishes
+    for(unsigned short i = 0; i < MAXIMUM_PLAYBACKS; i+=quality) { 
+        if(i != 0) continue;
+
+        if(arrp[i].Axis1 != arrp[i-1].Axis1) arrp[i].registers.ButtonAxis1Changed = true;
+        if(arrp[i].Axis2 != arrp[i-1].Axis2) arrp[i].registers.ButtonAxis2Changed = true;
+        if(arrp[i].Axis3 != arrp[i-1].Axis3) arrp[i].registers.ButtonAxis3Changed = true;
+        if(arrp[i].Axis4 != arrp[i-1].Axis4) arrp[i].registers.ButtonAxis4Changed = true;
+
+        if (!arrp[i - 1].ButtonA && arrp[i].ButtonA) arrp[i].registers.ButtonAPressed = true;
+        else if (arrp[i - 1].ButtonA && !arrp[i].ButtonA) arrp[i].registers.ButtonAReleased = true;
+
+        if (!arrp[i - 1].ButtonB && arrp[i].ButtonB) arrp[i].registers.ButtonBPressed = true;
+        else if (arrp[i - 1].ButtonB && !arrp[i].ButtonB) arrp[i].registers.ButtonBReleased = true;
+
+        if (!arrp[i - 1].ButtonX && arrp[i].ButtonX) arrp[i].registers.ButtonXPressed = true;
+        else if (arrp[i - 1].ButtonX && !arrp[i].ButtonX) arrp[i].registers.ButtonXReleased = true;
+
+        if (!arrp[i - 1].ButtonY && arrp[i].ButtonY) arrp[i].registers.ButtonYPressed = true;
+        else if (arrp[i - 1].ButtonY && !arrp[i].ButtonY) arrp[i].registers.ButtonYReleased = true;
+
+        if (!arrp[i - 1].ButtonUp && arrp[i].ButtonUp) arrp[i].registers.ButtonUpPressed = true;
+        else if (arrp[i - 1].ButtonUp && !arrp[i].ButtonUp) arrp[i].registers.ButtonUpReleased = true;
+
+        if (!arrp[i - 1].ButtonDown && arrp[i].ButtonDown) arrp[i].registers.ButtonDownPressed = true;
+        else if (arrp[i - 1].ButtonDown && !arrp[i].ButtonDown) arrp[i].registers.ButtonDownReleased = true;
+
+        if (!arrp[i - 1].ButtonLeft && arrp[i].ButtonLeft) arrp[i].registers.ButtonLeftPressed = true;
+        else if (arrp[i - 1].ButtonLeft && !arrp[i].ButtonLeft) arrp[i].registers.ButtonLeftReleased = true;
+
+        if (!arrp[i - 1].ButtonRight && arrp[i].ButtonRight) arrp[i].registers.ButtonRightPressed = true;
+        else if (arrp[i - 1].ButtonRight && !arrp[i].ButtonRight) arrp[i].registers.ButtonRightReleased = true;
+
+        if (!arrp[i - 1].ButtonL1 && arrp[i].ButtonL1) arrp[i].registers.ButtonL1Pressed = true;
+        else if (arrp[i - 1].ButtonL1 && !arrp[i].ButtonL1) arrp[i].registers.ButtonL1Released = true;
+
+        if (!arrp[i - 1].ButtonL2 && arrp[i].ButtonL2) arrp[i].registers.ButtonL2Pressed = true;
+        else if (arrp[i - 1].ButtonL2 && !arrp[i].ButtonL2) arrp[i].registers.ButtonL2Released = true;
+
+        if (!arrp[i - 1].ButtonR1 && arrp[i].ButtonR1) arrp[i].registers.ButtonR1Pressed = true;
+        else if (arrp[i - 1].ButtonR1 && !arrp[i].ButtonR1) arrp[i].registers.ButtonR1Released = true;
+
+        if (!arrp[i - 1].ButtonR2 && arrp[i].ButtonR2) arrp[i].registers.ButtonR2Pressed = true;
+        else if (arrp[i - 1].ButtonR2 && !arrp[i].ButtonR2) arrp[i].registers.ButtonR2Released = true;
+    }
+
+
     return 0;
 }
 
-ProxyControllerStatus ProxyController::status = IDLE;
-vex::task ProxyController::worker = vex::task(ProxyController::_workerFunction);
-std::string ProxyController::file = "";
-unsigned char ProxyController::quality = 1;
-unsigned short ProxyController::currentTime = 0;
-PlaybackState ProxyController::playback[MAXIMUM_PLAYBACKS_WBUFFER] = {};
 
-void ProxyController::Initalize(std::string filename) {
+ProxyController::ProxyController(std::string filename) {
+
+    Axis1 = Axis(_V5_ControllerIndex::Axis1, this);
+    Axis2 = Axis(_V5_ControllerIndex::Axis2, this);
+    Axis3 = Axis(_V5_ControllerIndex::Axis3, this);
+    Axis4 = Axis(_V5_ControllerIndex::Axis4, this);
+    ButtonA = Button(_V5_ControllerIndex::ButtonA, this);
+    ButtonB = Button(_V5_ControllerIndex::ButtonB, this);
+    ButtonX = Button(_V5_ControllerIndex::ButtonX, this);
+    ButtonY = Button(_V5_ControllerIndex::ButtonY, this);
+    ButtonUp = Button(_V5_ControllerIndex::ButtonUp, this);
+    ButtonDown = Button(_V5_ControllerIndex::ButtonDown, this);
+    ButtonLeft = Button(_V5_ControllerIndex::ButtonLeft, this);
+    ButtonRight = Button(_V5_ControllerIndex::ButtonRight, this);
+    ButtonL1 = Button(_V5_ControllerIndex::ButtonL1, this);
+    ButtonL2 = Button(_V5_ControllerIndex::ButtonL2, this);
+    ButtonR1 = Button(_V5_ControllerIndex::ButtonR1, this);
+    ButtonR2 = Button(_V5_ControllerIndex::ButtonR2, this);
+
+
+
+    file = "";
+    quality = 1;
+    currentTime = 0;
+    playback[MAXIMUM_PLAYBACKS_WBUFFER] = {};
     file = filename;
     for(int i = 0; i < MAXIMUM_PLAYBACKS_WBUFFER; i++) {
         PlaybackState non;
@@ -160,10 +306,19 @@ int ProxyController::recordAndWrite(double quality_) {
     quality = 101-quality_;
     if(quality > 100 ) quality = 100;
     if(quality < 1) quality = 1;
-    status = RECORD;
+
+    ProxyController::_initWorker(RECORD, playback, quality, this);
+
+    vex::task work(ProxyController::_workerFunction());
+    
     return 0;
 }
 
 int ProxyController::play() {
     return 0;
+}
+
+//Ghost function for consistency;
+void ProxyController::rumble(const char* pattern) {
+    return;
 }
