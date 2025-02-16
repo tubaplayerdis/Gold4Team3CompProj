@@ -103,6 +103,24 @@ enum ProxyControllerStatus {
     PLAY
 };
 
+//None of these functions do nothing. they are meant to allow combatability beetween actual vex::controllers.
+//I might have them do thier functions but not now.
+class FScreen {
+    public:
+        FScreen();
+        void     setCursor( int32_t row, int32_t col );
+        int32_t  column();
+        int32_t  row();
+        template <class T>
+        void     print( T value ) {}
+        void     print( const char *format, ... );
+        void     print( char *format, ... ); 
+        void     clearScreen( void );
+        void     clearLine( int number );
+        void     clearLine( void );
+        void     newLine( void );  
+};
+
 class Axis;
 class ProxyController;
 
@@ -172,6 +190,8 @@ class ProxyController {
         unsigned short currentTime;
 
     public:
+        FScreen Screen = FScreen();
+
         Axis Axis1 = Axis(_V5_ControllerIndex::Axis1, this);
         Axis Axis2 = Axis(_V5_ControllerIndex::Axis2, this);
         Axis Axis3 = Axis(_V5_ControllerIndex::Axis3, this);

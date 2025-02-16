@@ -1,9 +1,29 @@
 #include "ProxyController.h"
 #include "vex.h"
 #include "fstream"
+#include "istream"
 #include "string"
 #include "vector"
 #include "functional"
+
+FScreen::FScreen() {
+    return;
+}
+
+void FScreen::setCursor( int32_t row, int32_t col ) { return; }
+int32_t  FScreen::column() { return -1; }
+int32_t  FScreen::row() { return -1; }
+
+template <class T>
+void  FScreen::print( T value ) { return; }
+void  FScreen::print( const char *format, ... ) { return; }
+void  FScreen::print( char *format, ... ) { return; }
+void  FScreen::clearScreen( void ) { return; }
+void  FScreen::clearLine( int number ) { return; }
+void  FScreen::clearLine( void ) { return; }
+void  FScreen::newLine( void ) { return; } 
+
+
 
 Button::Button(_V5_ControllerIndex keycode, ProxyController* parent) {
     code = keycode;
