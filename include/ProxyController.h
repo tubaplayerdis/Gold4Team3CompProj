@@ -2,6 +2,7 @@
 #include "fstream"
 #include "string"
 #include "vector"
+#include "functional"
 
 /*
 MEMORY CALCULATIONS.
@@ -36,6 +37,41 @@ That is infact, memory efficency
 #define MAXIMUM_PLAYBACKS 65000
 #define MAXIMUM_PLAYBACKS_WBUFFER 65000 + 500
 
+struct PlaybackStateEventReigsters {
+    //event registers
+    bool ButtonAPressed = false;
+    bool ButtonAReleased = false;
+    bool ButtonBPressed = false;
+    bool ButtonBReleased = false;
+    bool ButtonXPressed = false;
+    bool ButtonXReleased = false;
+    bool ButtonYPressed = false;
+    bool ButtonYReleased = false;
+    bool ButtonUpPressed = false;
+    bool ButtonUpReleased = false;
+    bool ButtonDownPressed = false;
+    bool ButtonDownReleased = false;
+    bool ButtonLeftPressed = false;
+    bool ButtonLeftReleased = false;
+    bool ButtonRightPressed = false;
+    bool ButtonRightReleased = false;
+    bool ButtonL1Pressed = false;
+    bool ButtonL1Released = false;
+    bool ButtonL2Pressed = false;
+    bool ButtonL2Released = false;
+    bool ButtonR1Pressed = false;
+    bool ButtonR1Released = false;
+    bool ButtonR2Pressed = false;
+    bool ButtonR2Released = false;
+
+    bool ButtonAxis1Changed = false;
+    bool ButtonAxis2Changed = false;
+    bool ButtonAxis3Changed = false;
+    bool ButtonAxis4Changed = false;
+    
+    
+};
+
 struct PlaybackState { // 20 bytes
     unsigned short time; //Skills matches are only 60 seconds (60,000) milliseconds long. 65,535 is the maximum value of a unsigned short, therefore the therorietical limit is 65.535 seconds of playback. Will be capped at 65.
     bool ButtonA = false;
@@ -50,35 +86,36 @@ struct PlaybackState { // 20 bytes
     bool ButtonL2 = false;
     bool ButtonR1 = false;
     bool ButtonR2 = false;
-    signed char Axis1 = 0;
+    signed char Axis1 = 0; //-127 to 127 domain for unsigned chars
     signed char Axis2 = 0;
     signed char Axis3 = 0;
     signed char Axis4 = 0;
+
+    //event registers
+    PlaybackStateEventReigsters registers;
+
 };
 
 enum ProxyControllerStatus {
-    IDLE,
     RECORD,
     PLAY
 };
 
 class Button {
+    friend ProxyController;
     private:
         _V5_ControllerIndex code;
         void (* pressedCallBack)(void);
         void  (* releasedCallBack)(void);
-        vex::event pressedTask;
-        vex::event releasedTask;
 
-        void _pressedWorker();
-        void _releasedWorker();
+        ProxyController* parentPointer;
 
     protected:
+        //pressed is true and false is released
         bool isRegistered(bool por);
-        bool isRunning(bool por);
 
     public:
-        Button(_V5_ControllerIndex keycode);
+        Button(_V5_ControllerIndex keycode, ProxyController* parent);
 
         void pressed(void (* CallBack)(void));
 
@@ -88,25 +125,71 @@ class Button {
 
 };
 
-class ProxyController {
-    friend Button;
-
+class Axis {
+    friend ProxyController;
     private:
-        static ProxyControllerStatus status;
-        static int _workerFunction();
+        _V5_ControllerIndex code;
+        void (* changedCallBack)(void);
 
-        static vex::task worker;
-        static std::string file;
-        static unsigned char quality; //real quality is reversed to simplify loop logic. so a value of 1 is highest quality and 100 is lowest
-        static PlaybackState playback[MAXIMUM_PLAYBACKS_WBUFFER]; //Add extra for saftey.
-        static unsigned short currentTime;
+        ProxyController* parentPointer;
+
+    protected:
+        bool isRegistered();
 
     public:
-        static void Initalize(std::string filename);
+        Axis(_V5_ControllerIndex keycode, ProxyController* parent);
 
-        static int recordAndWrite(double quality);//0-100 for quality. will be converted to real quality before flipping to record.
-        static int play(/*add a v5 controller to imitate?*/);
+        void changed(void (* CallBack)(void));
 
+        int position();
+
+};
+
+class ProxyController {
+    friend Button;
+    friend Axis;
+
+    private:
+        //static worker vars
+        static ProxyControllerStatus sstatus;
+        static PlaybackState* sarrp;
+        static unsigned char squality;
+        static ProxyController* splayPointer;
+
+
+        static void _initWorker(ProxyControllerStatus status, PlaybackState *arrp, unsigned char quality, ProxyController* playPointer);
+        static int _workerFunction();
+
+        vex::task worker;
+        std::string file;
+        unsigned char quality; //real quality is reversed to simplify loop logic. so a value of 1 is highest quality and 100 is lowest
+        PlaybackState playback[MAXIMUM_PLAYBACKS_WBUFFER]; //Add extra for saftey.
+        unsigned short currentTime;
+
+    public:
+        ProxyController(std::string filename);
+
+        int recordAndWrite(double quality);//0-100 for quality. will be converted to real quality before flipping to record.
+        int play(/*add a v5 controller to imitate?*/);
+        void rumble(const char* pattern);
+
+        Axis Axis1;
+        Axis Axis2;
+        Axis Axis3;
+        Axis Axis4;
+
+        Button ButtonA;
+        Button ButtonB;
+        Button ButtonX;
+        Button ButtonY;
+        Button ButtonUp;
+        Button ButtonDown;
+        Button ButtonLeft;
+        Button ButtonRight;
+        Button ButtonL1;
+        Button ButtonL2;
+        Button ButtonR1;
+        Button ButtonR2;
 
         
 
