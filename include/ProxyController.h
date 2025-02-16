@@ -37,6 +37,7 @@ That is infact, memory efficency
 #define MAXIMUM_PLAYBACKS 65000
 #define MAXIMUM_PLAYBACKS_WBUFFER 65000 + 500
 
+#pragma pack(push, 1)
 struct PlaybackStateEventReigsters {
     //event registers
     bool ButtonAPressed = false;
@@ -95,6 +96,7 @@ struct PlaybackState {
     PlaybackStateEventReigsters registers;
 
 };
+#pragma pack(pop)
 
 enum ProxyControllerStatus {
     RECORD,
