@@ -72,7 +72,7 @@ struct PlaybackStateEventReigsters {
     
 };
 
-struct PlaybackState { // 20 bytes
+struct PlaybackState {
     unsigned short time; //Skills matches are only 60 seconds (60,000) milliseconds long. 65,535 is the maximum value of a unsigned short, therefore the therorietical limit is 65.535 seconds of playback. Will be capped at 65.
     bool ButtonA = false;
     bool ButtonB = false;
