@@ -1,9 +1,29 @@
 #include "ProxyController.h"
 #include "vex.h"
 #include "fstream"
+#include "istream"
 #include "string"
 #include "vector"
 #include "functional"
+
+FScreen::FScreen() {
+    return;
+}
+
+void FScreen::setCursor( int32_t row, int32_t col ) { return; }
+int32_t  FScreen::column() { return -1; }
+int32_t  FScreen::row() { return -1; }
+
+template <class T>
+void  FScreen::print( T value ) { return; }
+void  FScreen::print( const char *format, ... ) { return; }
+void  FScreen::print( char *format, ... ) { return; }
+void  FScreen::clearScreen( void ) { return; }
+void  FScreen::clearLine( int number ) { return; }
+void  FScreen::clearLine( void ) { return; }
+void  FScreen::newLine( void ) { return; } 
+
+
 
 Button::Button(_V5_ControllerIndex keycode, ProxyController* parent) {
     code = keycode;
@@ -135,7 +155,7 @@ bool isPlaybackStateEmpty(PlaybackState state) {
 }
 
 void ProxyController::_initWorker(ProxyControllerStatus status, PlaybackState *arrp, unsigned char quality, ProxyController* playPointer) {
-    sstatus == status;
+    sstatus = status;
     sarrp = arrp;
     squality = quality;
     splayPointer = playPointer;
@@ -264,35 +284,22 @@ int ProxyController::_workerFunction() {
     }
 
 
+    //Write to file
+    std::ofstream file(playPointer->file, std::ios::binary);
+    if (file.is_open()) {
+        file.write(reinterpret_cast<const char*>(&arrp), sizeof(PlaybackState));
+        file.close();
+    } else return 1;
+
     return 0;
 }
 
 
 ProxyController::ProxyController(std::string filename) {
-
-    Axis1 = Axis(_V5_ControllerIndex::Axis1, this);
-    Axis2 = Axis(_V5_ControllerIndex::Axis2, this);
-    Axis3 = Axis(_V5_ControllerIndex::Axis3, this);
-    Axis4 = Axis(_V5_ControllerIndex::Axis4, this);
-    ButtonA = Button(_V5_ControllerIndex::ButtonA, this);
-    ButtonB = Button(_V5_ControllerIndex::ButtonB, this);
-    ButtonX = Button(_V5_ControllerIndex::ButtonX, this);
-    ButtonY = Button(_V5_ControllerIndex::ButtonY, this);
-    ButtonUp = Button(_V5_ControllerIndex::ButtonUp, this);
-    ButtonDown = Button(_V5_ControllerIndex::ButtonDown, this);
-    ButtonLeft = Button(_V5_ControllerIndex::ButtonLeft, this);
-    ButtonRight = Button(_V5_ControllerIndex::ButtonRight, this);
-    ButtonL1 = Button(_V5_ControllerIndex::ButtonL1, this);
-    ButtonL2 = Button(_V5_ControllerIndex::ButtonL2, this);
-    ButtonR1 = Button(_V5_ControllerIndex::ButtonR1, this);
-    ButtonR2 = Button(_V5_ControllerIndex::ButtonR2, this);
-
-
-
     file = "";
     quality = 1;
     currentTime = 0;
-    playback[MAXIMUM_PLAYBACKS_WBUFFER] = {};
+    playback[MAXIMUM_PLAYBACKS_WBUFFER-1] = {};
     file = filename;
     for(int i = 0; i < MAXIMUM_PLAYBACKS_WBUFFER; i++) {
         PlaybackState non;
@@ -315,6 +322,16 @@ int ProxyController::recordAndWrite(double quality_) {
 }
 
 int ProxyController::play() {
+    std::ifstream filep(file, std::ios::binary);
+    if (filep.is_open()) {
+        filep.read(reinterpret_cast<char*>(&playback), sizeof(PlaybackState));
+        filep.close(); 
+    }
+
+    ProxyController::_initWorker(PLAY, playback, 1, this);
+
+    vex::task work(ProxyController::_workerFunction);
+
     return 0;
 }
 

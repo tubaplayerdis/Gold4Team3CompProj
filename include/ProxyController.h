@@ -37,6 +37,7 @@ That is infact, memory efficency
 #define MAXIMUM_PLAYBACKS 65000
 #define MAXIMUM_PLAYBACKS_WBUFFER 65000 + 500
 
+#pragma pack(push, 1)
 struct PlaybackStateEventReigsters {
     //event registers
     bool ButtonAPressed = false;
@@ -72,7 +73,7 @@ struct PlaybackStateEventReigsters {
     
 };
 
-struct PlaybackState { // 20 bytes
+struct PlaybackState {
     unsigned short time; //Skills matches are only 60 seconds (60,000) milliseconds long. 65,535 is the maximum value of a unsigned short, therefore the therorietical limit is 65.535 seconds of playback. Will be capped at 65.
     bool ButtonA = false;
     bool ButtonB = false;
@@ -95,11 +96,33 @@ struct PlaybackState { // 20 bytes
     PlaybackStateEventReigsters registers;
 
 };
+#pragma pack(pop)
 
 enum ProxyControllerStatus {
     RECORD,
     PLAY
 };
+
+//None of these functions do nothing. they are meant to allow combatability beetween actual vex::controllers.
+//I might have them do thier functions but not now.
+class FScreen {
+    public:
+        FScreen();
+        void     setCursor( int32_t row, int32_t col );
+        int32_t  column();
+        int32_t  row();
+        template <class T>
+        void     print( T value ) {}
+        void     print( const char *format, ... );
+        void     print( char *format, ... ); 
+        void     clearScreen( void );
+        void     clearLine( int number );
+        void     clearLine( void );
+        void     newLine( void );  
+};
+
+class Axis;
+class ProxyController;
 
 class Button {
     friend ProxyController;
@@ -167,31 +190,32 @@ class ProxyController {
         unsigned short currentTime;
 
     public:
+        FScreen Screen = FScreen();
+
+        Axis Axis1 = Axis(_V5_ControllerIndex::Axis1, this);
+        Axis Axis2 = Axis(_V5_ControllerIndex::Axis2, this);
+        Axis Axis3 = Axis(_V5_ControllerIndex::Axis3, this);
+        Axis Axis4 = Axis(_V5_ControllerIndex::Axis4, this);
+
+        Button ButtonA = Button(_V5_ControllerIndex::ButtonA, this);
+        Button ButtonB = Button(_V5_ControllerIndex::ButtonB, this);
+        Button ButtonX = Button(_V5_ControllerIndex::ButtonX, this);
+        Button ButtonY = Button(_V5_ControllerIndex::ButtonY, this);
+        Button ButtonUp = Button(_V5_ControllerIndex::ButtonUp, this);
+        Button ButtonDown = Button(_V5_ControllerIndex::ButtonDown, this);
+        Button ButtonLeft = Button(_V5_ControllerIndex::ButtonLeft, this);
+        Button ButtonRight = Button(_V5_ControllerIndex::ButtonRight, this);
+        Button ButtonL1 = Button(_V5_ControllerIndex::ButtonL1, this);
+        Button ButtonL2 = Button(_V5_ControllerIndex::ButtonL2, this);
+        Button ButtonR1 = Button(_V5_ControllerIndex::ButtonR1, this);
+        Button ButtonR2 = Button(_V5_ControllerIndex::ButtonR2, this);
+
+
         ProxyController(std::string filename);
 
         int recordAndWrite(double quality);//0-100 for quality. will be converted to real quality before flipping to record.
         int play(/*add a v5 controller to imitate?*/);
         void rumble(const char* pattern);
-
-        Axis Axis1;
-        Axis Axis2;
-        Axis Axis3;
-        Axis Axis4;
-
-        Button ButtonA;
-        Button ButtonB;
-        Button ButtonX;
-        Button ButtonY;
-        Button ButtonUp;
-        Button ButtonDown;
-        Button ButtonLeft;
-        Button ButtonRight;
-        Button ButtonL1;
-        Button ButtonL2;
-        Button ButtonR1;
-        Button ButtonR2;
-
-        
 
 };
 
