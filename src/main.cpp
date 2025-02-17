@@ -907,7 +907,6 @@ int main() {
   UISystem::setup();
   vex::task uiloop(UISystem::renderLoop);
 
-
   // Run the pre-autonomous function.
   pre_auton();
 

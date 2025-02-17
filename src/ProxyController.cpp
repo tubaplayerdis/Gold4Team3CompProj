@@ -309,7 +309,7 @@ int ProxyController::recordAndWrite(double quality_) {
 
     ProxyController::_initWorker(RECORD, playback, quality, this);
 
-    vex::task work(ProxyController::_workerFunction());
+    vex::task work(ProxyController::_workerFunction);
     
     return 0;
 }
