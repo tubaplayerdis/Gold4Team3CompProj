@@ -11,7 +11,5 @@
 #define TURN_PID_MAX_MOTOR_POWER 100.0
 #define TURN_PID_MAX_TOLERANCE 3.0
 
-namespace GBSPID {
-    int turnToPID(double targetAngle);
-    int turnForPID(double angle);
-}
+int turnToPID(double targetAngle);
+int turnForPID(double angle);

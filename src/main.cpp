@@ -15,6 +15,7 @@
 #include "Notifications.h"
 #include "UISystem.h"
 #include "Skills.h"
+#include "PID.h"
 
 using namespace vex;
 
@@ -68,42 +69,42 @@ void pre_auton(void) {
 }
 
 void turnForEnhanced(double amount) {
-  Bot::Drivetrain.turnToHeading(amount + Bot::Inertial.heading(), vex::degrees, true);
+  turnForPID(amount);
 }
 
 void turnToAccounting(double amount) {
-  switch (UISystem::SelectedPosition)
+  switch (Bot::AutonomusRoutine)
   {
-    case 0:
-        Bot::Drivetrain.turnToHeading(amount, vex::degrees, true);
+    case 0 ... 1:
+        turnToPID(360 - amount);
         break;
-    case 1:
-        Bot::Drivetrain.turnToHeading(amount, vex::degrees, true);
+    case 4 ... 5:
+        turnToPID(360 - amount);
         break;
-    case 2:
-        Bot::Drivetrain.turnToHeading(360 - amount, vex::degrees, true);
+    case 2 ... 3:
+        turnToPID(amount);
         break;
-    case 3:
-        Bot::Drivetrain.turnToHeading(360 - amount, vex::degrees, true);
+    case 6 ... 7:
+        turnToPID(amount);
         break;
   
   }
 }
 
 void turnForAccounting(double amount) {
-  switch (UISystem::SelectedPosition)
+  switch (Bot::AutonomusRoutine)
   {
-    case 0:
-        Bot::Drivetrain.turnFor(amount, degrees, true);
+    case 0 ... 1:
+        turnForPID(-1*amount);
         break;
-    case 1:
-        Bot::Drivetrain.turnFor(amount, degrees, true);
+    case 4 ... 5:
+        turnForPID(-1*amount);
         break;
-    case 2:
-        Bot::Drivetrain.turnFor(-1*amount, degrees, true);
+    case 2 ... 3:
+        turnForPID(amount);
         break;
-    case 3:
-        Bot::Drivetrain.turnFor(-1*amount, degrees, true);
+    case 6 ... 7:
+        turnForPID(amount);
         break;
   
   }
@@ -138,47 +139,9 @@ int capPercentage(int percentage, int cap) {
 
 #define MAX_OBJ_TO_TRACK 3 //Cannot be larger than 8
 
-void autonomous(void) {
-  //Bot::AIVisionF.startAwb();
-
-  Bot::IgnoreDisplay = true;
-  bool isExitAiLoop = false; //shared
-
-
-  const char* selecteduatonstring = "";
-  //Force red auton.
-  //UISystem::SelectedPosition = 2;
-  Bot::Inertial.setHeading(360, degrees);
-  switch (UISystem::SelectedPosition)
-  {
-    case 0:
-        selecteduatonstring = "BLUE LEFT";
-        Bot::Aliance = Blue;
-        break;
-    case 1:
-        selecteduatonstring = "BLUE RIGHT";
-        Bot::Aliance = Blue;
-        break;
-    case 2:
-        selecteduatonstring = "RED LEFT  ";
-        Bot::Aliance = Red;
-        break;
-    case 3:
-        selecteduatonstring = "RED RIGHT ";
-        Bot::Aliance = Red;
-        break;
-  
-  }
-
-  
-  Bot::IgnoreDisplay = true; 
-  Bot::Controller.Screen.clearScreen();
-
-  Bot::Controller.Screen.setCursor(1,1);
-  Bot::Controller.Screen.print("RUN:  %s", selecteduatonstring);
-
-  
-
+void redLeftElim() {
+    
+  bool isExitAiLoop = false;
   //drive full speed till 100mm
   Bot::Drivetrain.setDriveVelocity(35, percent);
   while(Bot::DistanceF.objectDistance(vex::mm) > BOT_SLOWDOWN_DISTANCE) {
@@ -215,6 +178,7 @@ void autonomous(void) {
   #pragma region PAIA
   while (true)
   {
+
     if(isExitAiLoop) {
       isExitAiLoop = true;
       break;
@@ -751,8 +715,88 @@ void autonomous(void) {
 
   #pragma endregion PAID
   //Drive to corner and throw mobile goal in
-  
 
+}
+
+void redLeftAlianceStake() {
+
+}
+
+void redLeftGoalRush() {
+
+}
+
+void redRightElim() {
+
+}
+
+void blueLeftElim() {
+
+}
+
+void blueLeftAlainceStake() {
+
+}
+
+void blueLeftGoalRush() {
+
+}
+
+void blueRightElim() {
+
+}
+
+void skills() {
+  
+}
+
+
+
+
+void autonomous(void) {
+  //Bot::AIVisionF.startAwb();
+
+  Bot::IgnoreDisplay = true;
+
+  //Force red auton.
+  //UISystem::SelectedPosition = 2;
+  Bot::Inertial.setHeading(360, degrees);
+
+  
+  Bot::IgnoreDisplay = true; 
+  Bot::Controller.Screen.clearScreen();
+
+  switch (Bot::AutonomusRoutine)
+  {
+      case Red_Left_Elim:
+          redLeftElim();
+          break;
+      case Red_Left_AlainceStake:
+          redLeftAlianceStake();
+          break;
+      case Red_Left_GoalRush:
+          redLeftGoalRush();
+          break;
+      case Red_Right_Elim:
+          redLeftElim();
+          break;
+      case Blue_Left_Elim:
+          blueLeftElim();
+          break;
+      case Blue_Left_AlainceStake:
+          blueLeftAlainceStake();
+          break;
+      case Blue_Left_GoalRush:
+          blueLeftGoalRush();
+          break;
+      case Blue_Right_Elim:
+          blueRightElim();
+          break;
+      default:
+          skills();
+          break;
+  
+  }
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................

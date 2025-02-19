@@ -7,7 +7,7 @@ T clamp(T val, T mn, T mx){
     return std::max(std::min(val, mx), mn);
 }
 
-int GBSPID::turnToPID(double targetAngle) {
+int turnToPID(double targetAngle) {
     double error, integral = 0, derivative, lastError = 0;
     double power;
     
@@ -40,7 +40,7 @@ int GBSPID::turnToPID(double targetAngle) {
     Bot::RightMotors.stop();
 }
 
-int GBSPID::turnForPID(double angle) {
+int turnForPID(double angle) {
     if(angle + Bot::Inertial.heading() < 0) return turnToPID(360 + (angle + Bot::Inertial.heading()));
     if(angle + Bot::Inertial.heading() > 360) return turnToPID(fabs(360 - Bot::Inertial.heading() - angle));
     return turnToPID(angle + Bot::Inertial.heading());

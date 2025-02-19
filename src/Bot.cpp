@@ -10,6 +10,8 @@
 //Define Brain
 vex::brain Bot::Brain = vex::brain();
 
+autons Bot::AutonomusRoutine = Red_Left_Elim;
+
 //Define Motors
 vex::motor Bot::LeftA = vex::motor(vex::PORT1, vex::ratio6_1,true);//High Speed
 vex::motor Bot::LeftB = vex::motor(vex::PORT2, vex::ratio6_1, true);//High Speed
