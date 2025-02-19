@@ -866,6 +866,23 @@ void ringCounterTripped() {
   Bot::RingsIntaken++;
 }
 
+void selectAutonBasedOfPotentiometer() {
+  switch((int)std::round(Bot::AutonSelect.angle(vex::degrees))) {
+    case 0 ... 30:
+      break;
+
+    case 31 ... 60:
+      break;
+
+    case 0 ... 30:
+      break;
+
+    default:
+      return;
+
+  }
+}
+
 //
 // Main will set up the competition functions and callbacks.
 //
@@ -873,7 +890,7 @@ int main() {
   //Skills::runSkills(1);
   Odometry::setupAndStartOdometry();
   Bot::Aliance = aliance::Blue;
-
+  selectAutonBasedOfPotentiometer();
 
   //Bot::Controller.ButtonY.pressed(cycleStartingPosistions);
   //Bot::Controller.ButtonX.pressed(Bot::swapFeedPos);
@@ -886,10 +903,9 @@ int main() {
   Bot::Controller.ButtonLeft.pressed(Notifications::notifBackward);
   Bot::Controller.ButtonRight.pressed(Notifications::notifForward);
 
-  Bot::Controller.ButtonUp.pressed(IncreaseSelectedPosisitonAuton);
+  //Bot::Controller.ButtonUp.pressed(IncreaseSelectedPosisitonAuton);
   Bot::Controller.ButtonDown.pressed(ColorDetection::toggleEnabled);
 
-  Bot::RingCounter.pressed(ringCounterTripped);
 
 
   vex::task drivetrian(Drivetrain::ControllerLoop);

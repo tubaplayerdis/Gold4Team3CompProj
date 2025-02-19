@@ -17,11 +17,17 @@ enum aliance {
     Red = 1
 };
 
-enum autonSelect {
-    Red_Left = 0,
+enum autons {
+    Red_Left = 0, //Elimination Autons. Works with caspars autons
     Red_Right = 1,
     Blue_Left = 2,
-    Blue_Right = 3
+    Blue_Right = 3,
+    Red_Left_AlainceStake = 4,
+    Red_Left_GoalRush = 5,
+    Red_Right_RingRush = 6,
+    Blue_Left_AlainceStake = 7,
+    Blue_Left_GoalRush = 8,
+    Blue_Right_RingRush = 9,
 };
 
 enum BlinkTypes {
@@ -65,6 +71,8 @@ class Bot {
         //Brain
         static vex::brain Brain;
 
+        static autons AutonomusRoutine;
+
         //Drivetrain Elements
         static vex::controller Controller;
         static vex::smartdrive Drivetrain;
@@ -90,7 +98,7 @@ class Bot {
         static vex::digital_out Clutch;
         static vex::digital_out Doinker;
         static vex::digital_out Lift;
-        static vex::limit RingCounter;
+        static vex::pot AutonSelect;
         static int RingsIntaken;
 
         //Gryos and stuff

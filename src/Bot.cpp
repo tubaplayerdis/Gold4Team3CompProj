@@ -32,7 +32,7 @@ vex::digital_out Bot::Clutch = vex::digital_out(Bot::Brain.ThreeWirePort.B);
 vex::digital_out Bot::Doinker = vex::digital_out(Bot::Brain.ThreeWirePort.C);
 vex::digital_out Bot::Lift = vex::digital_out(Bot::Brain.ThreeWirePort.E);
 
-vex::limit Bot::RingCounter = vex::limit(Bot::Brain.ThreeWirePort.D);
+vex::pot Bot::AutonSelect = vex::pot(Bot::Brain.ThreeWirePort.D);
 int Bot::RingsIntaken = 0;
 
 vex::inertial Bot::Inertial = vex::inertial(vex::PORT11);
