@@ -867,20 +867,15 @@ void ringCounterTripped() {
 }
 
 void selectAutonBasedOfPotentiometer() {
-  switch((int)std::round(Bot::AutonSelect.angle(vex::degrees))) {
-    case 0 ... 30:
-      break;
-
-    case 31 ... 60:
-      break;
-
-    case 0 ... 30:
-      break;
-
-    default:
-      return;
-
-  }
+  double a = Bot::AutonSelect.angle(vex::degrees);
+  if(a <= 0 && a < 33.75) Bot::AutonomusRoutine = Red_Left_Elim;
+  else if(a <= 33.75 && a < 67.5) Bot::AutonomusRoutine = Red_Left_AlainceStake;
+  else if(a <= 67.5 && a < 101.25) Bot::AutonomusRoutine = Red_Left_GoalRush;
+  else if(a <= 101.25 && a < 135) Bot::AutonomusRoutine = Red_Right_Elim;
+  else if(a <= 101.25 && a < 135) Bot::AutonomusRoutine = Blue_Left_Elim;
+  else if(a <= 101.25 && a < 135) Bot::AutonomusRoutine = Blue_Left_AlainceStake;
+  else if(a <= 101.25 && a < 135) Bot::AutonomusRoutine = Blue_Left_GoalRush;
+  else if(a <= 101.25 && a < 135) Bot::AutonomusRoutine = Blue_Right_Elim;
 }
 
 //

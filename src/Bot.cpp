@@ -164,6 +164,7 @@ void Bot::setup() {
         if(Bot::Controller.ButtonA.pressing()) break;
         vex::this_thread::sleep_for(30);
     }
+    Bot::Controller.Screen.clearScreen();
     IgnoreDisplay = false;
     IgnoreMain = false;
 
@@ -482,19 +483,34 @@ int Bot::displayLoop() {
         if(Skills::isSkillsActive()) {
             Bot::Controller.Screen.print("%02d %s", SkillsEngine::currentTaskIndex(), SkillsEngine::currentTask().name.c_str());
         } else {
-            switch (UISystem::SelectedPosition)
+            switch (AutonomusRoutine)
             {
-                case 0:
-                    Bot::Controller.Screen.print("BLUE LEFT       CS%d  ", ColorDetection::isEnabled);
+                case Red_Left_Elim:
+                    Bot::Controller.Screen.print("RED LEFT E      CS%d  ", ColorDetection::isEnabled);
                     break;
-                case 1:
-                    Bot::Controller.Screen.print("BLUE RIGHT      CS%d  ", ColorDetection::isEnabled);
+                case Red_Left_AlainceStake:
+                    Bot::Controller.Screen.print("RED LEFT AS     CS%d  ", ColorDetection::isEnabled);
                     break;
-                case 2:
-                    Bot::Controller.Screen.print("RED LEFT        CS%d  ", ColorDetection::isEnabled);
+                case Red_Left_GoalRush:
+                    Bot::Controller.Screen.print("RED LEFT GR     CS%d  ", ColorDetection::isEnabled);
                     break;
-                case 3:
-                    Bot::Controller.Screen.print("RED RIGHT       CS%d  ", ColorDetection::isEnabled);
+                case Red_Right_Elim:
+                    Bot::Controller.Screen.print("RED RIGHT E     CS%d  ", ColorDetection::isEnabled);
+                    break;
+                case Blue_Left_Elim:
+                    Bot::Controller.Screen.print("BLUE LEFT E     CS%d  ", ColorDetection::isEnabled);
+                    break;
+                case Blue_Left_AlainceStake:
+                    Bot::Controller.Screen.print("BLUE LEFT AS    CS%d  ", ColorDetection::isEnabled);
+                    break;
+                case Blue_Left_GoalRush:
+                    Bot::Controller.Screen.print("BLUE LEFT GR     CS%d  ", ColorDetection::isEnabled);
+                    break;
+                case Blue_Right_Elim:
+                    Bot::Controller.Screen.print("BLUE RIGHT E     CS%d  ", ColorDetection::isEnabled);
+                    break;
+                default:
+                    Bot::Controller.Screen.print("ERROR           CS%d  ", ColorDetection::isEnabled);
                     break;
             
             }
