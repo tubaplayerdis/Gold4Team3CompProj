@@ -15,16 +15,16 @@ autons Bot::AutonomusRoutine = Red_Left_Elim;
 //Define Motors
 vex::motor Bot::LeftA = vex::motor(vex::PORT1, vex::ratio6_1,true);//High Speed
 vex::motor Bot::LeftB = vex::motor(vex::PORT2, vex::ratio6_1, true);//High Speed
-vex::motor Bot::LeftC = vex::motor(vex::PORT3, vex::ratio6_1, false);//High Speed
+vex::motor Bot::LeftC = vex::motor(vex::PORT3, vex::ratio6_1, true);//High Speed
 vex::motor Bot::RightA = vex::motor(vex::PORT4, vex::ratio6_1, false);//High Speed
 vex::motor Bot::RightB = vex::motor(vex::PORT5, vex::ratio6_1, false);//High Speed
-vex::motor Bot::RightC = vex::motor(vex::PORT6, vex::ratio6_1, true);//High Speed
+vex::motor Bot::RightC = vex::motor(vex::PORT6, vex::ratio6_1, false);//High Speed
 
 
 vex::motor Bot::Intake = vex::motor(vex::PORT7, vex::ratio6_1, false);//High Speed
 vex::motor Bot::ArmL = vex::motor(vex::PORT8, vex::ratio18_1, true); //Low Power
 vex::motor Bot::ArmR = vex::motor(vex::PORT9, vex::ratio18_1, false); //Low Power
-vex::motor_group Bot::Arm = vex::motor_group(Bot::ArmL, Bot::ArmR);//High Torque
+vex::motor_group Bot::Arm = vex::motor_group(Bot::ArmL, Bot::ArmR);
 bool Bot::isArmPIDActive = false;
 int Bot::desiredARMAngle = LADYBROWN_DESIRED_ANGLE;
 
