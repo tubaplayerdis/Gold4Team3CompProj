@@ -7,6 +7,7 @@ T clamp(T val, T mn, T mx){
     return std::max(std::min(val, mx), mn);
 }
 
+//maybe add timeout that return 1.
 int turnToPID(double targetAngle) {
     double error, integral = 0, derivative, lastError = 0;
     double power;
@@ -38,6 +39,8 @@ int turnToPID(double targetAngle) {
     // Stop motors once target is reached
     Bot::LeftMotors.stop();
     Bot::RightMotors.stop();
+
+    return 0;
 }
 
 int turnForPID(double angle) {
