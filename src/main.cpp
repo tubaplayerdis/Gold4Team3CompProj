@@ -927,7 +927,10 @@ void selectAutonBasedOfPotentiometer() {
 //
 int main() {
   //Skills::runSkills(1);
-  Odometry::setupAndStartOdometry();
+  //Odometry::setupAndStartOdometry();
+  Odometry::x = -1;
+  Odometry::y = -1;
+  Odometry::trackingWheelsInstalled=false;
   Bot::Aliance = aliance::Blue;
   selectAutonBasedOfPotentiometer();
 
