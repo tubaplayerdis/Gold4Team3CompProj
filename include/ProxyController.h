@@ -111,8 +111,8 @@ class FScreen {
         void     setCursor( int32_t row, int32_t col );
         int32_t  column();
         int32_t  row();
-        template <class T>
-        void     print( T value ) {}
+        //template <class T>
+        //void     print( T value ) {}
         void     print( const char *format, ... );
         void     print( char *format, ... ); 
         void     clearScreen( void );

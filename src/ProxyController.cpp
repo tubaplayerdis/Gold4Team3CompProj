@@ -14,8 +14,8 @@ void FScreen::setCursor( int32_t row, int32_t col ) { return; }
 int32_t  FScreen::column() { return -1; }
 int32_t  FScreen::row() { return -1; }
 
-template <class T>
-void  FScreen::print( T value ) { return; }
+//template <class T>
+//void  FScreen::print( T value ) { return; }
 void  FScreen::print( const char *format, ... ) { return; }
 void  FScreen::print( char *format, ... ) { return; }
 void  FScreen::clearScreen( void ) { return; }
