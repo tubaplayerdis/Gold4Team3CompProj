@@ -18,15 +18,15 @@ enum aliance {
 };
 
 enum autons {
-    Red_Left_Elim = 0, //Elimination Autons. Works with caspars autons
-    Red_Right_Elim = 1,
-    Blue_Left_Elim = 2,
-    Blue_Right_Elim = 3,
+    Red_Goal_Elim = 0, //Elimination Autons. Works with caspars autons
+    Red_Ring_Elim = 1,
+    Blue_Goal_Elim = 2,
+    Blue_Ring_Elim = 3,
 
-    Red_Left_AlainceStake = 4, //AWP based autons. use whter or not team has alaince stake or not. All of these should touch bar
-    Red_Left_GoalRush = 5,
-    Blue_Left_AlainceStake = 6,
-    Blue_Left_GoalRush = 7,
+    Red_Goal_AlainceStake = 4, //AWP based autons. use whter or not team has alaince stake or not. All of these should touch bar
+    Red_Goal_GoalRush = 5,
+    Blue_Goal_AlainceStake = 6,
+    Blue_Goal_GoalRush = 7,
 };
 
 enum BlinkTypes {
