@@ -6,7 +6,12 @@ template<typename T>
 T clamp(T val, T mn, T mx){
     return std::max(std::min(val, mx), mn);
 }
-
+double getShortestPathError(double target, double current) {
+    double error = target - current;
+    if (error > 180) error -= 360;  // Convert large positive angles
+    if (error < -180) error += 360; // Convert large negative angles
+    return error;
+}
 //maybe add timeout that return 1.
 int turnToPID(double targetAngle) {
     double error, integral = 0, derivative, lastError = 0;
@@ -14,7 +19,8 @@ int turnToPID(double targetAngle) {
     
     while (true) {
         double currentAngle = Bot::Inertial.heading();
-        error = targetAngle - currentAngle;
+        error = getShortestPathError(targetAngle, currentAngle);
+        //error = targetAngle - currentAngle;
         
         // Break if within a small margin
         if (fabs(error) < TURN_PID_MAX_TOLERANCE) break;

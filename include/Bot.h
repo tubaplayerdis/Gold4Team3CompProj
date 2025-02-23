@@ -27,6 +27,7 @@ enum autons {
     Red_Goal_GoalRush = 5,
     Blue_Goal_AlainceStake = 6,
     Blue_Goal_GoalRush = 7,
+    Test = 8
 };
 
 enum BlinkTypes {
@@ -98,6 +99,7 @@ class Bot {
         static vex::digital_out Doinker;
         static vex::digital_out Lift;
         static vex::pot AutonSelect;
+        static vex::pot ArmPot;
         static int RingsIntaken;
 
         //Gryos and stuff
@@ -113,6 +115,8 @@ class Bot {
         static vex::aivision::colordesc BLUEDESJ;
         static vex::aivision::colordesc REDDESJ;
         static vex::aivision AIVisionF;
+        static vex::aivision::colordesc MOGODESJ;
+        static vex::aivision AIVisionM;
 
         //"Game Posistioning System"
         static vex::gps GpsF;

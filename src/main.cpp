@@ -22,6 +22,20 @@ using namespace vex;
 // A global instance of competition
 competition Competition;
 
+void selectAutonBasedOfPotentiometer() {
+  double a = Bot::AutonSelect.angle(vex::degrees);
+  if(a >= 0 && a < 33.75) Bot::AutonomusRoutine = Red_Goal_Elim;
+  else if(a >= 33.75 && a < 67.5) Bot::AutonomusRoutine = Red_Goal_AlainceStake;
+  else if(a >= 67.5 && a < 101.25) Bot::AutonomusRoutine = Red_Goal_GoalRush;
+  else if(a >= 101.25 && a < 135) Bot::AutonomusRoutine = Red_Ring_Elim;
+  else if(a >= 135 && a < 168.75) Bot::AutonomusRoutine = Blue_Goal_Elim;
+  else if(a >= 168.75 && a < 202.5) Bot::AutonomusRoutine = Blue_Goal_AlainceStake;
+  else if(a >= 202.5 && a < 236.25) Bot::AutonomusRoutine = Blue_Goal_GoalRush;
+  else if(a >= 236.25 && a < 240) Bot::AutonomusRoutine = Blue_Ring_Elim;
+  else if(a >= 240 && a < 250) Bot::AutonomusRoutine = Test;
+  //250 is the max for some reason.
+}
+
 
 void cycleStartingPosistions() {
   UISystem::SelectedPosition++;
@@ -34,8 +48,10 @@ void cycleStartingPosistions() {
 }
 
 
-#define APPROACH_VELOCITY_PERCENT -35
-#define LINEAR_CHANGE_VELOCITY_CORRECTION 0.5
+#define APPROACH_VELOCITY_PERCENT -45
+#define LINEAR_CHANGE_VELOCITY_CORRECTION 0.7
+
+#define APPROACH_VELOCITY_PERCENT_MOGO -1 * APPROACH_VELOCITY_PERCENT
 
 
 // define your global instances of motors and other devices here
@@ -56,9 +72,14 @@ void pre_auton(void) {
   Bot::LeftMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
   Bot::RightMotors.setVelocity(APPROACH_VELOCITY_PERCENT, vex::percent);
   Bot::Drivetrain.setStopping(vex::brake);
+
+  //Setup AIVision Sensors
   Bot::AIVisionF.modelDetection(false);
   Bot::AIVisionF.colorDetection(true);
   Bot::AIVisionF.startAwb();
+  Bot::AIVisionM.modelDetection(false);
+  Bot::AIVisionM.colorDetection(true);
+  Bot::AIVisionM.startAwb();
   ColorDetection::isEnabled = true;
   //Preload
   Bot::RingsIntaken = 1;
@@ -138,6 +159,8 @@ int capPercentage(int percentage, int cap) {
 #define BOT_SLOWDOWN_DISTANCE 200
 
 #define MAX_OBJ_TO_TRACK 3 //Cannot be larger than 8
+
+#pragma region realelims
 
 void redGoalElim() {
     
@@ -1199,23 +1222,160 @@ void blueRingElim() {
 void skills() {
   
 }
+#pragma endregion
+
+void autonTest() {
+  Bot::IgnoreDisplay = true;
+  bool isExitAiLoop = false;
+  while (true)
+  {
+
+    if(isExitAiLoop) {
+      isExitAiLoop = true;
+      break;
+    }
 
 
+    Bot::Controller.Screen.clearScreen();
+
+    //Defualt blue
+    if(Bot::Aliance == Blue) {
+      Bot::AIVisionM.takeSnapshot(Bot::BLUEDESJ, MAX_OBJ_TO_TRACK);
+    } else {
+      //red
+      Bot::AIVisionM.takeSnapshot(Bot::REDDESJ, MAX_OBJ_TO_TRACK);
+    }
+
+    //Brain.Screen.printAt(0,50, "AI Vision Count: %d", AIVisionF.objectCount);
+    vex::aivision::object pursuit = vex::aivision::object();
+
+    //Bot::Drivetrain.setDriveVelocity(15, vex::percent);
+    //Bot::Drivetrain.setTurnVelocity(15, vex::percent);
+
+
+    if(Bot::AIVisionM.objectCount == 0) {
+      Bot::Controller.Screen.setCursor(2,1);
+      Bot::Controller.Screen.print("SEARCHING  ");
+      vex::this_thread::sleep_for(20);
+      continue;
+    }
+
+    //Something was found
+
+    Bot::LeftMotors.stop();
+    Bot::RightMotors.stop();
+
+    //The AI Vision Sensor has a resolution of 320 x 240 pixels.
+
+    //Turning to face
+    Bot::Controller.Screen.setCursor(2,1);
+    Bot::Controller.Screen.print("PURSUIT  ");
+    //Bot::Drivetrain.setDriveVelocity(35, vex::percent);
+    //Bot::Drivetrain.setTurnVelocity(5, vex::percent);
+
+    Bot::LeftMotors.setVelocity(APPROACH_VELOCITY_PERCENT_MOGO, vex::percent);
+    Bot::RightMotors.setVelocity(APPROACH_VELOCITY_PERCENT_MOGO, vex::percent);
+    Bot::LeftMotors.spin(vex::forward);
+    Bot::RightMotors.spin(vex::forward);
+    vex::this_thread::sleep_for(10);
+
+    Bot::Controller.Screen.clearScreen();
+
+    while (true)
+    {
+      //vex::this_thread::sleep_for(1000);
+
+      //vex::this_thread::sleep_for(10);
+      if(Bot::Aliance == Blue) {
+        Bot::AIVisionM.takeSnapshot(Bot::BLUEDESJ, MAX_OBJ_TO_TRACK);
+      } else {
+        //red
+        Bot::AIVisionM.takeSnapshot(Bot::REDDESJ, MAX_OBJ_TO_TRACK);
+      }
+    
+
+      if(Bot::AIVisionM.objectCount == 0) {
+        //Lost Ring
+        Bot::Drivetrain.stop();
+        break;
+      }
+
+
+      pursuit = Bot::AIVisionM.objects[0];
+      for (size_t i = 0; i < 3; i++)
+      {
+        if(Bot::AIVisionM.objects[i].width > pursuit.width) pursuit = Bot::AIVisionM.objects[i];
+      }
+      
+
+      bool isTurningtoDriving = false;
+      //Center of screen is 160,160.
+
+      if(Bot::LeftMotors.velocity(vex::percent) > APPROACH_VELOCITY_PERCENT_MOGO) Bot::LeftMotors.setVelocity(APPROACH_VELOCITY_PERCENT_MOGO, vex::percent);
+      if(Bot::RightMotors.velocity(vex::percent) > APPROACH_VELOCITY_PERCENT_MOGO) Bot::RightMotors.setVelocity(APPROACH_VELOCITY_PERCENT_MOGO, vex::percent);
+
+
+      Bot::Controller.Screen.setCursor(3,1);
+      Bot::Controller.Screen.print("LV :%.2f  RV: %.2f    ", Bot::LeftMotors.velocity(vex::percent), Bot::RightMotors.velocity(vex::percent));
+      
+      
+
+      if(pursuit.originX + pursuit.width < 160) {
+        Bot::LeftMotors.spin(vex::forward);
+        Bot::LeftMotors.setVelocity(Bot::LeftMotors.velocity(vex::percent)+LINEAR_CHANGE_VELOCITY_CORRECTION, vex::percent);
+        continue;
+      } else if (pursuit.originX > 160) {
+        Bot::RightMotors.spin(vex::forward);
+        Bot::RightMotors.setVelocity(Bot::RightMotors.velocity(vex::percent)+LINEAR_CHANGE_VELOCITY_CORRECTION, vex::percent);
+        continue;
+      } else {   
+        Bot::LeftMotors.setVelocity(APPROACH_VELOCITY_PERCENT_MOGO, vex::percent);
+        Bot::RightMotors.setVelocity(APPROACH_VELOCITY_PERCENT_MOGO, vex::percent);
+        if(isTurningtoDriving) {
+          //Bot::Drivetrain.stop();
+          isTurningtoDriving = false;
+        } //Stop turning
+        if(pursuit.width >= 200) {
+          Bot::Controller.Screen.setCursor(2,1);
+          Bot::Controller.Screen.clearLine(2);
+          Bot::Controller.Screen.print("DONE");
+          Bot::Drivetrain.setDriveVelocity(25, percent);
+          Bot::Drivetrain.drive(forward);
+          this_thread::sleep_for(100);
+          Bot::MogoMech.set(true);
+          Bot::MogoToggle = true;
+          this_thread::sleep_for(300);
+          Bot::Drivetrain.stop();
+          isExitAiLoop = true;
+          break;
+        }    
+
+        
+          
+      }
+
+      
+    }
+  }
+
+}
 
 
 void autonomous(void) {
+  //Setup AIVision Sensors.
   //Bot::AIVisionF.startAwb();
 
   Bot::IgnoreDisplay = true;
 
   //Force red auton.
   //UISystem::SelectedPosition = 2;
-  Bot::Inertial.setHeading(360, degrees);
+  Bot::Inertial.setHeading(0, degrees);
 
   
   Bot::IgnoreDisplay = true; 
   Bot::Controller.Screen.clearScreen();
 
+  selectAutonBasedOfPotentiometer();
   switch (Bot::AutonomusRoutine)
   {
       case Red_Goal_Elim:
@@ -1241,6 +1401,9 @@ void autonomous(void) {
           break;
       case Blue_Ring_Elim:
           blueRingElim();
+          break;
+      case Test:
+          autonTest();
           break;
       default:
           skills();
@@ -1358,18 +1521,6 @@ void IncreaseSelectedPosisitonAuton() {
 
 void ringCounterTripped() {
   Bot::RingsIntaken++;
-}
-
-void selectAutonBasedOfPotentiometer() {
-  double a = Bot::AutonSelect.angle(vex::degrees);
-  if(a <= 0 && a < 33.75) Bot::AutonomusRoutine = Red_Goal_Elim;
-  else if(a <= 33.75 && a < 67.5) Bot::AutonomusRoutine = Red_Goal_AlainceStake;
-  else if(a <= 67.5 && a < 101.25) Bot::AutonomusRoutine = Red_Goal_GoalRush;
-  else if(a <= 101.25 && a < 135) Bot::AutonomusRoutine = Red_Ring_Elim;
-  else if(a <= 101.25 && a < 135) Bot::AutonomusRoutine = Blue_Goal_Elim;
-  else if(a <= 101.25 && a < 135) Bot::AutonomusRoutine = Blue_Goal_AlainceStake;
-  else if(a <= 101.25 && a < 135) Bot::AutonomusRoutine = Blue_Goal_GoalRush;
-  else if(a <= 101.25 && a < 135) Bot::AutonomusRoutine = Blue_Ring_Elim;
 }
 
 //

@@ -10,7 +10,7 @@
 //Define Brain
 vex::brain Bot::Brain = vex::brain();
 
-autons Bot::AutonomusRoutine = Red_Goal_Elim;
+autons Bot::AutonomusRoutine = Red_Goal_AlainceStake;
 
 //Define Motors
 vex::motor Bot::LeftA = vex::motor(vex::PORT1, vex::ratio6_1,true);//High Speed
@@ -35,6 +35,7 @@ vex::digital_out Bot::Doinker = vex::digital_out(Bot::Brain.ThreeWirePort.C);
 vex::digital_out Bot::Lift = vex::digital_out(Bot::Brain.ThreeWirePort.E);
 
 vex::pot Bot::AutonSelect = vex::pot(Bot::Brain.ThreeWirePort.D);
+vex::pot Bot::ArmPot = vex::pot(Bot::Brain.ThreeWirePort.F);
 int Bot::RingsIntaken = 0;
 
 vex::inertial Bot::Inertial = vex::inertial(vex::PORT11);
@@ -50,6 +51,10 @@ aliance Bot::Aliance = aliance::Blue;
 vex::aivision::colordesc Bot::BLUEDESJ = vex::aivision::colordesc(1, 42,103,172, AI_HEU_TOLERANCE, AI_SATURATION_TOLERANCE);
 vex::aivision::colordesc Bot::REDDESJ = vex::aivision::colordesc(2, 209,30,105, AI_HEU_TOLERANCE, AI_SATURATION_TOLERANCE);
 vex::aivision Bot::AIVisionF = vex::aivision(vex::PORT20, BLUEDESJ, REDDESJ);
+
+
+vex::aivision::colordesc Bot::MOGODESJ = vex::aivision::colordesc(1, 161, 193, 129, 32, 0.21);
+vex::aivision Bot::AIVisionM = vex::aivision(vex::PORT19, MOGODESJ);
 
 //These are not installed.
 vex::gps Bot::GpsF = vex::gps(vex::PORT16, -16, 16, vex::inches, 0);
@@ -101,6 +106,20 @@ bool Bot::ClutchToggle = false;
 bool Bot::MogoToggle = true;
 bool Bot::DoinkerToggle = false;
 bool Bot::LiftToggle = false;
+
+void selectAutonBasedOfPotentiometer_priv() {
+    double a = Bot::AutonSelect.angle(vex::degrees);
+    if(a >= 0 && a < 33.75) Bot::AutonomusRoutine = Red_Goal_Elim;
+    else if(a >= 33.75 && a < 67.5) Bot::AutonomusRoutine = Red_Goal_AlainceStake;
+    else if(a >= 67.5 && a < 101.25) Bot::AutonomusRoutine = Red_Goal_GoalRush;
+    else if(a >= 101.25 && a < 135) Bot::AutonomusRoutine = Red_Ring_Elim;
+    else if(a >= 135 && a < 168.75) Bot::AutonomusRoutine = Blue_Goal_Elim;
+    else if(a >= 168.75 && a < 202.5) Bot::AutonomusRoutine = Blue_Goal_AlainceStake;
+    else if(a >= 202.5 && a < 236.25) Bot::AutonomusRoutine = Blue_Goal_GoalRush;
+    else if(a >= 236.25 && a < 240) Bot::AutonomusRoutine = Blue_Ring_Elim;
+    else if(a >= 240 && a < 250) Bot::AutonomusRoutine = Test;
+    //250 is the max for some reason.
+  }
 
 void Bot::swapFeedPos() {
     feedGps = !feedGps;
@@ -167,6 +186,7 @@ void Bot::setup() {
         if(Bot::Controller.ButtonA.pressing()) break;
         vex::this_thread::sleep_for(30);
     }
+    selectAutonBasedOfPotentiometer_priv();
     Bot::Controller.Screen.clearScreen();
     IgnoreDisplay = false;
     IgnoreMain = false;
@@ -459,6 +479,7 @@ int Bot::blinkerLoop() {
 
 int Bot::displayLoop() {
     Bot::Controller.Screen.clearScreen();
+    selectAutonBasedOfPotentiometer_priv();
     while (true) {
         if(IgnoreDisplay) {
             vex::this_thread::sleep_for(50);
@@ -470,6 +491,17 @@ int Bot::displayLoop() {
             continue;
         }
         /*
+        double a = Bot::AutonSelect.angle(vex::degrees);
+        if(a >= 0 && a < 33.75) Bot::AutonomusRoutine = Red_Goal_Elim;
+        else if(a >= 33.75 && a < 67.5) Bot::AutonomusRoutine = Red_Goal_AlainceStake;
+        else if(a >= 67.5 && a < 101.25) Bot::AutonomusRoutine = Red_Goal_GoalRush;
+        else if(a >= 101.25 && a < 135) Bot::AutonomusRoutine = Red_Ring_Elim;
+        else if(a >= 135 && a < 168.75) Bot::AutonomusRoutine = Blue_Goal_Elim;
+        else if(a >= 168.75 && a < 202.5) Bot::AutonomusRoutine = Blue_Goal_AlainceStake;
+        else if(a >= 202.5 && a < 236.25) Bot::AutonomusRoutine = Blue_Goal_GoalRush;
+        else if(a >= 236.25 && a < 270) Bot::AutonomusRoutine = Blue_Ring_Elim;
+        */
+        /*
             LED
         */
 
@@ -480,7 +512,7 @@ int Bot::displayLoop() {
         if(Bot::feedGps, Skills::isSkillsActive()) {
             Bot::Controller.Screen.print("X:%.1f,Y:%.1f,H:%.1f", Skills::x, Skills::y, Skills::h);
         } else {
-            Bot::Controller.Screen.print("H:%.1f, DIS:%.1f", Bot::Inertial.heading(), DistanceF.objectDistance(vex::mm));
+            Bot::Controller.Screen.print("H:%.1f, DIS:%.1f", Bot::Inertial.heading(), /*DistanceF.objectDistance(vex::mm)*/AutonSelect.value(vex::deg));
         }
         Bot::Controller.Screen.setCursor(3,1);
         if(Skills::isSkillsActive()) {
@@ -495,7 +527,7 @@ int Bot::displayLoop() {
                     Bot::Controller.Screen.print("RED GOAL AS      CS%d  ", ColorDetection::isEnabled);
                     break;
                 case Red_Goal_GoalRush:
-                    Bot::Controller.Screen.print("RED GOAL GR      CS%d  ", ColorDetection::isEnabled);
+                    Bot::Controller.Screen.print("RED GOAL GR     CS%d  ", ColorDetection::isEnabled);
                     break;
                 case Red_Ring_Elim:
                     Bot::Controller.Screen.print("RED RIGHT E      CS%d  ", ColorDetection::isEnabled);
@@ -507,10 +539,13 @@ int Bot::displayLoop() {
                     Bot::Controller.Screen.print("BLUE GOAL AS     CS%d  ", ColorDetection::isEnabled);
                     break;
                 case Blue_Goal_GoalRush:
-                    Bot::Controller.Screen.print("BLUE GOAL GR     CS%d  ", ColorDetection::isEnabled);
+                    Bot::Controller.Screen.print("BLUE GOAL GR    CS%d  ", ColorDetection::isEnabled);
                     break;
                 case Blue_Ring_Elim:
                     Bot::Controller.Screen.print("BLUE RING E      CS%d  ", ColorDetection::isEnabled);
+                    break;
+                case Test:
+                    Bot::Controller.Screen.print("TESTING          CS%d  ", ColorDetection::isEnabled);
                     break;
                 default:
                     Bot::Controller.Screen.print("ERROR            CS%d  ", ColorDetection::isEnabled);
@@ -573,8 +608,8 @@ void Bot::checkInstall() {
     if(!Intake.installed()) Notifications::addNotification("Intake DISCONNECT");
     if(!ArmL.installed()) Notifications::addNotification("ArmL DISCONNECT");
     if(!ArmR.installed()) Notifications::addNotification("ArmR DISCONNECT");
-    if(!RotationForward.installed()) Notifications::addNotification("RotationF DISCONNECT");
-    if(!RotationLateral.installed()) Notifications::addNotification("RotationL DISCONNECT");
+    //if(!RotationForward.installed()) Notifications::addNotification("RotationF DISCONNECT");
+    //if(!RotationLateral.installed()) Notifications::addNotification("RotationL DISCONNECT");
     if(!Inertial.installed()) Notifications::addNotification("Inertial DISCONNECT");
 
     if(Brain.Battery.capacity() < 30) Notifications::addNotification("Battery 30 WARN");
@@ -606,8 +641,8 @@ int Bot::monitorLoop() {
         if(!Intake.installed()) Notifications::addNotification("Intake DISCONNECT");
         if(!ArmL.installed()) Notifications::addNotification("ArmL DISCONNECT");
         if(!ArmR.installed()) Notifications::addNotification("ArmR DISCONNECT");
-        if(!RotationForward.installed()) Notifications::addNotification("RotationF DISCONNECT");
-        if(!RotationLateral.installed()) Notifications::addNotification("RotationL DISCONNECT");
+        //if(!RotationForward.installed()) Notifications::addNotification("RotationF DISCONNECT");
+        //if(!RotationLateral.installed()) Notifications::addNotification("RotationL DISCONNECT");
         if(!Inertial.installed()) Notifications::addNotification("Inertial DISCONNECT");
 
         if(Brain.Battery.capacity() < 30) Notifications::addNotification("Battery 30 WARN");
