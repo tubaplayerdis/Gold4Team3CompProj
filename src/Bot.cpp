@@ -109,6 +109,7 @@ bool Bot::LiftToggle = false;
 
 void selectAutonBasedOfPotentiometer_priv() {
     double a = Bot::AutonSelect.angle(vex::degrees);
+    if(a >= 0 && a < 135) Bot::Aliance = Red; else Bot::Aliance = Blue;
     if(a >= 0 && a < 33.75) Bot::AutonomusRoutine = Red_Goal_Elim;
     else if(a >= 33.75 && a < 67.5) Bot::AutonomusRoutine = Red_Goal_AlainceStake;
     else if(a >= 67.5 && a < 101.25) Bot::AutonomusRoutine = Red_Goal_GoalRush;
@@ -117,7 +118,10 @@ void selectAutonBasedOfPotentiometer_priv() {
     else if(a >= 168.75 && a < 202.5) Bot::AutonomusRoutine = Blue_Goal_AlainceStake;
     else if(a >= 202.5 && a < 236.25) Bot::AutonomusRoutine = Blue_Goal_GoalRush;
     else if(a >= 236.25 && a < 240) Bot::AutonomusRoutine = Blue_Ring_Elim;
-    else if(a >= 240 && a < 250) Bot::AutonomusRoutine = Test;
+    else if(a >= 240 && a < 250) {
+        Bot::AutonomusRoutine = Test;
+        Bot::Aliance = Blue;
+    }
     //250 is the max for some reason.
   }
 

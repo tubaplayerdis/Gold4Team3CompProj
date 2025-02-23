@@ -1379,27 +1379,35 @@ void autonomous(void) {
   switch (Bot::AutonomusRoutine)
   {
       case Red_Goal_Elim:
+          Bot::Aliance = Red;
           redGoalElim();
           break;
       case Red_Goal_AlainceStake:
+          Bot::Aliance = Red;
           redGoalAlianceStake();
           break;
       case Red_Goal_GoalRush:
+          Bot::Aliance = Red;
           redGoalGoalRush();
           break;
       case Red_Ring_Elim:
+          Bot::Aliance = Red;
           redRingElim();
           break;
       case Blue_Goal_Elim:
+          Bot::Aliance = Blue;
           blueGoalElim();
           break;
       case Blue_Goal_AlainceStake:
+          Bot::Aliance = Blue;
           blueGoalAlainceStake();
           break;
       case Blue_Goal_GoalRush:
+          Bot::Aliance = Blue;
           blueGoalGoalRush();
           break;
       case Blue_Ring_Elim:
+          Bot::Aliance = Blue;
           blueRingElim();
           break;
       case Test:
