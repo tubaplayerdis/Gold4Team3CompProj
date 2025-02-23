@@ -1411,6 +1411,7 @@ void autonomous(void) {
           blueRingElim();
           break;
       case Test:
+          Bot::Aliance = Blue;
           autonTest();
           break;
       default:
