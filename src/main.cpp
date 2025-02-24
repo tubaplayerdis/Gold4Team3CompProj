@@ -160,7 +160,6 @@ int capPercentage(int percentage, int cap) {
 
 #define MAX_OBJ_TO_TRACK 3 //Cannot be larger than 8
 
-#pragma region realelims
 
 void redGoalElim() {
     
@@ -1222,7 +1221,6 @@ void blueRingElim() {
 void skills() {
   
 }
-#pragma endregion
 
 void autonTest() {
   Bot::IgnoreDisplay = true;

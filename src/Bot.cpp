@@ -21,10 +21,10 @@ vex::motor Bot::RightB = vex::motor(vex::PORT5, vex::ratio6_1, false);//High Spe
 vex::motor Bot::RightC = vex::motor(vex::PORT6, vex::ratio6_1, false);//High Speed
 
 
-vex::motor Bot::Intake = vex::motor(vex::PORT7, vex::ratio6_1, false);//High Speed
-vex::motor Bot::ArmL = vex::motor(vex::PORT8, vex::ratio18_1, true); //Low Power
-vex::motor Bot::ArmR = vex::motor(vex::PORT9, vex::ratio18_1, false); //Low Power
-vex::motor_group Bot::Arm = vex::motor_group(Bot::ArmL, Bot::ArmR);
+vex::motor Bot::Conveyor = vex::motor(vex::PORT7, vex::ratio6_1, false);//High Speed
+vex::motor Bot::IntakeReal = vex::motor(vex::PORT8, vex::ratio18_1, true); //Low Power
+vex::motor Bot::Arm = vex::motor(vex::PORT9, vex::ratio18_1, false); //Low Power
+vex::motor_group Bot::Intake = vex::motor_group(Bot::Conveyor, Bot::IntakeReal);
 bool Bot::isArmPIDActive = false;
 int Bot::desiredARMAngle = LADYBROWN_DESIRED_ANGLE;
 
@@ -166,12 +166,11 @@ void Bot::setup() {
     LeftC.setBrake(vex::brakeType::coast);
     RightC.setBrake(vex::brakeType::coast);
     Intake.setStopping(vex::brakeType::coast);
-    Intake.setBrake(vex::brakeType::coast);
+    Conveyor.setBrake(vex::brakeType::coast);
 
     Arm.setPosition(0, vex::degrees);
     Arm.setStopping(vex::hold);
-    ArmL.setBrake(vex::hold);
-    ArmR.setBrake(vex::hold);
+    Arm.setBrake(vex::hold);
 
     Bot::Arm.setStopping(vex::hold);
     Bot::Arm.setVelocity(100, vex::percent);
@@ -285,16 +284,16 @@ int Bot::mainLoop() {
 
         if(!IgnoreIntake) {
             if(Controller.ButtonL2.pressing() && Controller.ButtonR2.pressing()) {
-                Intake.setVelocity(0, vex::rpm);
+                Intake.setVelocity(0, vex::pct);
                 Intake.stop();
             } else if (Controller.ButtonL2.pressing()) {
-                Intake.setVelocity(600, vex::rpm);
+                Intake.setVelocity(100, vex::pct);
                 Intake.spin(vex::reverse);
             } else if (Controller.ButtonR2.pressing()) {
-                Intake.setVelocity(600, vex::rpm);
+                Intake.setVelocity(100, vex::pct);
                 Intake.spin(vex::forward);
             } else {
-                Intake.setVelocity(0, vex::rpm);
+                Intake.setVelocity(0, vex::pct);
                 Intake.stop();
             }
         }
@@ -389,31 +388,31 @@ void Bot::releaseClutch() {
 
 void Bot::checkMonitors() {
 
-        if(LeftA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LeftA TEMP");
-        if(LeftB.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LeftB TEMP");
-        if(LeftC.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LeftC TEMP");
-        if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightA TEMP");
-        if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightB TEMP");
-        if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightC TEMP");
-        if(Intake.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("Intake TEMP");
-        if(ArmL.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("ArmL TEMP");
-        if(ArmR.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("ArmR TEMP");
+    if(LeftA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LeftA TEMP");
+    if(LeftB.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LeftB TEMP");
+    if(LeftC.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("LeftC TEMP");
+    if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightA TEMP");
+    if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightB TEMP");
+    if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightC TEMP");
+    if(Intake.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("Intake TEMP");
+    if(Arm.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("Intake TEMP");
+    if(Conveyor.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("Conveyor TEMP");
 
-        if(!LeftA.installed()) Notifications::addNotification("LeftA DISCONNECT");
-        if(!LeftB.installed()) Notifications::addNotification("LeftB DISCONNECT");
-        if(!LeftC.installed()) Notifications::addNotification("LeftC DISCONNECT");
-        if(!RightA.installed()) Notifications::addNotification("RightA DISCONNECT");
-        if(!RightB.installed()) Notifications::addNotification("RightB DISCONNECT");
-        if(!RightC.installed()) Notifications::addNotification("RightC DISCONNECT");
-        if(!Intake.installed()) Notifications::addNotification("Intake DISCONNECT");
-        if(!ArmL.installed()) Notifications::addNotification("ArmL DISCONNECT");
-        if(!ArmR.installed()) Notifications::addNotification("ArmR DISCONNECT");
-        if(!RotationForward.installed()) Notifications::addNotification("RotationF DISCONNECT");
-        if(!RotationLateral.installed()) Notifications::addNotification("RotationL DISCONNECT");
-        if(!Inertial.installed()) Notifications::addNotification("Inertial DISCONNECT");
+    if(!LeftA.installed()) Notifications::addNotification("LeftA DISCONNECT");
+    if(!LeftB.installed()) Notifications::addNotification("LeftB DISCONNECT");
+    if(!LeftC.installed()) Notifications::addNotification("LeftC DISCONNECT");
+    if(!RightA.installed()) Notifications::addNotification("RightA DISCONNECT");
+    if(!RightB.installed()) Notifications::addNotification("RightB DISCONNECT");
+    if(!RightC.installed()) Notifications::addNotification("RightC DISCONNECT");
+    if(!IntakeReal.installed()) Notifications::addNotification("Intake DISCONNECT");
+    if(!Arm.installed()) Notifications::addNotification("ArmL DISCONNECT");
+    if(!Conveyor.installed()) Notifications::addNotification("Conveyor DISCONNECT");
+    //if(!RotationForward.installed()) Notifications::addNotification("RotationF DISCONNECT");
+    //if(!RotationLateral.installed()) Notifications::addNotification("RotationL DISCONNECT");
+    if(!Inertial.installed()) Notifications::addNotification("Inertial DISCONNECT");
 
-        if(Brain.Battery.capacity() < 30) Notifications::addNotification("Battery 30 WARN");
-        if(Brain.Battery.capacity() < 10) Notifications::addNotification("Battery 10 REPLACE");
+    if(Brain.Battery.capacity() < 30) Notifications::addNotification("Battery 30 WARN");
+    if(Brain.Battery.capacity() < 10) Notifications::addNotification("Battery 10 REPLACE");
 
 }
 
@@ -600,8 +599,8 @@ void Bot::checkInstall() {
     if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightB TEMP");
     if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightC TEMP");
     if(Intake.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("Intake TEMP");
-    if(ArmL.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("ArmL TEMP");
-    if(ArmR.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("ArmR TEMP");
+    //if(ArmL.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("ArmL TEMP");
+    //if(ArmR.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("ArmR TEMP");
 
     if(!LeftA.installed()) Notifications::addNotification("LeftA DISCONNECT");
     if(!LeftB.installed()) Notifications::addNotification("LeftB DISCONNECT");
@@ -609,9 +608,9 @@ void Bot::checkInstall() {
     if(!RightA.installed()) Notifications::addNotification("RightA DISCONNECT");
     if(!RightB.installed()) Notifications::addNotification("RightB DISCONNECT");
     if(!RightC.installed()) Notifications::addNotification("RightC DISCONNECT");
-    if(!Intake.installed()) Notifications::addNotification("Intake DISCONNECT");
-    if(!ArmL.installed()) Notifications::addNotification("ArmL DISCONNECT");
-    if(!ArmR.installed()) Notifications::addNotification("ArmR DISCONNECT");
+    //if(!Intake.installed()) Notifications::addNotification("Intake DISCONNECT");
+    //if(!ArmL.installed()) Notifications::addNotification("ArmL DISCONNECT");
+    //if(!ArmR.installed()) Notifications::addNotification("ArmR DISCONNECT");
     //if(!RotationForward.installed()) Notifications::addNotification("RotationF DISCONNECT");
     //if(!RotationLateral.installed()) Notifications::addNotification("RotationL DISCONNECT");
     if(!Inertial.installed()) Notifications::addNotification("Inertial DISCONNECT");
@@ -633,8 +632,8 @@ int Bot::monitorLoop() {
         if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightB TEMP");
         if(RightA.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("RightC TEMP");
         if(Intake.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("Intake TEMP");
-        if(ArmL.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("ArmL TEMP");
-        if(ArmR.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("ArmR TEMP");
+        //if(ArmL.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("ArmL TEMP");
+        //if(ArmR.temperature(vex::temperatureUnits::fahrenheit) > 129) Notifications::addNotification("ArmR TEMP");
 
         if(!LeftA.installed()) Notifications::addNotification("LeftA DISCONNECT");
         if(!LeftB.installed()) Notifications::addNotification("LeftB DISCONNECT");
@@ -642,9 +641,9 @@ int Bot::monitorLoop() {
         if(!RightA.installed()) Notifications::addNotification("RightA DISCONNECT");
         if(!RightB.installed()) Notifications::addNotification("RightB DISCONNECT");
         if(!RightC.installed()) Notifications::addNotification("RightC DISCONNECT");
-        if(!Intake.installed()) Notifications::addNotification("Intake DISCONNECT");
-        if(!ArmL.installed()) Notifications::addNotification("ArmL DISCONNECT");
-        if(!ArmR.installed()) Notifications::addNotification("ArmR DISCONNECT");
+        //if(!Intake.installed()) Notifications::addNotification("Intake DISCONNECT");
+        //if(!ArmL.installed()) Notifications::addNotification("ArmL DISCONNECT");
+        //if(!ArmR.installed()) Notifications::addNotification("ArmR DISCONNECT");
         //if(!RotationForward.installed()) Notifications::addNotification("RotationF DISCONNECT");
         //if(!RotationLateral.installed()) Notifications::addNotification("RotationL DISCONNECT");
         if(!Inertial.installed()) Notifications::addNotification("Inertial DISCONNECT");

@@ -86,10 +86,12 @@ class Bot {
         static vex::motor_group RightMotors;
 
         //Conveyor/Lady Brown
-        static vex::motor Intake;
-        static vex::motor ArmL;
-        static vex::motor ArmR;
-        static vex::motor_group Arm;
+        static vex::motor Conveyor;
+        static vex::motor IntakeReal;
+        static vex::motor Arm;
+        static vex::motor_group Intake;
+        //static vex::motor ArmR;
+        //static vex::motor_group Arm;
         static bool isArmPIDActive;
         static int desiredARMAngle;
 
