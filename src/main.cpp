@@ -1529,17 +1529,17 @@ void ringCounterTripped() {
 }
 
 void primeTheGripper() {
-  //If it is already being pressed wait till release.
-  if(Bot::GripperSwitch.pressing()) {
-    Bot::Gripper.set(false);
-    waitUntil(!Bot::GripperSwitch.pressing() || !Bot::GripperSwitchDos.pressing());
-  }
   //Release
   Bot::Gripper.set(false);
 
   //Wait until the Limit switch is pressed.
+  Bot::Controller.rumble("..");
   waitUntil(Bot::GripperSwitch.pressing() || Bot::GripperSwitchDos.pressing());
   Bot::Gripper.set(true);
+}
+
+void releaseGripper() {
+  Bot::Gripper.set(false);
 }
 
 //
@@ -1562,11 +1562,11 @@ int main() {
   Bot::Controller.ButtonA.pressed(Bot::toggleMogo);
   Bot::Controller.ButtonB.pressed(Bot::toggleDoinker);
 
-  Bot::Controller.ButtonLeft.pressed(Notifications::notifBackward);
+  Bot::Controller.ButtonLeft.pressed(ColorDetection::toggleEnabled);
   Bot::Controller.ButtonRight.pressed(Notifications::notifForward);
 
   Bot::Controller.ButtonUp.pressed(primeTheGripper);
-  Bot::Controller.ButtonDown.pressed(ColorDetection::toggleEnabled);
+  Bot::Controller.ButtonDown.pressed(releaseGripper);
 
 
 

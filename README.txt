@@ -10,11 +10,11 @@ CONTROLS:
     R2 - Intake Out
     A - Clamp Toggle
     B - Doinker Toggle
-    Y - Step Back Conveyor
+    Y - Lift Toggle
     X - Load Position For LadyBrown
-    Up - Cycle Auton Position and Alaince
-    Down - Color Sort Toggle
-    Left - Cycle Notification Backward
+    Up - Prime Gripper
+    Down - Release Gripper
+    Left - Toggle colorsort
     Right - Cycle Notifications Forward
 
 

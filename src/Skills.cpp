@@ -107,7 +107,7 @@ void interpretSkill(SkillsTask task) {
             Bot::isArmPIDActive = true;
             break;
         case EndGame:
-            Bot::Clutch.set(task.togglePTUTo);
+            Bot::Gripper.set(task.togglePTUTo);
             break;
         case Doinker:
             Bot::Doinker.set(task.toggleDoinkerTO);

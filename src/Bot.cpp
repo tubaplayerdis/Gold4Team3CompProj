@@ -334,8 +334,8 @@ int Bot::mainLoop() {
 }
 
 void Bot::toggleClutch() {
-    ClutchToggle = !ClutchToggle;
-    Gripper.set(ClutchToggle);
+    //ClutchToggle = !ClutchToggle;
+    //Gripper.set(ClutchToggle);
 }
 
 void Bot::toggleMogo() {
@@ -379,11 +379,11 @@ void Bot::releaseMobileGoal() {
 }
 
 void Bot::pushClutch() {
-    Bot::Gripper.set(true);
+    //Bot::Gripper.set(true);
 }
 
 void Bot::releaseClutch() {
-    Bot::Gripper.set(false);
+    //Bot::Gripper.set(false);
 }
 
 
