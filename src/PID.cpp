@@ -86,6 +86,7 @@ int turnArmToPID(double targetAngle) {
 
     // Stop motors once target is reached
     Bot::Arm.stop();
+    Bot::Controller.rumble("..");
 
     return 0;
 }

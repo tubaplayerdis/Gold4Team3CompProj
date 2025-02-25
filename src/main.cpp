@@ -1477,9 +1477,7 @@ void usercontrol(void) {
 
 void ToggleLadyBrown() {
   Bot::IgnoreArm = true;
-  Bot::Arm.setMaxTorque(100, vex::percent);
-  Bot::Arm.setVelocity(100, vex::percent);
-  Bot::Arm.spinTo(125, vex::degrees, true);
+  turnArmToPID(40);
   Bot::IgnoreArm = false;
   //Bot::desiredARMAngle = LADYBROWN_DESIRED_ANGLE;
   //Bot::isArmPIDActive = !Bot::isArmPIDActive;
