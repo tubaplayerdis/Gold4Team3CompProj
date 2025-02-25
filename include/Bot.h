@@ -97,11 +97,12 @@ class Bot {
 
         //3 Wrire Port
         static vex::digital_out MogoMech;
-        static vex::digital_out Clutch;
+        static vex::digital_out Gripper;
         static vex::digital_out Doinker;
         static vex::digital_out Lift;
         static vex::pot AutonSelect;
         static vex::pot ArmPot;
+        static vex::limit GripperSwitch;
         static int RingsIntaken;
 
         //Gryos and stuff

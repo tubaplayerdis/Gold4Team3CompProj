@@ -1530,6 +1530,20 @@ void ringCounterTripped() {
   Bot::RingsIntaken++;
 }
 
+void primeTheGripper() {
+  //If it is already being pressed wait till release.
+  if(Bot::GripperSwitch.pressing()) {
+    Bot::Gripper.set(false);
+    waitUntil(!Bot::GripperSwitch.pressing());
+  }
+  //Release
+  Bot::Gripper.set(false);
+
+  //Wait until the Limit switch is pressed.
+  waitUntil(Bot::GripperSwitch.pressing());
+  Bot::Gripper.set(true);
+}
+
 //
 // Main will set up the competition functions and callbacks.
 //
@@ -1553,7 +1567,7 @@ int main() {
   Bot::Controller.ButtonLeft.pressed(Notifications::notifBackward);
   Bot::Controller.ButtonRight.pressed(Notifications::notifForward);
 
-  //Bot::Controller.ButtonUp.pressed(IncreaseSelectedPosisitonAuton);
+  Bot::Controller.ButtonUp.pressed(primeTheGripper);
   Bot::Controller.ButtonDown.pressed(ColorDetection::toggleEnabled);
 
 

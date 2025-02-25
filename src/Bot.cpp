@@ -30,12 +30,12 @@ int Bot::desiredARMAngle = LADYBROWN_DESIRED_ANGLE;
 
 
 vex::digital_out Bot::MogoMech = vex::digital_out(Bot::Brain.ThreeWirePort.A);
-vex::digital_out Bot::Clutch = vex::digital_out(Bot::Brain.ThreeWirePort.B);
+vex::digital_out Bot::Gripper = vex::digital_out(Bot::Brain.ThreeWirePort.B);
 vex::digital_out Bot::Doinker = vex::digital_out(Bot::Brain.ThreeWirePort.C);
 vex::digital_out Bot::Lift = vex::digital_out(Bot::Brain.ThreeWirePort.E);
-
 vex::pot Bot::AutonSelect = vex::pot(Bot::Brain.ThreeWirePort.D);
 vex::pot Bot::ArmPot = vex::pot(Bot::Brain.ThreeWirePort.F);
+vex::limit Bot::GripperSwitch = vex::limit(Bot::Brain.ThreeWirePort.G);
 int Bot::RingsIntaken = 0;
 
 vex::inertial Bot::Inertial = vex::inertial(vex::PORT11);
@@ -178,7 +178,7 @@ void Bot::setup() {
 
 
     MogoMech.set(false);
-    Clutch.set(false);
+    Gripper.set(false);
     Doinker.set(false);
 
     Bot::Inertial.calibrate();
@@ -334,7 +334,7 @@ int Bot::mainLoop() {
 
 void Bot::toggleClutch() {
     ClutchToggle = !ClutchToggle;
-    Clutch.set(ClutchToggle);
+    Gripper.set(ClutchToggle);
 }
 
 void Bot::toggleMogo() {
@@ -378,11 +378,11 @@ void Bot::releaseMobileGoal() {
 }
 
 void Bot::pushClutch() {
-    Bot::Clutch.set(true);
+    Bot::Gripper.set(true);
 }
 
 void Bot::releaseClutch() {
-    Bot::Clutch.set(false);
+    Bot::Gripper.set(false);
 }
 
 
