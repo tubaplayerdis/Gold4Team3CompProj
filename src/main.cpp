@@ -1534,13 +1534,13 @@ void primeTheGripper() {
   //If it is already being pressed wait till release.
   if(Bot::GripperSwitch.pressing()) {
     Bot::Gripper.set(false);
-    waitUntil(!Bot::GripperSwitch.pressing());
+    waitUntil(!Bot::GripperSwitch.pressing() || !Bot::GripperSwitchDos.pressing());
   }
   //Release
   Bot::Gripper.set(false);
 
   //Wait until the Limit switch is pressed.
-  waitUntil(Bot::GripperSwitch.pressing());
+  waitUntil(Bot::GripperSwitch.pressing() || Bot::GripperSwitchDos.pressing());
   Bot::Gripper.set(true);
 }
 

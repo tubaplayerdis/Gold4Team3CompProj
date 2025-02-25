@@ -103,6 +103,7 @@ class Bot {
         static vex::pot AutonSelect;
         static vex::pot ArmPot;
         static vex::limit GripperSwitch;
+        static vex::limit GripperSwitchDos;
         static int RingsIntaken;
 
         //Gryos and stuff

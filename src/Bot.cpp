@@ -36,6 +36,7 @@ vex::digital_out Bot::Lift = vex::digital_out(Bot::Brain.ThreeWirePort.E);
 vex::pot Bot::AutonSelect = vex::pot(Bot::Brain.ThreeWirePort.D);
 vex::pot Bot::ArmPot = vex::pot(Bot::Brain.ThreeWirePort.F);
 vex::limit Bot::GripperSwitch = vex::limit(Bot::Brain.ThreeWirePort.G);
+vex::limit Bot::GripperSwitchDos = vex::limit(Bot::Brain.ThreeWirePort.H);
 int Bot::RingsIntaken = 0;
 
 vex::inertial Bot::Inertial = vex::inertial(vex::PORT11);
