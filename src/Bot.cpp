@@ -36,7 +36,7 @@ vex::digital_out Bot::Lift = vex::digital_out(Bot::Brain.ThreeWirePort.E);
 vex::pot Bot::AutonSelect = vex::pot(Bot::Brain.ThreeWirePort.D);
 vex::pot Bot::ArmPot = vex::pot(Bot::Brain.ThreeWirePort.F);
 vex::limit Bot::GripperSwitch = vex::limit(Bot::Brain.ThreeWirePort.G);
-vex::limit Bot::GripperSwitchDos = vex::limit(Bot::Brain.ThreeWirePort.H);
+vex::digital_out Bot::DoinkerDos = vex::digital_out(Bot::Brain.ThreeWirePort.H);
 int Bot::RingsIntaken = 0;
 
 vex::inertial Bot::Inertial = vex::inertial(vex::PORT11);
@@ -181,6 +181,8 @@ void Bot::setup() {
     MogoMech.set(false);
     Gripper.set(false);
     Doinker.set(false);
+    Lift.set(false);
+    DoinkerDos.set(false);
 
     Bot::Inertial.calibrate();
     Bot::Controller.Screen.clearScreen();
@@ -346,6 +348,18 @@ void Bot::toggleMogo() {
 void Bot::toggleDoinker() {
     DoinkerToggle = !DoinkerToggle;
     Doinker.set(DoinkerToggle);
+}
+
+void Bot::toggleDoinkerMacro() {
+    waitUntil(!Bot::Controller.ButtonB.pressing());
+    for(int i = 0; i < 200; i++) {
+        if(Bot::Controller.ButtonB.pressing()) {
+            Bot::toggleDoinker();
+            return;
+        }
+        vex::this_thread::sleep_for(1);
+    }
+    DoinkerDos.set(DoinkerDos.value());
 }
 
 void Bot::toggleLift() {
