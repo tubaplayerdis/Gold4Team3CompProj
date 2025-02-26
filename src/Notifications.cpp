@@ -31,6 +31,7 @@ int Notifications::notificationLoop() {
     return 0;
 }
 
+//techniclly not needed since the notif forward allows me to cycle trough things better.
 void Notifications::notifBackward() {
     int newval = notifIndex - 1;
     if(newval < 0) {

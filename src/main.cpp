@@ -1528,6 +1528,12 @@ void ringCounterTripped() {
   Bot::RingsIntaken++;
 }
 
+//200 ms for "double click"
+void pGDP(){
+  Bot::DoinkerToggle = true;
+  Bot::Doinker.set(true);
+}
+
 void primeTheGripper() {
   //Release
   Bot::Gripper.set(false);
@@ -1565,8 +1571,8 @@ int main() {
   Bot::Controller.ButtonLeft.pressed(ColorDetection::toggleEnabled);
   Bot::Controller.ButtonRight.pressed(Notifications::notifForward);
 
-  Bot::Controller.ButtonUp.pressed(primeTheGripper);
-  Bot::Controller.ButtonDown.pressed(releaseGripper);
+  Bot::Controller.ButtonUp.pressed(releaseGripper);
+  Bot::Controller.ButtonDown.pressed(primeTheGripper);
 
 
 

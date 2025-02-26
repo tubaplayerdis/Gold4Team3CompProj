@@ -78,7 +78,7 @@ int turnArmToPID(double targetAngle) {
         power = clamp(power, -ARM_PID_MAX_MOTOR_POWER, ARM_PID_MAX_MOTOR_POWER);
         
         // Apply power to motors
-        Bot::Arm.spin(vex::fwd, power, vex::pct);
+        Bot::Arm.spin(vex::reverse, power, vex::pct);
 
         lastError = error;
         vex::task::sleep(20);  // Small delay for stability
