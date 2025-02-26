@@ -14,7 +14,7 @@ int ColorDetection::visionTask() {
         //Bot::Brain.Screen.printAt(130,0, "hue: %f brightness: %f", hue, brightness);
 
         double GV = Bot::ColorSensor.hue();
-        if(GV < BLUE_HUE_HIGH && GV > BLUE_HEU_LOW && Bot::DistanceC.objectDistance(vex::mm) < 40) {
+        if(GV < BLUE_HUE_HIGH && GV > BLUE_HEU_LOW && Bot::DistanceC.objectDistance(vex::mm) < 50) {
             //Blue Ring
             //Bot::Brain.Screen.printAt(0,190, "Blue Ring Detected!");
             if(!isEnabled) continue;
@@ -22,7 +22,7 @@ int ColorDetection::visionTask() {
             if(Bot::Aliance != aliance::Blue) {
                 Bot::IgnoreIntake = true;
                 Bot::Conveyor.stop();
-                vex::this_thread::sleep_for(30);
+                vex::this_thread::sleep_for(80);
                 if(Bot::Comp.isAutonomous()) {
                     Bot::Conveyor.setMaxTorque(100, vex::percent);
                     Bot::Conveyor.setVelocity(100, vex::percent);
@@ -31,7 +31,7 @@ int ColorDetection::visionTask() {
                 Bot::IgnoreIntake = false;
                 //vex::this_thread::sleep_for(200);
             }
-        } else if( GV < RED_HUE_HIGH && GV > RED_HUE_LOW && Bot::DistanceC.objectDistance(vex::mm) < 40) {
+        } else if( GV < RED_HUE_HIGH && GV > RED_HUE_LOW && Bot::DistanceC.objectDistance(vex::mm) < 50) {
             //Red Ring
             //Bot::Brain.Screen.printAt(0,190, "Red Ring Detected!");
             if(!isEnabled) continue;
@@ -39,7 +39,7 @@ int ColorDetection::visionTask() {
             if(Bot::Aliance != aliance::Red) {
                 Bot::IgnoreIntake = true;
                 Bot::Conveyor.stop();
-                vex::this_thread::sleep_for(30);
+                vex::this_thread::sleep_for(80);
                 if(Bot::Comp.isAutonomous()) {
                     Bot::Conveyor.setMaxTorque(100, vex::percent);
                     Bot::Conveyor.setVelocity(100, vex::percent);
