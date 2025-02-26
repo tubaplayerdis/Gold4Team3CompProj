@@ -61,7 +61,7 @@ int turnArmToPID(double targetAngle) {
     double power;
     
     while (true) {
-        double currentAngle = Bot::ArmPot.value(vex::deg);
+        double currentAngle = Bot::ArmPot.position(vex::deg);
         error = targetAngle - currentAngle;
         //error = targetAngle - currentAngle;
         

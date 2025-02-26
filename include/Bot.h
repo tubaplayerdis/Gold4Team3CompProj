@@ -101,7 +101,7 @@ class Bot {
         static vex::digital_out Doinker;
         static vex::digital_out Lift;
         static vex::pot AutonSelect;
-        static vex::pot ArmPot;
+        static vex::rotation ArmPot;
         static vex::limit GripperSwitch;
         static vex::digital_out DoinkerDos;
         static int RingsIntaken;

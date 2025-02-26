@@ -34,7 +34,7 @@ vex::digital_out Bot::Gripper = vex::digital_out(Bot::Brain.ThreeWirePort.B);
 vex::digital_out Bot::Doinker = vex::digital_out(Bot::Brain.ThreeWirePort.C);
 vex::digital_out Bot::Lift = vex::digital_out(Bot::Brain.ThreeWirePort.E);
 vex::pot Bot::AutonSelect = vex::pot(Bot::Brain.ThreeWirePort.D);
-vex::pot Bot::ArmPot = vex::pot(Bot::Brain.ThreeWirePort.F);
+vex::rotation Bot::ArmPot = vex::rotation(vex::PORT12);
 vex::limit Bot::GripperSwitch = vex::limit(Bot::Brain.ThreeWirePort.G);
 vex::digital_out Bot::DoinkerDos = vex::digital_out(Bot::Brain.ThreeWirePort.H);
 int Bot::RingsIntaken = 0;
@@ -536,7 +536,7 @@ int Bot::displayLoop() {
         if(Bot::feedGps, Skills::isSkillsActive()) {
             Bot::Controller.Screen.print("X:%.1f,Y:%.1f,H:%.1f", Skills::x, Skills::y, Skills::h);
         } else {
-            Bot::Controller.Screen.print("H:%.1f, DIS:%.1f", Bot::Inertial.heading(), /*DistanceF.objectDistance(vex::mm)*/Bot::ArmPot.value(vex::deg));
+            Bot::Controller.Screen.print("H:%.1f, DIS:%.1f", Bot::Inertial.heading(), /*DistanceF.objectDistance(vex::mm)*/Bot::ArmPot.position(vex::deg));
         }
         Bot::Controller.Screen.setCursor(3,1);
         if(Skills::isSkillsActive()) {
