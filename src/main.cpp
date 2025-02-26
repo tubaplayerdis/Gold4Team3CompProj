@@ -1477,7 +1477,7 @@ void usercontrol(void) {
 
 void ToggleLadyBrown() {
   Bot::IgnoreArm = true;
-  turnArmToPID(40);
+  turnArmToPID(241);
   Bot::IgnoreArm = false;
   //Bot::desiredARMAngle = LADYBROWN_DESIRED_ANGLE;
   //Bot::isArmPIDActive = !Bot::isArmPIDActive;

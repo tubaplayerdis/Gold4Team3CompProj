@@ -350,16 +350,22 @@ void Bot::toggleDoinker() {
     Doinker.set(DoinkerToggle);
 }
 
+bool isMacroRunning = false;
+
 void Bot::toggleDoinkerMacro() {
+    if(isMacroRunning = true) return;
+    isMacroRunning = true;
     waitUntil(!Bot::Controller.ButtonB.pressing());
     for(int i = 0; i < 200; i++) {
         if(Bot::Controller.ButtonB.pressing()) {
             Bot::toggleDoinker();
+            isMacroRunning = false;
             return;
         }
         vex::this_thread::sleep_for(1);
     }
-    DoinkerDos.set(DoinkerDos.value());
+    DoinkerDos.set(!DoinkerDos.value());
+    isMacroRunning = false;
 }
 
 void Bot::toggleLift() {
@@ -530,7 +536,7 @@ int Bot::displayLoop() {
         if(Bot::feedGps, Skills::isSkillsActive()) {
             Bot::Controller.Screen.print("X:%.1f,Y:%.1f,H:%.1f", Skills::x, Skills::y, Skills::h);
         } else {
-            Bot::Controller.Screen.print("H:%.1f, DIS:%.1f", Bot::Inertial.heading(), /*DistanceF.objectDistance(vex::mm)*/AutonSelect.value(vex::deg));
+            Bot::Controller.Screen.print("H:%.1f, DIS:%.1f", Bot::Inertial.heading(), /*DistanceF.objectDistance(vex::mm)*/Bot::ArmPot.value(vex::deg));
         }
         Bot::Controller.Screen.setCursor(3,1);
         if(Skills::isSkillsActive()) {
