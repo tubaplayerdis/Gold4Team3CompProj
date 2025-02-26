@@ -103,7 +103,7 @@ class Bot {
         static vex::pot AutonSelect;
         static vex::pot ArmPot;
         static vex::limit GripperSwitch;
-        static vex::limit GripperSwitchDos;
+        static vex::digital_out DoinkerDos;
         static int RingsIntaken;
 
         //Gryos and stuff
@@ -170,6 +170,7 @@ class Bot {
         static void toggleClutch();
         static void toggleMogo();
         static void toggleDoinker();
+        static void toggleDoinkerMacro();
         static void toggleLift();
         static void switchAlliance();
         static void clampMobileGoal();

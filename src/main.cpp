@@ -1534,7 +1534,7 @@ void primeTheGripper() {
 
   //Wait until the Limit switch is pressed.
   Bot::Controller.rumble("..");
-  waitUntil(Bot::GripperSwitch.pressing() || Bot::GripperSwitchDos.pressing());
+  waitUntil(Bot::GripperSwitch.pressing());
   Bot::Gripper.set(true);
 }
 
@@ -1560,7 +1560,7 @@ int main() {
   Bot::Controller.ButtonX.pressed(ToggleLadyBrown);
   Bot::Controller.ButtonY.pressed(Bot::toggleLift);
   Bot::Controller.ButtonA.pressed(Bot::toggleMogo);
-  Bot::Controller.ButtonB.pressed(Bot::toggleDoinker);
+  Bot::Controller.ButtonB.pressed(Bot::toggleDoinkerMacro);
 
   Bot::Controller.ButtonLeft.pressed(ColorDetection::toggleEnabled);
   Bot::Controller.ButtonRight.pressed(Notifications::notifForward);
