@@ -14,7 +14,7 @@ int ColorDetection::visionTask() {
         //Bot::Brain.Screen.printAt(130,0, "hue: %f brightness: %f", hue, brightness);
 
         double GV = Bot::ColorSensor.hue();
-        if(GV < BLUE_HUE_HIGH && GV > BLUE_HEU_LOW && Bot::DistanceC.objectDistance(vex::mm) < 50) {
+        if(GV < BLUE_HUE_HIGH && GV > BLUE_HEU_LOW && Bot::DistanceC.objectDistance(vex::mm) < 30) {
             //Blue Ring
             //Bot::Brain.Screen.printAt(0,190, "Blue Ring Detected!");
             if(!isEnabled) continue;
@@ -31,7 +31,7 @@ int ColorDetection::visionTask() {
                 Bot::IgnoreIntake = false;
                 //vex::this_thread::sleep_for(200);
             }
-        } else if( GV < RED_HUE_HIGH && GV > RED_HUE_LOW && Bot::DistanceC.objectDistance(vex::mm) < 50) {
+        } else if( GV < RED_HUE_HIGH && GV > RED_HUE_LOW && Bot::DistanceC.objectDistance(vex::mm) < 30) {
             //Red Ring
             //Bot::Brain.Screen.printAt(0,190, "Red Ring Detected!");
             if(!isEnabled) continue;

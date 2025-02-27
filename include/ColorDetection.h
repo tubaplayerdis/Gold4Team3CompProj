@@ -14,7 +14,7 @@
         }
 */
 #define BLUE_HEU_LOW 200
-#define BLUE_HUE_HIGH 250
+#define BLUE_HUE_HIGH 235
 
 #define RED_HUE_LOW 0
 #define RED_HUE_HIGH 20

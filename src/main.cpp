@@ -1228,11 +1228,11 @@ void blueGoalGoalRush() {
     }
     vex::this_thread::sleep_for(1);
   }
-  Bot::Drivetrain.driveFor(900, vex::mm, true);
+  Bot::Drivetrain.driveFor(600, vex::mm, true);
   if(gotogal) {
     Bot::Gripper.set(false);
-    Bot::Drivetrain.driveFor(200, vex::mm, true);
-    turnToPID(190);//do a flip!
+    Bot::Drivetrain.driveFor(100, vex::mm, true);
+    turnForPID(180);//do a flip!
     Bot::Doinker.set(false);
     #pragma region PAIGOAL
     Bot::IgnoreDisplay = true;

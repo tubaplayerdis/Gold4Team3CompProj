@@ -11,7 +11,7 @@
 #define TURN_PID_MAX_MOTOR_POWER 100.0
 #define TURN_PID_MAX_TOLERANCE 1.0
 
-#define ARMPIDKP 0.9
+#define ARMPIDKP 1.6
 #define ARMPIDKI 0.0005
 #define ARMPIDKD 0.5
 
