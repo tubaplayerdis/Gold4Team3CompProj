@@ -1232,9 +1232,27 @@ void blueGoalGoalRush() {
   if(gotogal) {
     Bot::Gripper.set(false);
     Bot::Drivetrain.driveFor(100, vex::mm, true);
-    turnForPID(180);//do a flip!
+    turnForPID(195);//do a flip!
     Bot::Doinker.set(false);
+
+    Bot::Drivetrain.setDriveVelocity(15, percent);
+    for(int i = 0; i < 1000; i++) {
+      if(Bot::DistanceF.objectDistance(vex::mm) < 25) {
+        Bot::Drivetrain.drive(forward);
+        vex::this_thread::sleep_for(200);
+        Bot::MogoMech.set(true);
+        Bot::MogoToggle = true;
+        Bot::Drivetrain.drive(forward);
+        vex::this_thread::sleep_for(100);
+        Bot::Drivetrain.stop();
+        break;
+      }
+      Bot::Drivetrain.drive(vex::forward);
+      vex::this_thread::sleep_for(1);
+    }
+    
     #pragma region PAIGOAL
+    /*
     Bot::IgnoreDisplay = true;
     bool isExitAiLoop = false;
     while (true)
@@ -1356,20 +1374,30 @@ void blueGoalGoalRush() {
         
       }
     }
-
+    */
     #pragma endregion
     ColorDetection::isEnabled = false;
-    Bot::Drivetrain.driveFor(-500, mm, true);
+    //Bot::Drivetrain.driveFor(-500, mm, true);
     Bot::IntakeReal.stop();
     Bot::Intake.setVelocity(100, vex::percent);
-    Bot::Intake.spin(forward);
+    Bot::Intake.spinFor(forward, 0.2, seconds);
+    Bot::MogoMech.set(false);
+    Bot::MogoToggle = false;
 
 
+    turnForPID(90);
 
-
-
-
-
+    for(int i = 0; i < 1000; i++) {
+      if(Bot::DistanceF.objectDistance(vex::mm) < 30) {
+        Bot::MogoMech.set(true);
+        Bot::MogoToggle = true;
+        Bot::Drivetrain.driveFor(100, mm, true);
+        Bot::Drivetrain.stop();
+        break;
+      }
+      Bot::Drivetrain.drive(vex::forward);
+      vex::this_thread::sleep_for(1);
+    }
 
 
   } else {
