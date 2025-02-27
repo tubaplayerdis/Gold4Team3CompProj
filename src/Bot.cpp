@@ -353,7 +353,7 @@ void Bot::toggleDoinker() {
 bool isMacroRunning = false;
 
 void Bot::toggleDoinkerMacro() {
-    if(isMacroRunning = true) return;
+    if(isMacroRunning == true) return;
     isMacroRunning = true;
     waitUntil(!Bot::Controller.ButtonB.pressing());
     for(int i = 0; i < 200; i++) {
