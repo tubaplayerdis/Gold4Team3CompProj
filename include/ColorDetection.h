@@ -13,11 +13,11 @@
             //Red Ring
         }
 */
-#define BLUE_HEU_LOW 175
-#define BLUE_HUE_HIGH 250
+#define BLUE_HEU_LOW 200
+#define BLUE_HUE_HIGH 235
 
 #define RED_HUE_LOW 0
-#define RED_HUE_HIGH 35
+#define RED_HUE_HIGH 20
 
 
 //For Throwing:

@@ -51,7 +51,7 @@ void cycleStartingPosistions() {
 #define APPROACH_VELOCITY_PERCENT -45
 #define LINEAR_CHANGE_VELOCITY_CORRECTION 0.7
 
-#define APPROACH_VELOCITY_PERCENT_MOGO -1 * APPROACH_VELOCITY_PERCENT
+#define APPROACH_VELOCITY_PERCENT_MOGO 35
 
 
 // define your global instances of motors and other devices here
@@ -1211,7 +1211,198 @@ void blueGoalAlainceStake() {
 }
 
 void blueGoalGoalRush() {
+  ColorDetection::isEnabled = false;
+  //Bot::Doinker.set(true);
+  Bot::Drivetrain.setDriveVelocity(50, percent);
+  Bot::IntakeReal.setVelocity(100, vex::pct);
+  Bot::IntakeReal.spin(vex::forward);
+  bool gotogal = false;
+  for(int i = 0; i < 700; i++) {
+    if(i == 300) Bot::Doinker.set(true);
+    Bot::Drivetrain.drive(reverse);
+    if(Bot::GripperSwitch.pressing()) {
+      Bot::Gripper.set(true);
+      Bot::Drivetrain.drive(forward);
+      gotogal = true;
+      break;
+    }
+    vex::this_thread::sleep_for(1);
+  }
+  Bot::Drivetrain.driveFor(600, vex::mm, true);
+  if(gotogal) {
+    Bot::Gripper.set(false);
+    Bot::Drivetrain.driveFor(100, vex::mm, true);
+    turnForPID(195);//do a flip!
+    Bot::Doinker.set(false);
 
+    Bot::Drivetrain.setDriveVelocity(15, percent);
+    for(int i = 0; i < 1000; i++) {
+      if(Bot::DistanceF.objectDistance(vex::mm) < 25) {
+        Bot::Drivetrain.drive(forward);
+        vex::this_thread::sleep_for(200);
+        Bot::MogoMech.set(true);
+        Bot::MogoToggle = true;
+        Bot::Drivetrain.drive(forward);
+        vex::this_thread::sleep_for(100);
+        Bot::Drivetrain.stop();
+        break;
+      }
+      Bot::Drivetrain.drive(vex::forward);
+      vex::this_thread::sleep_for(1);
+    }
+    
+    #pragma region PAIGOAL
+    /*
+    Bot::IgnoreDisplay = true;
+    bool isExitAiLoop = false;
+    while (true)
+    {
+
+      if(isExitAiLoop) {
+        isExitAiLoop = true;
+        break;
+      }
+
+
+      Bot::Controller.Screen.clearScreen();
+
+      Bot::AIVisionM.takeSnapshot(Bot::MOGODESJ, MAX_OBJ_TO_TRACK);
+
+      //Brain.Screen.printAt(0,50, "AI Vision Count: %d", AIVisionF.objectCount);
+      vex::aivision::object pursuit = vex::aivision::object();
+
+      //Bot::Drivetrain.setDriveVelocity(15, vex::percent);
+      //Bot::Drivetrain.setTurnVelocity(15, vex::percent);
+
+
+      if(Bot::AIVisionM.objectCount == 0) {
+        Bot::Controller.Screen.setCursor(2,1);
+        Bot::Controller.Screen.print("SEARCHING  ");
+        vex::this_thread::sleep_for(20);
+        continue;
+      }
+
+      //Something was found
+
+      Bot::LeftMotors.stop();
+      Bot::RightMotors.stop();
+
+      //The AI Vision Sensor has a resolution of 320 x 240 pixels.
+
+      //Turning to face
+      Bot::Controller.Screen.setCursor(2,1);
+      Bot::Controller.Screen.print("PURSUIT  ");
+      //Bot::Drivetrain.setDriveVelocity(35, vex::percent);
+      //Bot::Drivetrain.setTurnVelocity(5, vex::percent);
+
+      Bot::LeftMotors.setVelocity(APPROACH_VELOCITY_PERCENT_MOGO, vex::percent);
+      Bot::RightMotors.setVelocity(APPROACH_VELOCITY_PERCENT_MOGO, vex::percent);
+      Bot::LeftMotors.spin(vex::forward);
+      Bot::RightMotors.spin(vex::forward);
+      vex::this_thread::sleep_for(10);
+
+      Bot::Controller.Screen.clearScreen();
+
+      while (true)
+      {
+        //vex::this_thread::sleep_for(1000);
+
+        //vex::this_thread::sleep_for(10);
+        Bot::AIVisionM.takeSnapshot(Bot::MOGODESJ, MAX_OBJ_TO_TRACK);
+      
+
+        if(Bot::AIVisionM.objectCount == 0) {
+          //Lost Ring
+          Bot::Drivetrain.stop();
+          break;
+        }
+
+
+        pursuit = Bot::AIVisionM.objects[0];
+        for (size_t i = 0; i < 3; i++)
+        {
+          if(Bot::AIVisionM.objects[i].width > pursuit.width) pursuit = Bot::AIVisionM.objects[i];
+        }
+        
+
+        bool isTurningtoDriving = false;
+        //Center of screen is 160,160.
+
+        if(Bot::LeftMotors.velocity(vex::percent) > APPROACH_VELOCITY_PERCENT_MOGO) Bot::LeftMotors.setVelocity(APPROACH_VELOCITY_PERCENT_MOGO, vex::percent);
+        if(Bot::RightMotors.velocity(vex::percent) > APPROACH_VELOCITY_PERCENT_MOGO) Bot::RightMotors.setVelocity(APPROACH_VELOCITY_PERCENT_MOGO, vex::percent);
+
+
+        Bot::Controller.Screen.setCursor(3,1);
+        Bot::Controller.Screen.print("LV :%.2f  RV: %.2f    ", Bot::LeftMotors.velocity(vex::percent), Bot::RightMotors.velocity(vex::percent));
+        
+        
+
+        if(pursuit.originX + pursuit.width < 160) {
+          Bot::LeftMotors.spin(vex::forward);
+          Bot::LeftMotors.setVelocity(Bot::LeftMotors.velocity(vex::percent)+(LINEAR_CHANGE_VELOCITY_CORRECTION+0.3), vex::percent);
+          continue;
+        } else if (pursuit.originX > 160) {
+          Bot::RightMotors.spin(vex::forward);
+          Bot::RightMotors.setVelocity(Bot::RightMotors.velocity(vex::percent)+(LINEAR_CHANGE_VELOCITY_CORRECTION+0.3), vex::percent);
+          continue;
+        } else {   
+          Bot::LeftMotors.setVelocity(APPROACH_VELOCITY_PERCENT_MOGO, vex::percent);
+          Bot::RightMotors.setVelocity(APPROACH_VELOCITY_PERCENT_MOGO, vex::percent);
+          if(isTurningtoDriving) {
+            //Bot::Drivetrain.stop();
+            isTurningtoDriving = false;
+          } //Stop turning
+          if(pursuit.width >= 200) {
+            Bot::Controller.Screen.setCursor(2,1);
+            Bot::Controller.Screen.clearLine(2);
+            Bot::Controller.Screen.print("DONE");
+            Bot::Drivetrain.setDriveVelocity(20, percent);
+            Bot::Drivetrain.drive(forward);
+            this_thread::sleep_for(400);
+            Bot::MogoMech.set(true);
+            Bot::MogoToggle = true;
+            this_thread::sleep_for(400);
+            Bot::Drivetrain.stop();
+            isExitAiLoop = true;
+            break;
+          }    
+
+          
+            
+        }
+
+        
+      }
+    }
+    */
+    #pragma endregion
+    ColorDetection::isEnabled = false;
+    //Bot::Drivetrain.driveFor(-500, mm, true);
+    Bot::IntakeReal.stop();
+    Bot::Intake.setVelocity(100, vex::percent);
+    Bot::Intake.spinFor(forward, 0.2, seconds);
+    Bot::MogoMech.set(false);
+    Bot::MogoToggle = false;
+
+
+    turnForPID(90);
+
+    for(int i = 0; i < 1000; i++) {
+      if(Bot::DistanceF.objectDistance(vex::mm) < 30) {
+        Bot::MogoMech.set(true);
+        Bot::MogoToggle = true;
+        Bot::Drivetrain.driveFor(100, mm, true);
+        Bot::Drivetrain.stop();
+        break;
+      }
+      Bot::Drivetrain.drive(vex::forward);
+      vex::this_thread::sleep_for(1);
+    }
+
+
+  } else {
+
+  }
 }
 
 void blueRingElim() {
@@ -1236,13 +1427,7 @@ void autonTest() {
 
     Bot::Controller.Screen.clearScreen();
 
-    //Defualt blue
-    if(Bot::Aliance == Blue) {
-      Bot::AIVisionM.takeSnapshot(Bot::BLUEDESJ, MAX_OBJ_TO_TRACK);
-    } else {
-      //red
-      Bot::AIVisionM.takeSnapshot(Bot::REDDESJ, MAX_OBJ_TO_TRACK);
-    }
+    Bot::AIVisionM.takeSnapshot(Bot::MOGODESJ, MAX_OBJ_TO_TRACK);
 
     //Brain.Screen.printAt(0,50, "AI Vision Count: %d", AIVisionF.objectCount);
     vex::aivision::object pursuit = vex::aivision::object();
@@ -1284,12 +1469,7 @@ void autonTest() {
       //vex::this_thread::sleep_for(1000);
 
       //vex::this_thread::sleep_for(10);
-      if(Bot::Aliance == Blue) {
-        Bot::AIVisionM.takeSnapshot(Bot::BLUEDESJ, MAX_OBJ_TO_TRACK);
-      } else {
-        //red
-        Bot::AIVisionM.takeSnapshot(Bot::REDDESJ, MAX_OBJ_TO_TRACK);
-      }
+      Bot::AIVisionM.takeSnapshot(Bot::MOGODESJ, MAX_OBJ_TO_TRACK);
     
 
       if(Bot::AIVisionM.objectCount == 0) {
@@ -1477,7 +1657,7 @@ void usercontrol(void) {
 
 void ToggleLadyBrown() {
   Bot::IgnoreArm = true;
-  turnArmToPID(23.3);
+  turnArmToPID(25);
   Bot::IgnoreArm = false;
   //Bot::desiredARMAngle = LADYBROWN_DESIRED_ANGLE;
   //Bot::isArmPIDActive = !Bot::isArmPIDActive;
@@ -1566,10 +1746,10 @@ int main() {
   Bot::Controller.ButtonX.pressed(ToggleLadyBrown);
   Bot::Controller.ButtonY.pressed(Bot::toggleLift);
   Bot::Controller.ButtonA.pressed(Bot::toggleMogo);
-  Bot::Controller.ButtonB.pressed(Bot::toggleDoinkerMacro);
+  Bot::Controller.ButtonB.pressed(Bot::toggleDoinker);
 
   Bot::Controller.ButtonLeft.pressed(ColorDetection::toggleEnabled);
-  Bot::Controller.ButtonRight.pressed(Notifications::notifForward);
+  Bot::Controller.ButtonRight.pressed(Bot::toggleDoinkerMacro);
 
   Bot::Controller.ButtonUp.pressed(releaseGripper);
   Bot::Controller.ButtonDown.pressed(primeTheGripper);

@@ -50,9 +50,14 @@ int turnToPID(double targetAngle) {
 }
 
 int turnForPID(double angle) {
-    if(angle + Bot::Inertial.heading() < 0) return turnToPID(360 + (angle + Bot::Inertial.heading()));
-    if(angle + Bot::Inertial.heading() > 360) return turnToPID(fabs(360 - Bot::Inertial.heading() - angle));
-    return turnToPID(angle + Bot::Inertial.heading());
+    double desire = angle + Bot::Inertial.heading();
+    if(desire < 0) {
+        return turnToPID(360 + desire);
+    }
+    if(desire > 360) {
+        return turnToPID(desire - 360);
+    }
+    return turnToPID(desire);
 }
 
 
@@ -78,7 +83,7 @@ int turnArmToPID(double targetAngle) {
         power = clamp(power, -ARM_PID_MAX_MOTOR_POWER, ARM_PID_MAX_MOTOR_POWER);
         
         // Apply power to motors
-        Bot::Arm.spin(vex::reverse, power, vex::pct);
+        Bot::Arm.spin(vex::forward, power, vex::pct);
 
         lastError = error;
         vex::task::sleep(20);  // Small delay for stability

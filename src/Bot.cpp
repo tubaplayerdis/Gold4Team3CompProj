@@ -353,19 +353,7 @@ void Bot::toggleDoinker() {
 bool isMacroRunning = false;
 
 void Bot::toggleDoinkerMacro() {
-    if(isMacroRunning == true) return;
-    isMacroRunning = true;
-    waitUntil(!Bot::Controller.ButtonB.pressing());
-    for(int i = 0; i < 200; i++) {
-        if(Bot::Controller.ButtonB.pressing()) {
-            Bot::toggleDoinker();
-            isMacroRunning = false;
-            return;
-        }
-        vex::this_thread::sleep_for(1);
-    }
     DoinkerDos.set(!DoinkerDos.value());
-    isMacroRunning = false;
 }
 
 void Bot::toggleLift() {
