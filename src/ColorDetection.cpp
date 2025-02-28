@@ -20,8 +20,12 @@ int ColorDetection::visionTask() {
             if(!isEnabled) continue;
             //Blue Ring Detected
             if(Bot::Aliance != aliance::Blue) {
+                vex::this_thread::sleep_for(80);
                 Bot::IgnoreIntake = true;
                 Bot::Conveyor.stop();
+                Bot::Conveyor.spinFor(vex::reverse, 0.1, vex::seconds);
+                Bot::Conveyor.stop();
+                Bot::Conveyor.spin(vex::forward);
                 vex::this_thread::sleep_for(80);
                 if(Bot::Comp.isAutonomous()) {
                     Bot::Conveyor.setMaxTorque(100, vex::percent);
@@ -37,8 +41,12 @@ int ColorDetection::visionTask() {
             if(!isEnabled) continue;
             //Red Ring Detected
             if(Bot::Aliance != aliance::Red) {
+                vex::this_thread::sleep_for(80);
                 Bot::IgnoreIntake = true;
                 Bot::Conveyor.stop();
+                Bot::Conveyor.spinFor(vex::reverse, 0.1, vex::seconds);
+                Bot::Conveyor.stop();
+                Bot::Conveyor.spin(vex::forward);
                 vex::this_thread::sleep_for(80);
                 if(Bot::Comp.isAutonomous()) {
                     Bot::Conveyor.setMaxTorque(100, vex::percent);
