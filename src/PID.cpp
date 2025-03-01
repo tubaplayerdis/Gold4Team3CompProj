@@ -64,10 +64,15 @@ int turnForPID(double angle) {
 int turnArmToPID(double targetAngle) {
     double error, integral = 0, derivative, lastError = 0;
     double power;
+    int timeout = 0;
     
     while (true) {
         double currentAngle = Bot::ArmPot.position(vex::deg);
         error = targetAngle - currentAngle;
+        if(timeout >= 90) {
+            Bot::IgnoreArm = false;
+            return 1;
+        }
         //error = targetAngle - currentAngle;
         
         // Break if within a small margin
@@ -87,6 +92,7 @@ int turnArmToPID(double targetAngle) {
 
         lastError = error;
         vex::task::sleep(20);  // Small delay for stability
+        timeout++;
     }
 
     // Stop motors once target is reached

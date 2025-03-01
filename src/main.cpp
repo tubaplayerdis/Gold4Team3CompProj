@@ -375,7 +375,7 @@ void redGoalElim() {
           Bot::Drivetrain.stop();
           Bot::LiftToggle = true;
           Bot::Lift.set(true);
-          Bot::Drivetrain.setDriveVelocity(5, vex::percent);
+          Bot::Drivetrain.setDriveVelocity(4, vex::percent);
           Bot::Drivetrain.drive(reverse);
           Bot::Drivetrain.driveFor(-200, vex::mm, true);
           Bot::Drivetrain.driveFor(300, vex::mm, true);
