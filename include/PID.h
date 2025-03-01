@@ -16,9 +16,10 @@
 #define ARMPIDKD 0.5
 
 #define ARM_PID_MAX_MOTOR_POWER 100.0
-#define ARM_PID_MAX_TOLERANCE 1.0
+#define ARM_PID_MAX_TOLERANCE 0.3
 
 int turnToPID(double targetAngle);
 int turnForPID(double angle);
 
 int turnArmToPID(double target);
+ 

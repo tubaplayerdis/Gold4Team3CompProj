@@ -108,8 +108,8 @@ void turnCorrectToMogo() {
 
 
 
-#define APPROACH_VELOCITY_PERCENT -40
-#define LINEAR_CHANGE_VELOCITY_CORRECTION 0.7
+#define APPROACH_VELOCITY_PERCENT -25
+#define LINEAR_CHANGE_VELOCITY_CORRECTION 0.65
 
 #define APPROACH_VELOCITY_PERCENT_MOGO 35
 
@@ -249,7 +249,7 @@ void redGoalElim() {
   
   //Turn to face ring
   Bot::Drivetrain.setTurnVelocity(5, vex::percent);
-  turnToAccounting(310);
+  turnToAccounting(325);
 
   Bot::Intake.setMaxTorque(100, vex::percent);
   Bot::Intake.setVelocity(600, vex::rpm);
@@ -1375,7 +1375,7 @@ void blueGoalElim() {
   
   //Turn to face ring
   Bot::Drivetrain.setTurnVelocity(5, vex::percent);
-  turnToAccounting(310);
+  turnToAccounting(325);
 
   Bot::Intake.setMaxTorque(100, vex::percent);
   Bot::Intake.setVelocity(600, vex::rpm);
@@ -1501,7 +1501,7 @@ void blueGoalElim() {
           Bot::Drivetrain.stop();
           Bot::LiftToggle = true;
           Bot::Lift.set(true);
-          Bot::Drivetrain.setDriveVelocity(5, vex::percent);
+          Bot::Drivetrain.setDriveVelocity(4, vex::percent);
           Bot::Drivetrain.drive(reverse);
           Bot::Drivetrain.driveFor(-200, vex::mm, true);
           Bot::Drivetrain.driveFor(300, vex::mm, true);
@@ -1663,8 +1663,8 @@ void blueGoalElim() {
   vex::this_thread::sleep_for(300);//allow ring to not be heaved off bot during turn
   Bot::Drivetrain.setTurnVelocity(15, vex::percent);
   turnForAccounting(-100);
-  Bot::DoinkerToggle = true;
-  Bot::Doinker.set(true);
+  //Bot::DoinkerToggle = true;
+  //Bot::Doinker.set(true);
 
   #pragma region PAIC
 
