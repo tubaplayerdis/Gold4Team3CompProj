@@ -196,40 +196,40 @@ int ProxyController::_workerFunction() {
                 if(reg.ButtonAxis4Changed && playPointer->Axis4.isRegistered()) vex::thread(playPointer->Axis4.changedCallBack);
 
                 if(reg.ButtonAPressed && playPointer->ButtonA.isRegistered(true) ) vex::thread(playPointer->ButtonA.pressedCallBack);
-                if(reg.ButtonAPressed && playPointer->ButtonA.isRegistered(true) ) vex::thread(playPointer->ButtonA.pressedCallBack);
+                if(reg.ButtonAReleased && playPointer->ButtonA.isRegistered(false) ) vex::thread(playPointer->ButtonA.releasedCallBack);
 
                 if(reg.ButtonBPressed && playPointer->ButtonB.isRegistered(true) ) vex::thread(playPointer->ButtonB.pressedCallBack);
-                if(reg.ButtonBPressed && playPointer->ButtonB.isRegistered(true) ) vex::thread(playPointer->ButtonB.pressedCallBack);
+                if(reg.ButtonBReleased && playPointer->ButtonB.isRegistered(false) ) vex::thread(playPointer->ButtonB.releasedCallBack);
 
                 if(reg.ButtonXPressed && playPointer->ButtonX.isRegistered(true) ) vex::thread(playPointer->ButtonX.pressedCallBack);
-                if(reg.ButtonXPressed && playPointer->ButtonX.isRegistered(true) ) vex::thread(playPointer->ButtonX.pressedCallBack);
+                if(reg.ButtonXReleased && playPointer->ButtonX.isRegistered(false) ) vex::thread(playPointer->ButtonX.releasedCallBack);
 
                 if(reg.ButtonYPressed && playPointer->ButtonY.isRegistered(true) ) vex::thread(playPointer->ButtonY.pressedCallBack);
-                if(reg.ButtonYPressed && playPointer->ButtonY.isRegistered(true) ) vex::thread(playPointer->ButtonY.pressedCallBack);
+                if(reg.ButtonYReleased && playPointer->ButtonY.isRegistered(false) ) vex::thread(playPointer->ButtonY.releasedCallBack);
 
                 if(reg.ButtonUpPressed && playPointer->ButtonUp.isRegistered(true) ) vex::thread(playPointer->ButtonUp.pressedCallBack);
-                if(reg.ButtonUpPressed && playPointer->ButtonUp.isRegistered(true) ) vex::thread(playPointer->ButtonUp.pressedCallBack);
+                if(reg.ButtonUpReleased && playPointer->ButtonUp.isRegistered(false) ) vex::thread(playPointer->ButtonUp.releasedCallBack);
 
                 if(reg.ButtonDownPressed && playPointer->ButtonDown.isRegistered(true) ) vex::thread(playPointer->ButtonDown.pressedCallBack);
-                if(reg.ButtonDownPressed && playPointer->ButtonDown.isRegistered(true) ) vex::thread(playPointer->ButtonDown.pressedCallBack);
+                if(reg.ButtonDownReleased && playPointer->ButtonDown.isRegistered(false) ) vex::thread(playPointer->ButtonDown.releasedCallBack);
 
                 if(reg.ButtonLeftPressed && playPointer->ButtonLeft.isRegistered(true) ) vex::thread(playPointer->ButtonLeft.pressedCallBack);
-                if(reg.ButtonLeftPressed && playPointer->ButtonLeft.isRegistered(true) ) vex::thread(playPointer->ButtonLeft.pressedCallBack);
+                if(reg.ButtonLeftReleased && playPointer->ButtonLeft.isRegistered(false) ) vex::thread(playPointer->ButtonLeft.releasedCallBack);
 
                 if(reg.ButtonRightPressed && playPointer->ButtonRight.isRegistered(true) ) vex::thread(playPointer->ButtonRight.pressedCallBack);
-                if(reg.ButtonRightPressed && playPointer->ButtonRight .isRegistered(true) ) vex::thread(playPointer->ButtonRight.pressedCallBack);
+                if(reg.ButtonRightReleased && playPointer->ButtonRight.isRegistered(false) ) vex::thread(playPointer->ButtonRight.releasedCallBack);
 
                 if(reg.ButtonL1Pressed && playPointer->ButtonL1.isRegistered(true) ) vex::thread(playPointer->ButtonL1.pressedCallBack);
-                if(reg.ButtonL1Pressed && playPointer->ButtonL1.isRegistered(true) ) vex::thread(playPointer->ButtonL1.pressedCallBack);
+                if(reg.ButtonL1Released && playPointer->ButtonL1.isRegistered(false) ) vex::thread(playPointer->ButtonL1.releasedCallBack);
 
                 if(reg.ButtonL2Pressed && playPointer->ButtonL2.isRegistered(true) ) vex::thread(playPointer->ButtonL2.pressedCallBack);
-                if(reg.ButtonL2Pressed && playPointer->ButtonL2.isRegistered(true) ) vex::thread(playPointer->ButtonL2.pressedCallBack);
+                if(reg.ButtonL2Released && playPointer->ButtonL2.isRegistered(false) ) vex::thread(playPointer->ButtonL2.releasedCallBack);
 
                 if(reg.ButtonR1Pressed && playPointer->ButtonR1.isRegistered(true) ) vex::thread(playPointer->ButtonR1.pressedCallBack);
-                if(reg.ButtonR1Pressed && playPointer->ButtonR1.isRegistered(true) ) vex::thread(playPointer->ButtonR1.pressedCallBack);
+                if(reg.ButtonR1Released && playPointer->ButtonR1.isRegistered(false) ) vex::thread(playPointer->ButtonR1.releasedCallBack);
 
                 if(reg.ButtonR2Pressed && playPointer->ButtonR2.isRegistered(true) ) vex::thread(playPointer->ButtonR2.pressedCallBack);
-                if(reg.ButtonR2Pressed && playPointer->ButtonR2.isRegistered(true) ) vex::thread(playPointer->ButtonR2.pressedCallBack);
+                if(reg.ButtonR2Released && playPointer->ButtonR2.isRegistered(false) ) vex::thread(playPointer->ButtonR2.releasedCallBack);
 
                 vex::this_thread::sleep_for(quality);
             }
